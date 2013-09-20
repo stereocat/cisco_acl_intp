@@ -1,0 +1,646 @@
+- test-description: "named standard acl"
+  test-symbol: "named_std_acl"
+  test-data:
+  - line: "ip access-list standard remote-ipv4  "
+    tokens:
+      - [ "NAMED_ACL", "ip access-list" ]
+      - [ "STANDARD", "standard" ]
+      - [ "STRING", "remote-ipv4" ]
+  - line: " remark hoge fuga aa"
+    tokens:
+      - [ "REMARK", " hoge fuga aa" ]
+  - line: " permit 192.168.0.0 0.0.255.255  "
+    tokens:
+      - [ "PERMIT", "permit" ]
+      - [ "IPV4_ADDR", "192.168.0.0" ]
+      - [ "IPV4_ADDR", "0.0.255.255" ]
+  - line: " remark ip access-list extended hogehoge"
+    tokens:
+      - [ "REMARK", " ip access-list extended hogehoge" ]
+  - line: " deny   any log"
+    tokens:
+      - [ "DENY", "deny" ]
+      - [ "ANY", "any" ]
+      - [ "LOG", "log" ]
+- test-description: "named extended acl"
+  test-symbol: "named_ext_acl"
+  test-data:
+  - line: "ip access-list extended GI0-IN"
+    tokens:
+      - [ "NAMED_ACL", "ip access-list" ]
+      - [ "EXTENDED", "extended" ]
+      - [ "STRING", "GI0-IN" ]
+  - line: " deny   ip 10.0.0.0 0.255.255.255 any log"
+    tokens:
+      - [ "DENY", "deny" ]
+      - [ "IP", "ip" ]
+      - [ "IPV4_ADDR", "10.0.0.0" ]
+      - [ "IPV4_ADDR", "0.255.255.255" ]
+      - [ "ANY", "any" ]
+      - [ "LOG", "log" ]
+  - line: " deny   ip 172.16.0.0 0.15.255.255 any log"
+    tokens:
+      - [ "DENY", "deny" ]
+      - [ "IP", "ip" ]
+      - [ "IPV4_ADDR", "172.16.0.0" ]
+      - [ "IPV4_ADDR", "0.15.255.255" ]
+      - [ "ANY", "any" ]
+      - [ "LOG", "log" ]
+  - line: " deny   ip 0.0.0.0 0.255.255.255 any log"
+    tokens:
+      - [ "DENY", "deny" ]
+      - [ "IP", "ip" ]
+      - [ "IPV4_ADDR", "0.0.0.0" ]
+      - [ "IPV4_ADDR", "0.255.255.255" ]
+      - [ "ANY", "any" ]
+      - [ "LOG", "log" ]
+  - line: " deny   ip 127.0.0.0 0.255.255.255 any log"
+    tokens:
+      - [ "DENY", "deny" ]
+      - [ "IP", "ip" ]
+      - [ "IPV4_ADDR", "127.0.0.0" ]
+      - [ "IPV4_ADDR", "0.255.255.255" ]
+      - [ "ANY", "any" ]
+      - [ "LOG", "log" ]
+  - line: " deny   ip 192.0.2.0 0.0.0.255 any log"
+    tokens:
+      - [ "DENY", "deny" ]
+      - [ "IP", "ip" ]
+      - [ "IPV4_ADDR", "192.0.2.0" ]
+      - [ "IPV4_ADDR", "0.0.0.255" ]
+      - [ "ANY", "any" ]
+      - [ "LOG", "log" ]
+  - line: " deny   ip 169.254.0.0 0.0.255.255 any log"
+    tokens:
+      - [ "DENY", "deny" ]
+      - [ "IP", "ip" ]
+      - [ "IPV4_ADDR", "169.254.0.0" ]
+      - [ "IPV4_ADDR", "0.0.255.255" ]
+      - [ "ANY", "any" ]
+      - [ "LOG", "log" ]
+  - line: " deny   ip 224.0.0.0 31.255.255.255 any log"
+    tokens:
+      - [ "DENY", "deny" ]
+      - [ "IP", "ip" ]
+      - [ "IPV4_ADDR", "224.0.0.0" ]
+      - [ "IPV4_ADDR", "31.255.255.255" ]
+      - [ "ANY", "any" ]
+      - [ "LOG", "log" ]
+  - line: " deny   tcp any any eq 135 log"
+    tokens:
+      - [ "DENY", "deny" ]
+      - [ "TCP", "tcp" ]
+      - [ "ANY", "any" ]
+      - [ "ANY", "any" ]
+      - [ "EQ", "eq" ]
+      - [ "NUMBER", 135 ]
+      - [ "LOG", "log" ]
+  - line: " deny   udp any any eq 135 log"
+    tokens:
+      - [ "DENY", "deny" ]
+      - [ "UDP", "udp" ]
+      - [ "ANY", "any" ]
+      - [ "ANY", "any" ]
+      - [ "EQ", "eq" ]
+      - [ "NUMBER", 135 ]
+      - [ "LOG", "log" ]
+  - line: " deny   tcp any any range 137 139 log"
+    tokens:
+      - [ "DENY", "deny" ]
+      - [ "TCP", "tcp" ]
+      - [ "ANY", "any" ]
+      - [ "ANY", "any" ]
+      - [ "RANGE", "range" ]
+      - [ "NUMBER", 137 ]
+      - [ "NUMBER", 139 ]
+      - [ "LOG", "log" ]
+  - line: " deny   udp any any range netbios-ns netbios-ss log"
+    tokens:
+      - [ "DENY", "deny" ]
+      - [ "UDP", "udp" ]
+      - [ "ANY", "any" ]
+      - [ "ANY", "any" ]
+      - [ "RANGE", "range" ]
+      - [ "NETBIOS_NS", "netbios-ns" ]
+      - [ "NETBIOS_SS", "netbios-ss" ]
+      - [ "LOG", "log" ]
+  - line: " remark ospf"
+    tokens:
+      - [ "REMARK", " ospf" ]
+  - line: " permit ospf 192.168.100.0 0.0.0.255 any"
+    tokens:
+      - [ "PERMIT", "permit" ]
+      - [ "OSPF", "ospf" ]
+      - [ "IPV4_ADDR", "192.168.100.0" ]
+      - [ "IPV4_ADDR", "0.0.0.255" ]
+      - [ "ANY", "any" ]
+  - line: " remark ihanet"
+    tokens:
+      - [ "REMARK", " ihanet" ]
+  - line: " permit gre any host 192.168.100.201"
+    tokens:
+      - [ "PERMIT", "permit" ]
+      - [ "GRE", "gre" ]
+      - [ "ANY", "any" ]
+      - [ "HOST", "host" ]
+      - [ "IPV4_ADDR", "192.168.100.201" ]
+  - line: " permit ipinip any host 192.168.100.201"
+    tokens:
+      - [ "PERMIT", "permit" ]
+      - [ "IPINIP", "ipinip" ]
+      - [ "ANY", "any" ]
+      - [ "HOST", "host" ]
+      - [ "IPV4_ADDR", "192.168.100.201" ]
+  - line: " remark remark of vpn"
+    tokens:
+      - [ "REMARK", " remark of vpn" ]
+  - line: " permit esp any any"
+    tokens:
+      - [ "PERMIT", "permit" ]
+      - [ "ESP", "esp" ]
+      - [ "ANY", "any" ]
+      - [ "ANY", "any" ]
+  - line: " permit udp any any eq isakmp"
+    tokens:
+      - [ "PERMIT", "permit" ]
+      - [ "UDP", "udp" ]
+      - [ "ANY", "any" ]
+      - [ "ANY", "any" ]
+      - [ "EQ", "eq" ]
+      - [ "ISAKMP", "isakmp" ]
+  - line: " remark ntp/dns"
+    tokens:
+      - [ "REMARK", " ntp/dns" ]
+  - line: " remark ipv6"
+    tokens:
+      - [ "REMARK", " ipv6" ]
+  - line: " permit 41 any any"
+    tokens:
+      - [ "PERMIT", "permit" ]
+      - [ "NUMBER", 41 ]
+      - [ "ANY", "any" ]
+      - [ "ANY", "any" ]
+  - line: " remark permit any from inside to outside"
+    tokens:
+      - [ "REMARK", " permit any from inside to outside" ]
+  - line: " evaluate iptraffic"
+    tokens:
+      - [ "EVALUATE", "evaluate" ]
+      - [ "STRING", "iptraffic" ]
+  - line: " permit tcp any any established"
+    tokens:
+      - [ "PERMIT", "permit" ]
+      - [ "TCP", "tcp" ]
+      - [ "ANY", "any" ]
+      - [ "ANY", "any" ]
+      - [ "ESTABL", "established" ]
+  - line: " permit icmp any any"
+    tokens:
+      - [ "PERMIT", "permit" ]
+      - [ "ICMP", "icmp" ]
+      - [ "ANY", "any" ]
+      - [ "ANY", "any" ]
+  - line: " deny   ip any any log"
+    tokens:
+      - [ "DENY", "deny" ]
+      - [ "IP", "ip" ]
+      - [ "ANY", "any" ]
+      - [ "ANY", "any" ]
+      - [ "LOG", "log" ]
+- test-description: "numbered standard acl"
+  test-symbol: "numd_std_acl"
+  test-data:
+  - line: "access-list 1 permit 192.168.0.0 0.0.255.255"
+    tokens:
+      - [ "NUMD_STD_ACL", 1 ]
+      - [ "PERMIT", "permit" ]
+      - [ "IPV4_ADDR", "192.168.0.0" ]
+      - [ "IPV4_ADDR", "0.0.255.255" ]
+  - line: "access-list 1 deny   any log"
+    tokens:
+      - [ "NUMD_STD_ACL", 1 ]
+      - [ "DENY", "deny" ]
+      - [ "ANY", "any" ]
+      - [ "LOG", "log" ]
+- test-description: "numbered extended acl"
+  test-symbol: "numd_ext_acl"
+  test-data:
+  - line: "access-list 100 remark 6to4"
+    tokens:
+      - [ "NUMD_EXT_ACL", 100 ]
+      - [ "REMARK", " 6to4" ]
+  - line: "access-list 100 permit 41 any host 192.88.99.1"
+    tokens:
+      - [ "NUMD_EXT_ACL", 100 ]
+      - [ "PERMIT", "permit" ]
+      - [ "NUMBER", 41 ]
+      - [ "ANY", "any" ]
+      - [ "HOST", "host" ]
+      - [ "IPV4_ADDR", "192.88.99.1" ]
+  - line: "access-list 100 permit ip any host 192.88.99.1"
+    tokens:
+      - [ "NUMD_EXT_ACL", 100 ]
+      - [ "PERMIT", "permit" ]
+      - [ "IP", "ip" ]
+      - [ "ANY", "any" ]
+      - [ "HOST", "host" ]
+      - [ "IPV4_ADDR", "192.88.99.1" ]
+  - line: "access-list 100 remark others"
+    tokens:
+      - [ "NUMD_EXT_ACL", 100 ]
+      - [ "REMARK", " others" ]
+  - line: "access-list 100 permit tcp any eq 0 any eq 0"
+    tokens:
+      - [ "NUMD_EXT_ACL", 100 ]
+      - [ "PERMIT", "permit" ]
+      - [ "TCP", "tcp" ]
+      - [ "ANY", "any" ]
+      - [ "EQ", "eq" ]
+      - [ "NUMBER", 0 ]
+      - [ "ANY", "any" ]
+      - [ "EQ", "eq" ]
+      - [ "NUMBER", 0 ]
+  - line: "access-list 100 deny   ip any any log"
+    tokens:
+      - [ "NUMD_EXT_ACL", 100 ]
+      - [ "DENY", "deny" ]
+      - [ "IP", "ip" ]
+      - [ "ANY", "any" ]
+      - [ "ANY", "any" ]
+      - [ "LOG", "log" ]
+- test-description: "tokens test: header and remarks"
+  test-symbol: "tokens_test_hr"
+  test-data:
+  - line: "  description description remark foobar"
+    tokens:
+      - [ "DESCRIPTION", " description remark foobar" ]
+  - line: " access-list  199  remark description ##!!##"
+    tokens:
+      - [ "NUMD_EXT_ACL", 199 ]
+      - [ "REMARK", " description ##!!##" ]
+  - line: " ip access-list extended standard"
+    tokens:
+      - [ "NAMED_ACL", "ip access-list" ]
+      - [ "EXTENDED", "extended" ]
+      - [ "STRING", "standard" ]
+- test-description: "tokens test: dynamic spec "
+  test-symbol: "tokens_test_ds"
+  test-data:
+  - line: " dynamic tcp_ip_filter timeout 33"
+    tokens:
+      - [ "DYNAMIC", "dynamic" ]
+      - [ "STRING", "tcp_ip_filter" ]
+      - [ "TIMEOUT", "timeout" ]
+      - [ "NUMBER", 33 ]
+- test-description: "tokens test: tcp_flag"
+  test-symbol: "tokens_test_tcpf"
+  test-data:
+  - line: "established syn ack fin psh urg rst"
+    tokens:
+      - [ "ESTABL", "established" ]
+      - [ "SYN", "syn" ]
+      - [ "ACK", "ack" ]
+      - [ "FIN", "fin" ]
+      - [ "PSH", "psh" ]
+      - [ "URG", "urg" ]
+      - [ "RST", "rst" ]
+  - line: "+syn -syn +ack -ack +fin -fin +psh -psh +urg -urg +rst -rst"
+    tokens:
+      - [ "PM_SYN", "+syn" ]
+      - [ "PM_SYN", "-syn" ]
+      - [ "PM_ACK", "+ack" ]
+      - [ "PM_ACK", "-ack" ]
+      - [ "PM_FIN", "+fin" ]
+      - [ "PM_FIN", "-fin" ]
+      - [ "PM_PSH", "+psh" ]
+      - [ "PM_PSH", "-psh" ]
+      - [ "PM_URG", "+urg" ]
+      - [ "PM_URG", "-urg" ]
+      - [ "PM_RST", "+rst" ]
+      - [ "PM_RST", "-rst" ]
+  - line: "match-all match-any"
+    tokens:
+      - [ "MATCH_ALL", "match-all" ]
+      - [ "MATCH_ANY", "match-any" ]
+- test-description: "tokens test: ip_proto"
+  test-symbol: "tokens_test_ipp"
+  test-data:
+  - line: "ahp eigrp esp gre icmp igmp ipinip ip"
+    tokens:
+      - [ "AHP", "ahp" ]
+      - [ "EIGRP", "eigrp" ]
+      - [ "ESP", "esp" ]
+      - [ "GRE", "gre" ]
+      - [ "ICMP", "icmp" ]
+      - [ "IGMP", "igmp" ]
+      - [ "IPINIP", "ipinip" ]
+      - [ "IP", "ip" ]
+  - line: "nos ospf pcf pim tcp udp fragments"
+    tokens:
+      - [ "NOS", "nos" ]
+      - [ "OSPF", "ospf" ]
+      - [ "PCF", "pcf" ]
+      - [ "PIM", "pim" ]
+      - [ "TCP", "tcp" ]
+      - [ "UDP", "udp" ]
+      - [ "FRAGMENTS", "fragments" ]
+- test-description: "tokens test: logging and time range spec"
+  test-symbol: "tokens_test_lt"
+  test-data:
+  - line: "log log-input log-update threshold time-range"
+    tokens:
+      - [ "LOG", "log" ]
+      - [ "LOG_INPUT", "log-input" ]
+      - [ "LOG_UPDATE", "log-update" ]
+      - [ "THRESHOLD", "threshold" ]
+      - [ "TIME_RANGE", "time-range" ]
+- test-description: "tokens test: icmp qualifier"
+  test-symbol: "tokens_test_icmpq"
+  test-data:
+  - line: "administratively-prohibited alternate-address conversion-error dod-host-prohibited dod-net-prohibited echo-reply echo general-parameter-problem"
+    tokens:
+      - [ "ADM_PROHIB", "administratively-prohibited" ]
+      - [ "ALT_ADDR", "alternate-address" ]
+      - [ "CONV_ERR", "conversion-error" ]
+      - [ "DOD_HOST_PROHIB", "dod-host-prohibited" ]
+      - [ "DOD_NET_PROHIB", "dod-net-prohibited" ]
+      - [ "ECHO_REPLY", "echo-reply" ]
+      - [ "ECHO", "echo" ]
+      - [ "GEN_PARAM_PROB", "general-parameter-problem" ]
+  - line: "host-isolated mobile-redirect net-redirect net-tos-redirect net-unreachable network-unknown no-room-for-option option-missing"
+    tokens:
+      - [ "HOST_ISOL", "host-isolated" ]
+      - [ "MOB_REDIR", "mobile-redirect" ]
+      - [ "NET_REDIR", "net-redirect" ]
+      - [ "NET_TOS_REDIR", "net-tos-redirect" ]
+      - [ "NET_UNREACH", "net-unreachable" ]
+      - [ "NET_UNKN", "network-unknown" ]
+      - [ "NO_ROOM_OPT", "no-room-for-option" ]
+      - [ "OPT_MISSING", "option-missing" ]
+  - line: "packet-too-big parameter-problem port-unreachable precedence-unreachable protocol-unreachable host-precedence-unreachable host-redirect host-tos-redirect"
+    tokens:
+      - [ "PKT_TOO_BIG", "packet-too-big" ]
+      - [ "PARAM_PROB", "parameter-problem" ]
+      - [ "PORT_UNREACH", "port-unreachable" ]
+      - [ "PREC_UNREACH", "precedence-unreachable" ]
+      - [ "PROT_UNREACH", "protocol-unreachable" ]
+      - [ "HOST_PREC_UNREACH", "host-precedence-unreachable" ]
+      - [ "HOST_REDIR", "host-redirect" ]
+      - [ "HOST_TOS_REDIR", "host-tos-redirect" ]
+  - line: "host-unknown host-unreachable information-reply information-request mask-reply mask-request reassembly-timeout redirect router-advertisement router-solicitation"
+    tokens:
+      - [ "HOST_UNKN", "host-unknown" ]
+      - [ "HOST_UNREACH", "host-unreachable" ]
+      - [ "INFO_REPLY", "information-reply" ]
+      - [ "INFO_REQ", "information-request" ]
+      - [ "MASK_REPLY", "mask-reply" ]
+      - [ "MASK_REQ", "mask-request" ]
+      - [ "REASS_TIMEOUT", "reassembly-timeout" ]
+      - [ "REDIR", "redirect" ]
+      - [ "ROUTER_ADV", "router-advertisement" ]
+      - [ "ROUTER_SOL", "router-solicitation" ]
+  - line: "source-quench source-route-failed time-exceeded timestamp-reply timestamp-request traceroute ttl-exceeded unreachable"
+    tokens:
+      - [ "SRC_QUENCH", "source-quench" ]
+      - [ "SRC_ROUTE_FAIL", "source-route-failed" ]
+      - [ "TIME_EXC", "time-exceeded" ]
+      - [ "TIME_REPLY", "timestamp-reply" ]
+      - [ "TIME_REQ", "timestamp-request" ]
+      - [ "TRACERT", "traceroute" ]
+      - [ "TTL_EXC", "ttl-exceeded" ]
+      - [ "UNREACH", "unreachable" ]
+- test-description: "tokens test: ipv6 acl"
+  test-symbol: "tokens_test_v6"
+  test-data:
+  - line: "beyond-scope destination-unreachable echo-request flow-label header hop-limit"
+    tokens:
+      - [ "BEYOND_SCOPE", "beyond-scope" ]
+      - [ "DEST_UNREACH", "destination-unreachable" ]
+      - [ "ECHO_REQUEST", "echo-request" ]
+      - [ "FLOW_LABEL", "flow-label" ]
+      - [ "HEADER", "header" ]
+      - [ "HOP_LIMIT", "hop-limit" ]
+  - line: "mld-query mld-reduction mld-report nd-na nd-ns"
+    tokens:
+      - [ "MLD_QUERY", "mld-query" ]
+      - [ "MLD_REDUCTION", "mld-reduction" ]
+      - [ "MLD_REPORT", "mld-report" ]
+      - [ "ND_NA", "nd-na" ]
+      - [ "ND_NS", "nd-ns" ]
+  - line: "next-header no-admin no-route parameter-option"
+    tokens:
+      - [ "NEXT_HEADER", "next-header" ]
+      - [ "NO_ADMIN", "no-admin" ]
+      - [ "NO_ROUTE", "no-route" ]
+      - [ "PARAM_OPTION", "parameter-option" ]
+  - line: "renum-command renum-result renum-seq-number router-renumbering routing undetermined-transport sequence"
+    tokens:
+      - [ "RENUM_CMD", "renum-command" ]
+      - [ "RENUM_RES", "renum-result" ]
+      - [ "RENUM_SEQ_NR", "renum-seq-number" ]
+      - [ "ROUTER_RENUM", "router-renumbering" ]
+      - [ "ROUTING", "routing" ]
+      - [ "UNDET_TRAN", "undetermined-transport" ]
+      - [ "SEQUENCE", "sequence" ]
+- test-description: "tokens test: precedence, tos, recursive qualifier"
+  test-symbol: "tokens_test_ptrq"
+  test-data:
+  - line: "precedence critical flash-override flash immediate"
+    tokens:
+      - [ "PRECEDENCE", "precedence" ]
+      - [ "PREC_CRITICAL", "critical" ]
+      - [ "PREC_FLASH_OVERR", "flash-override" ]
+      - [ "PREC_FLASH", "flash" ]
+      - [ "PREC_IMMED", "immediate" ]
+  - line: "internet network priority routine"
+    tokens:
+      - [ "PREC_INET", "internet" ]
+      - [ "NETWORK", "network" ]
+      - [ "PREC_PRIO", "priority" ]
+      - [ "PREC_ROUTINE", "routine" ]
+  - line: "tos max-reliability max-throughput min-delay min-monetary-cost normal"
+    tokens:
+      - [ "TOS", "tos" ]
+      - [ "TOS_MAX_REL", "max-reliability" ]
+      - [ "TOS_MAX_THRPUT", "max-throughput" ]
+      - [ "TOS_MIN_DELAY", "min-delay" ]
+      - [ "TOS_MIN_MONET_COST", "min-monetary-cost" ]
+      - [ "TOS_NORMAL", "normal" ]
+  - line: "reflect dummystr evaluate hogehoge"
+    tokens:
+      - [ "REFLECT", "reflect" ]
+      - [ "STRING", "dummystr" ]
+      - [ "EVALUATE", "evaluate" ]
+      - [ "STRING", "hogehoge" ]
+- test-description: "tokens test: tcp_port qualifier"
+  test-symbol: "tokens_test_tportq"
+  test-data:
+  - line: "bgp chargen cmd daytime discard domain drip echo exec finger ftp-data ftp"
+    tokens:
+      - [ "BGP", "bgp" ]
+      - [ "CHARGEN", "chargen" ]
+      - [ "CMD", "cmd" ]
+      - [ "DAYTIME", "daytime" ]
+      - [ "DISCARD", "discard" ]
+      - [ "DOMAIN", "domain" ]
+      - [ "DRIP", "drip" ]
+      - [ "ECHO", "echo" ]
+      - [ "EXEC", "exec" ]
+      - [ "FINGER", "finger" ]
+      - [ "FTP_DATA", "ftp-data" ]
+      - [ "FTP", "ftp" ]
+  - line: "gopher hostname ident irc klogin kshell login lpd nntp pim-auto-rp"
+    tokens:
+      - [ "GOPHER", "gopher" ]
+      - [ "HOSTNAME", "hostname" ]
+      - [ "IDENT", "ident" ]
+      - [ "IRC", "irc" ]
+      - [ "KLOGIN", "klogin" ]
+      - [ "KSHELL", "kshell" ]
+      - [ "LOGIN", "login" ]
+      - [ "LPD", "lpd" ]
+      - [ "NNTP", "nntp" ]
+      - [ "PIM_AUTO_RP", "pim-auto-rp" ]
+  - line: "pop2 pop3 smtp sunrpc tacacs talk telnet time uucp whois www"
+    tokens:
+      - [ "POP2", "pop2" ]
+      - [ "POP3", "pop3" ]
+      - [ "SMTP", "smtp" ]
+      - [ "SUNRPC", "sunrpc" ]
+      - [ "TACACS", "tacacs" ]
+      - [ "TALK", "talk" ]
+      - [ "TELNET", "telnet" ]
+      - [ "TIME", "time" ]
+      - [ "UUCP", "uucp" ]
+      - [ "WHOIS", "whois" ]
+      - [ "WWW", "www" ]
+- test-description: "tokens test: udp_port qualifier"
+  test-symbol: "tokens_test_uportq"
+  test-data:
+  - line: "biff bootpc bootps dnsix isakmp mobile-ip nameserver"
+    tokens:
+      - [ "BIFF", "biff" ]
+      - [ "BOOTPC", "bootpc" ]
+      - [ "BOOTPS", "bootps" ]
+      - [ "DNSIX", "dnsix" ]
+      - [ "ISAKMP", "isakmp" ]
+      - [ "MOBILE_IP", "mobile-ip" ]
+      - [ "NAMESERVER", "nameserver" ]
+  - line: "netbios-dgm netbios-ns netbios-ss non500-isakmp ntp"
+    tokens:
+      - [ "NETBIOS_DGM", "netbios-dgm" ]
+      - [ "NETBIOS_NS", "netbios-ns" ]
+      - [ "NETBIOS_SS", "netbios-ss" ]
+      - [ "NON500_ISAKMP", "non500-isakmp" ]
+      - [ "NTP", "ntp" ]
+  - line: "pim-auto-rp rip snmp snmptrap syslog tftp who xdmcp"
+    tokens:
+      - [ "PIM_AUTO_RP", "pim-auto-rp" ]
+      - [ "RIP", "rip" ]
+      - [ "SNMP", "snmp" ]
+      - [ "SNMPTRAP", "snmptrap" ]
+      - [ "SYSLOG", "syslog" ]
+      - [ "TFTP", "tftp" ]
+      - [ "WHO", "who" ]
+      - [ "XDMCP", "xdmcp" ]
+- test-description: "tokens test: dscp rule"
+  test-symbol: "tokens_test_dscp"
+  test-data:
+  - line: "dscp af11 af12 af13 af21 af22 af23 af31 af32 af33 af41 af42 af43"
+    tokens:
+      - [ "DSCP", "dscp" ]
+      - [ "AF11", "af11" ]
+      - [ "AF12", "af12" ]
+      - [ "AF13", "af13" ]
+      - [ "AF21", "af21" ]
+      - [ "AF22", "af22" ]
+      - [ "AF23", "af23" ]
+      - [ "AF31", "af31" ]
+      - [ "AF32", "af32" ]
+      - [ "AF33", "af33" ]
+      - [ "AF41", "af41" ]
+      - [ "AF42", "af42" ]
+      - [ "AF43", "af43" ]
+  - line: "cs1 cs2 cs3 cs4 cs5 cs6 cs7 default ef"
+    tokens:
+      - [ "CS1", "cs1" ]
+      - [ "CS2", "cs2" ]
+      - [ "CS3", "cs3" ]
+      - [ "CS4", "cs4" ]
+      - [ "CS5", "cs5" ]
+      - [ "CS6", "cs6" ]
+      - [ "CS7", "cs7" ]
+      - [ "DEFAULT", "default" ]
+      - [ "EF", "ef" ]
+- test-description: "tokens test: option qualifier"
+  test-symbol: "tokens_test_optq"
+  test-data:
+  - line: "option add-ext any-options com-security dps encode eool"
+    tokens:
+      - [ "OPTION", "option" ]
+      - [ "ADD_EXT", "add-ext" ]
+      - [ "ANY_OPTS", "any-options" ]
+      - [ "COM_SECURITY", "com-security" ]
+      - [ "DPS", "dps" ]
+      - [ "ENCODE", "encode" ]
+      - [ "EOOL", "eool" ]
+  - line: "ext-ip ext-security finn imitd lsr mtup mtur no-op nsapa"
+    tokens:
+      - [ "EXT_IP", "ext-ip" ]
+      - [ "EXT_SECURITY", "ext-security" ]
+      - [ "FINN", "finn" ]
+      - [ "IMITD", "imitd" ]
+      - [ "LSR", "lsr" ]
+      - [ "MTUP", "mtup" ]
+      - [ "MTUD", "mtur" ]
+      - [ "NO_OP", "no-op" ]
+      - [ "NSAPA", "nsapa" ]
+  - line: "record-route route-alert sdb security ssr stream-id timestamp"
+    tokens:
+      - [ "RECORD_ROUTE", "record-route" ]
+      - [ "ROUTER_ALERT", "route-alert" ]
+      - [ "SDB", "sdb" ]
+      - [ "SECURITY", "security" ]
+      - [ "SSR", "ssr" ]
+      - [ "STREAM_ID", "stream-id" ]
+      - [ "TIMESTAMP", "timestamp" ]
+  - line: "traceroute ump visa zsu"
+    tokens:
+      - [ "TRACERT", "traceroute" ]
+      - [ "UMP", "ump" ]
+      - [ "VISA", "visa" ]
+      - [ "ZSU", "zsu" ]
+- test-description: "tokens test: objgrp, operator, ip_spec"
+  test-symbol: "tokens_test_ogop"
+  test-data:
+  - line: "object-group service tcp"
+    tokens:
+      - [ "OBJGRP", "object-group" ]
+      - [ "SERVICE", "service" ]
+      - [ "STRING", "tcp" ]
+  - line: "object-group network network"
+    tokens:
+      - [ "OBJGRP", "object-group" ]
+      - [ "NETWORK", "network" ]
+      - [ "STRING", "network" ]
+  - line: "192.168.33.3/32"
+    tokens:
+      - [ "IPV4_ADDR", "192.168.33.3" ]
+      - [ "SLASH", "/" ]
+      - [ "NUMBER", 32 ]
+  - line: "tcp-udp source group-object"
+    tokens:
+      - [ "TCPUDP", "tcp-udp" ]
+      - [ "SOURCE", "source" ]
+      - [ "GRPOBJ", "group-object" ]
+  - line: "eq neq gt lt range"
+    tokens:
+      - [ "EQ", "eq" ]
+      - [ "NEQ", "neq" ]
+      - [ "GT", "gt" ]
+      - [ "LT", "lt" ]
+      - [ "RANGE", "range" ]
+  - line: "any host"
+    tokens:
+      - [ "ANY", "any" ]
+      - [ "HOST", "host" ]

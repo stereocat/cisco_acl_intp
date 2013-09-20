@@ -1,0 +1,21 @@
+access-list 1 permit 192.168.0.0 0.0.255.255
+access-list 1 deny   any log
+access-list 100 remark General Internet Access
+access-list 100 permit icmp any any
+access-list 100 permit ip 192.168.0.0 0.0.255.255 any
+access-list 100 remark NTP
+access-list 100 permit tcp any host 210.197.74.200
+access-list 100 permit udp any eq ntp any eq ntp
+access-list 100 remark 6to4
+access-list 100 permit 41 any host 192.88.99.1
+access-list 100 permit ip any host 192.88.99.1
+access-list 100 remark others
+access-list 100 permit tcp any eq 0 any eq 0
+access-list 100 permit udp any eq 0 any eq 0
+access-list 100 deny   ip any any log
+# comment
+
+! comment
+access-list 110 remark SPLIT_VPN
+access-list 110 permit ip 192.168.0.0 0.0.255.255 any
+!! test

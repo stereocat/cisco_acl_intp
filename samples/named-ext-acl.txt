@@ -1,0 +1,12 @@
+ip access-list extended FA8-OUT
+ deny   udp any any eq bootpc
+ deny   udp any any eq bootps
+ permit tcp host 192.168.3.4 173.30.240.0 0.0.0.255 range 32768 65535
+ deny udp 192.168.3.0 0.0.240.255 lt 1024 any eq 80
+ remark network access-list remark!!
+ permit tcp any any established
+ deny tcp any any syn rst
+ deny udp any any log-input hoge
+ permit ip any any log
+!
+!

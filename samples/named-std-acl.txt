@@ -1,0 +1,6 @@
+ip access-list standard remote-ipv4
+ permit 192.168.0.0 0.0.255.255
+ deny 192.168.0.0 0.0.0.255
+ remark standard access-list last deny!?
+ deny   any log
+!

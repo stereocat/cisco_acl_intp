@@ -1,0 +1,1351 @@
+# -*- coding: utf-8 -*-
+
+# cisco IOS access list parser
+class Parser
+
+start expr
+
+rule
+         expr: ipacl
+             | ipacl expr
+
+        ipacl: numbered_acl
+             | named_acl
+             | objgrp
+
+          eos: EOS
+                 {
+                   # end of line or "empty line"
+                   yyerrok
+                 }
+
+# standard access-list
+
+ numbered_acl: NUMD_STD_ACL std_acl eos
+                 {
+                   dputs "## numd std acl: #{val[0]}/#{val[1]}"
+                   @curr_acl_name = val[0]
+                   if not @acl_table[ @curr_acl_name ]
+                     @acl_table[ @curr_acl_name ] = NumberedStdAcl.new( @curr_acl_name )
+                     @line_number = 0
+                   end
+                   @acl_table[ @curr_acl_name ].add_entry( val[1] )
+                   @line_number += 1
+                 }
+             | NUMD_EXT_ACL ext_acl eos
+                 {
+                   dputs "## numd ext acl: #{val[0]}/#{val[1]}"
+                   @curr_acl_name = val[0]
+                   if not @acl_table[ @curr_acl_name ]
+                     @acl_table[ @curr_acl_name ] = NumberedExtAcl.new( @curr_acl_name )
+                     @line_number = 0
+                   end
+                   @acl_table[ @curr_acl_name ].add_entry( val[1] )
+                   @line_number += 1
+                 }
+             | error eos
+             | numbered_acl eos
+
+      std_acl: action ip_spec std_acl_log_spec
+                 {
+                   dputs "## std_acl: #{val[0]}/#{val[1]}/#{val[2]}"
+                   result = StandardAce.new(
+                     :action => val[0],
+                     :src => AceSrcDstSpec.new( :ip_spec => val[1] ),
+                     :log => val[2]
+                     )
+                 }
+             | REMARK
+                 {
+                   dputs "## std_acl: remark/#{val[0]}"
+                   result = RemarkAce.new( val[0] )
+                 }
+
+std_acl_log_spec:
+             | LOG log_cookie
+                 {
+                   result = AceLogSpec.new( val[1] )
+                 }
+
+# extended access-list
+
+      ext_acl: dynamic_spec ext_acl_body other_qualifier_list
+                 {
+                   ## NOT implemented yet:
+                   ##   dynamic_spec,
+                   ##   other_qualifier_list (partially implemented)
+                   dputs "## ext_acl"
+                   val[1].tcp_other_qualifiers = val[2]
+                   result = val[1]
+                 }
+             | REMARK
+                 {
+                   dputs "## ext_acl: remark/#{val[0]}"
+                   result = RemarkAce.new( val[0] )
+                 }
+
+ ext_acl_body: action ip_proto ip_spec ip_spec
+                 {
+                   dputs "## ext_acl_body ip: #{val[0]}/#{val[1]}/#{val[2]}/#{val[3]}"
+                   result = ExtendedAce.new(
+                     :action => val[0],
+                     :protocol => val[1],
+                     :src => AceSrcDstSpec.new( :ip_spec => val[2] ),
+                     :dst => AceSrcDstSpec.new( :ip_spec => val[3] )
+                     )
+                 }
+             | action icmp_proto ip_spec ip_spec icmp_qualifier
+                 {
+                   result = ExtendedAce.new(
+                     :action => val[0],
+                     :protocol => val[1],
+                     :src => AceSrcDstSpec.new( :ip_spec => val[2] ),
+                     :dst => AceSrcDstSpec.new( :ip_spec => val[3] )
+                     ## TBD: icmp_qualifier: val[4]
+                     )
+                 }
+             | action tcp_proto tcp_srcdst_spec tcp_srcdst_spec tcp_flags_qualifier
+                 {
+                   result = ExtendedAce.new(
+                     :action => val[0],
+                     :protocol => val[1],
+                     :src => val[2],
+                     :dst => val[3],
+                     :tcp_flags_qualifier => val[4]
+                     )
+                 }
+             | action udp_proto udp_srcdst_spec udp_srcdst_spec
+                 {
+                   result = ExtendedAce.new(
+                     :action => val[0],
+                     :protocol => val[1],
+                     :src => val[2],
+                     :dst => val[3]
+                     )
+                 }
+             | action objgrp_service_spec objgrp_srcdst_spec objgrp_srcdst_spec
+                 {
+                   ## TBD: object group
+                 }
+
+# protocols
+
+     ip_proto: AHP
+                 {
+                   result = AceIpProtoSpec.new(
+                     :name => val[0], :number => 51
+                     )
+                 }
+             | EIGRP
+                 {
+                   result = AceIpProtoSpec.new(
+                     :name => val[0], :number => 88
+                     )
+                 }
+             | ESP
+                 {
+                   result = AceIpProtoSpec.new(
+                     :name => val[0], :number => 50
+                     )
+                 }
+             | GRE
+                 {
+                   result = AceIpProtoSpec.new(
+                     :name => val[0], :number => 47
+                     )
+                 }
+             | IGMP
+                 {
+                   result = AceIpProtoSpec.new(
+                     :name => val[0], :number => 2
+                     )
+                 }
+             | IGRP
+                 {
+                   result = AceIpProtoSpec.new(
+                     :name => val[0], :number => 9
+                     )
+                 }
+             | IP
+                 {
+                   result = AceIpProtoSpec.new(
+                     :name => val[0]
+                     )
+                 } # IS NOT 0! (no number)
+             | IPINIP
+                 {
+                   result = AceIpProtoSpec.new(
+                     :name => val[0], :number => 94
+                     )
+                 }
+             | NOS
+                 {
+                   result = AceIpProtoSpec.new(
+                     :name => val[0], :number => 4
+                     )
+                 }
+             | OSPF
+                 {
+                   result = AceIpProtoSpec.new(
+                     :name => val[0], :number => 89
+                     )
+                 }
+             | PCP
+                 {
+                   result = AceIpProtoSpec.new(
+                     :name => val[0], :number => 108
+                     )
+                 }
+             | PIM
+                 {
+                   result = AceIpProtoSpec.new(
+                     :name => val[0], :number => 103
+                     )
+                 }
+             | NUMBER # ip protocol number (0-255)
+                 {
+                   begin
+                     dputs "## ip_proto number: #{val[0]}"
+                     result = AceIpProtoSpec.new(
+                       :number => val[0].to_i
+                       )
+                   rescue => err
+                     yyerror_with err.message
+                   end
+                 }
+
+   icmp_proto: ICMP
+                 {
+                   dputs "## icmp_proto"
+                   result = AceIpProtoSpec.new(
+                     :name => val[0], :number => 1
+                     )
+                 }
+
+    tcp_proto: TCP
+                 {
+                   dputs "## tcp_proto"
+                   result = AceIpProtoSpec.new(
+                     :name => val[0], :number => 6
+                     )
+                 }
+
+    udp_proto: UDP
+                 {
+                   dputs "## udp_proto"
+                   result = AceIpProtoSpec.new(
+                     :name => val[0], :number => 17
+                     )
+                 }
+
+tcp_srcdst_spec: objgrp_srcdst_spec tcp_port_spec
+                 {
+                   result = AceSrcDstSpec.new(
+                     :ip_spec => val[0],
+                     :port_spec => val[1]
+                     )
+                 }
+
+udp_srcdst_spec: objgrp_srcdst_spec udp_port_spec
+                 {
+                   result = AceSrcDstSpec.new(
+                     :ip_spec => val[0],
+                     :port_spec => val[1]
+                     )
+                 }
+
+# ip named access-list
+
+    named_acl: std_named_acl_header std_named_acl_entry_list
+             | ext_named_acl_header ext_named_acl_entry_list
+                 # Notice:
+                 # acl header でエラーがあると、そのあとのエントリ追加用のハコ(object)が
+                 # つくれないので、エラーリカバリしようがない。
+                 # acl_entry_list の中身については可能な範囲で parse して追加。
+
+std_named_acl_header: NAMED_ACL STANDARD STRING eos
+                 {
+                   dputs "## std named acl: #{val[2]}"
+                   @curr_acl_name = val[2]
+                   @acl_table[ @curr_acl_name ] = NamedStdAcl.new( @curr_acl_name )
+                   dputs "## make NamedStdAcl obj, name = #{ @curr_acl_name }"
+                 }
+
+std_named_acl_entry_list:
+             | std_named_acl_entry_list std_named_acl_entry
+                 {
+                   @acl_table[ @curr_acl_name ].add_entry( val[1] )
+                   @line_number += 1
+                 }
+             | std_named_acl_entry_list error eos
+                 # when a line contains syntax error (error recovery)
+             | std_named_acl_entry_list eos
+                 # acl ends when empty-line "eos"
+
+std_named_acl_entry: seq_number std_acl eos
+                 {
+                   # std_acl returns StandardAce/RemarkAce object
+                   val[1].seq_number = val[0].to_i
+                   result = val[1]
+                 }
+
+ext_named_acl_header: NAMED_ACL EXTENDED STRING eos
+                 {
+                   dputs "## ext named acl: #{val[2]}"
+                   @curr_acl_name = val[2]
+                   @acl_table[ @curr_acl_name ] = NamedExtAcl.new( @curr_acl_name )
+                   dputs "## make NamedExtAcl obj, name = #{ @curr_acl_name }"
+                 }
+
+ext_named_acl_entry_list:
+             | ext_named_acl_entry_list ext_named_acl_entry
+                 {
+                   @acl_table[ @curr_acl_name ].add_entry( val[1] )
+                   @line_number += 1
+                 }
+             | ext_named_acl_entry_list error eos
+                 # when a line contains syntax error (error recovery)
+             | ext_named_acl_entry_list eos
+                 # acl ends when empty-line "eos"
+
+ext_named_acl_entry: seq_number ext_acl eos
+                 {
+                   # ext_acl returns ExtendedAce/RemarkAce object
+                   val[1].seq_number = val[0].to_i
+                   result = val[1]
+                 }
+             | seq_number EVALUATE STRING eos
+                 {
+                   result = EvaluateAce.new(
+                     :number => val[0].to_i,
+                     :recursive_name => val[2]
+                     )
+                 }
+
+   seq_number:
+             | NUMBER # (1-2147483647)
+                 {
+                   result = val[0].to_i
+                 }
+
+# access-list common components
+
+       action: PERMIT
+                 {
+                   result = val[0]
+                 }
+             | DENY
+                 {
+                   result = val[0]
+                 }
+
+
+      ip_spec: HOST IPV4_ADDR
+                 {
+                   begin
+                     dputs "## ip_spec host: #{val[0]}/#{val[1]}"
+                     result = AceIpSpec.new(
+                       :ipaddr => val[1], :wildcard => '0.0.0.0'
+                       )
+                   rescue => err
+                     yyerror_with err.message
+                   end
+                 }
+             | IPV4_ADDR IPV4_ADDR # ipaddr wildcard
+                 {
+                   begin
+                     dputs "## ip_spec #{val[0]}/#{val[1]}"
+                     result = AceIpSpec.new(
+                       :ipaddr => val[0], :wildcard => val[1]
+                       )
+                   rescue => err
+                     yyerror_with err.message
+                   end
+                 }
+             | ANY
+                 {
+                   dputs "## ip_spec any: #{val[0]}"
+                   result = AceIpSpec.new(
+                     :ipaddr => '0.0.0.0', :wildcard => '255.255.255.255'
+                     )
+                 }
+
+ dynamic_spec:
+             | DYNAMIC STRING timeout_spec
+
+ timeout_spec:
+             | TIMEOUT NUMBER
+
+# object-group
+
+                 ## TBD
+                 # object group syntax was not implemented
+                 # 'eos' termination
+
+       objgrp: objgrp_service
+             | objgrp_network
+
+objgrp_service_spec: OBJGRP STRING # service object group
+                 {
+                 }
+
+objgrp_srcdst_spec: objgrp_network_spec
+             | ip_spec
+                 {
+                   result = val[0]
+                 }
+
+objgrp_network_spec: OBJGRP STRING # network object group
+                 {
+                 }
+
+objgrp_network: objgrp_network_header objgrp_network_entry_list
+
+objgrp_network_header: OBJGRP NETWORK STRING
+                 {
+                 }
+
+objgrp_network_entry_list:
+             | objgrp_network_entry_list objgrp_network_entry
+                 {
+                 }
+
+objgrp_network_entry: DESCRIPTION
+                 {
+                 }
+             | HOST IPV4_ADDR
+                 {
+                 }
+             | IPV4_ADDR IPV4_ADDR
+                 {
+                 }
+             | IPV4_ADDR SLASH NUMBER # 0-32
+                 {
+                 }
+             | RANGE IPV4_ADDR IPV4_ADDR
+                 {
+                 }
+             | GRPOBJ STRING # nested object-group
+                 {
+                 }
+
+objgrp_service: objgrp_service_header objgrp_service_entry_list
+
+objgrp_service_header: OBJGRP SERVICE STRING
+                 {
+                 }
+
+objgrp_service_entry_list:
+             | objgrp_service_entry_list objgrp_service_entry
+                 {
+                 }
+
+objgrp_service_entry: DESCRIPTION
+             | ip_proto
+                 {
+                 }
+             | icmp_proto icmp_qualifier
+                 {
+                 }
+             | tcp_proto objgrp_tcp_proto
+                 {
+                 }
+             | udp_proto objgrp_udp_proto
+                 {
+                 }
+             | TCPUDP objgrp_tcpudp_proto
+                 {
+                 }
+             | GRPOBJ STRING # nested object-group
+                 {
+                 }
+
+objgrp_tcp_proto: objgrp_tcp_proto_spec
+                 {
+                 }
+             | SOURCE objgrp_tcp_proto_spec
+                 {
+                 }
+
+objgrp_tcp_proto_spec:
+             | unary_operator tcp_port_qualifier
+                 {
+                 }
+             | RANGE tcp_port_qualifier tcp_port_qualifier
+                 {
+                 }
+             | tcp_port_qualifier
+                 {
+                 }
+
+objgrp_udp_proto: objgrp_udp_proto_spec
+                 {
+                 }
+             | SOURCE objgrp_udp_proto_spec
+                 {
+                 }
+
+objgrp_udp_proto_spec:
+             | unary_operator udp_port_qualifier
+                 {
+                 }
+             | RANGE udp_port_qualifier udp_port_qualifier
+                 {
+                 }
+             | udp_port_qualifier
+                 {
+                 }
+
+objgrp_tcpudp_proto: objgrp_tcpudp_proto_spec
+                 {
+                 }
+             | SOURCE objgrp_tcpudp_proto_spec
+                 {
+                 }
+
+objgrp_tcpudp_proto_spec:
+             | unary_operator tcpudp_port_qualifier
+                 {
+                 }
+             | RANGE tcpudp_port_qualifier tcpudp_port_qualifier
+                 {
+                 }
+             | tcpudp_port_qualifier
+                 {
+                 }
+
+tcpudp_port_qualifier: NUMBER        # port number (0-65535)
+             | DISCARD
+             | DOMAIN
+             | ECHO
+             | PIM_AUTO_RP
+             | SUNRPC
+             | SYSLOG
+             | TACACS
+             | TALK
+
+# icmp qualifier
+
+icmp_qualifier:
+             | ADM_PROHIB
+             | ALT_ADDR
+             | CONV_ERR
+             | DOD_HOST_PROHIB
+             | DOD_NET_PROHIB
+             | ECHO
+             | ECHO_REPLY
+             | GEN_PARAM_PROB
+             | HOST_ISOL
+             | MOB_REDIR
+             | NET_REDIR
+             | NET_TOS_REDIR
+             | NET_UNREACH
+             | NET_UNKN
+             | NO_ROOM_OPT
+             | OPT_MISSING
+             | PKT_TOO_BIG
+             | PARAM_PROB
+             | PORT_UNREACH
+             | PREC_UNREACH
+             | PROT_UNREACH
+             | HOST_PREC_UNREACH
+             | HOST_REDIR
+             | HOST_TOS_REDIR
+             | HOST_UNKN
+             | HOST_UNREACH
+             | INFO_REPLY
+             | INFO_REQ
+             | MASK_REPLY
+             | MASK_REQ
+             | REASS_TIMEOUT
+             | REDIR
+             | ROUTER_ADV
+             | ROUTER_SOL
+             | SRC_QUENCH
+             | SRC_ROUTE_FAIL
+             | TIME_EXC
+             | TIME_REPLY
+             | TIME_REQ
+             | TRACERT
+             | TTL_EXC
+             | UNREACH
+             | icmp_numtype icmp_numcode
+
+ icmp_numtype: NUMBER # icmp message type (0-255)
+
+ icmp_numcode:
+             | NUMBER # icmp message code (0-255)
+
+
+
+# tcp/udp port spec
+
+tcp_port_spec:
+                 {
+                   # tcp any
+                   dputs "## tcp port any"
+                   result = AcePortSpec.new( :operator => 'any' )
+                 }
+             | unary_operator tcp_port_qualifier
+                 {
+                   dputs "## tcp port spec: #{val[0]}/#{val[1]}"
+                   result = AcePortSpec.new(
+                     :operator => val[0],
+                     :port1 => val[1]
+                     )
+                 }
+             | RANGE tcp_port_qualifier tcp_port_qualifier
+                 {
+                   dputs "## tcp port spec: #{val[0]}/#{val[1]}/#{val[2]}"
+                   result = AcePortSpec.new(
+                     :operator => val[0],
+                     :port1 => val[1],
+                     :port2 => val[2]
+                     )
+                 }
+
+udp_port_spec:
+                 {
+                   # udp any
+                   dputs "## udp port: any"
+                   result = AcePortSpec.new( :operator => 'any' )
+                 }
+             | unary_operator udp_port_qualifier
+                 {
+                   dputs "## udp port spec: #{val[0]}/#{val[1]}"
+                   result = AcePortSpec.new(
+                     :operator => val[0],
+                     :port1 => val[1]
+                     )
+                 }
+             | RANGE udp_port_qualifier udp_port_qualifier
+                 {
+                   dputs "## udp port spec: #{val[0]}/#{val[1]}/#{val[2]}"
+                   result = AcePortSpec.new(
+                     :operator => val[0],
+                     :port1 => val[1],
+                     :port2 => val[2]
+                     )
+                 }
+
+unary_operator: GT
+             | EQ
+             | NEQ
+             | LT
+
+tcp_port_qualifier: NUMBER
+                 {
+                   begin
+                     # port number (0-65535)
+                     result = AceTcpProtoSpec.new(
+                       :number => val[0]
+                       )
+                   rescue => err
+                     yyerror_with err.message
+                   end
+                 }
+             | BGP
+                 {
+                   result = AceTcpProtoSpec.new(
+                     :name => val[0], :number => 179
+                     )
+                 }
+             | CHARGEN
+                 {
+                   result = AceTcpProtoSpec.new(
+                     :name => val[0], :number => 19
+                     )
+                 }
+             | CMD
+                 {
+                   result = AceTcpProtoSpec.new(
+                     :name => val[0], :number => 514
+                     )
+                 }
+             | DAYTIME
+                 {
+                   result = AceTcpProtoSpec.new(
+                     :name => val[0], :number => 13
+                     )
+                 }
+             | DISCARD
+                 {
+                   result = AceTcpProtoSpec.new(
+                     :name => val[0], :number => 9
+                     )
+                 }
+             | DOMAIN
+                 {
+                   result = AceTcpProtoSpec.new(
+                     :name => val[0], :number => 53
+                     )
+                 }
+             | DRIP
+                 {
+                   result = AceTcpProtoSpec.new(
+                     :name => val[0], :number => 3949
+                     )
+                 }
+             | ECHO
+                 {
+                   result = AceTcpProtoSpec.new(
+                     :name => val[0], :number => 7
+                     )
+                 }
+             | EXEC
+                 {
+                   result = AceTcpProtoSpec.new(
+                     :name => val[0], :number => 512
+                     )
+                 }
+             | FINGER
+                 {
+                   result = AceTcpProtoSpec.new(
+                     :name => val[0], :number => 79
+                     )
+                 }
+             | FTP
+                 {
+                   result = AceTcpProtoSpec.new(
+                     :name => val[0], :number => 21
+                     )
+                 }
+             | FTP_DATA
+                 {
+                   result = AceTcpProtoSpec.new(
+                     :name => val[0], :number => 20
+                     )
+                 }
+             | GOPHER
+                 {
+                   result = AceTcpProtoSpec.new(
+                     :name => val[0], :number => 70
+                     )
+                 }
+             | HOSTNAME
+                 {
+                   result = AceTcpProtoSpec.new(
+                     :name => val[0], :number => 101
+                     )
+                 }
+             | IDENT
+                 {
+                   result = AceTcpProtoSpec.new(
+                     :name => val[0], :number => 113
+                     )
+                 }
+             | IRC
+                 {
+                   result = AceTcpProtoSpec.new(
+                     :name => val[0], :number => 194
+                     )
+                 }
+             | KLOGIN
+                 {
+                   result = AceTcpProtoSpec.new(
+                     :name => val[0], :number => 543
+                     )
+                 }
+             | KSHELL
+                 {
+                   result = AceTcpProtoSpec.new(
+                     :name => val[0], :number => 544
+                     )
+                 }
+             | LOGIN
+                 {
+                   result = AceTcpProtoSpec.new(
+                     :name => val[0], :number => 513
+                     )
+                 }
+             | LPD
+                 {
+                   result = AceTcpProtoSpec.new(
+                     :name => val[0], :number => 515
+                     )
+                 }
+             | NNTP
+                 {
+                   result = AceTcpProtoSpec.new(
+                     :name => val[0], :number => 119
+                     )
+                 }
+             | PIM_AUTO_RP
+                 {
+                   result = AceTcpProtoSpec.new(
+                     :name => val[0], :number => 496
+                     )
+                 }
+             | POP2
+                 {
+                   result = AceTcpProtoSpec.new(
+                     :name => val[0], :number => 109
+                     )
+                 }
+             | POP3
+                 {
+                   result = AceTcpProtoSpec.new(
+                     :name => val[0], :number => 110
+                     )
+                 }
+             | SMTP
+                 {
+                   result = AceTcpProtoSpec.new(
+                     :name => val[0], :number => 25
+                     )
+                 }
+             | SUNRPC
+                 {
+                   result = AceTcpProtoSpec.new(
+                     :name => val[0], :number => 111
+                     )
+                 }
+             | SYSLOG
+                 {
+                   result = AceTcpProtoSpec.new(
+                     :name => val[0], :number => 514
+                     )
+                 }
+             | TACACS
+                 {
+                   result = AceTcpProtoSpec.new(
+                     :name => val[0], :number => 49
+                     )
+                 }
+             | TALK
+                 {
+                   result = AceTcpProtoSpec.new(
+                     :name => val[0], :number => 517
+                     )
+                 }
+             | TELNET
+                 {
+                   result = AceTcpProtoSpec.new(
+                     :name => val[0], :number => 23
+                     )
+                 }
+             | TIME
+                 {
+                   result = AceTcpProtoSpec.new(
+                     :name => val[0], :number => 37
+                     )
+                 }
+             | UUCP
+                 {
+                   result = AceTcpProtoSpec.new(
+                     :name => val[0], :number => 540
+                     )
+                 }
+             | WHOIS
+                 {
+                   result = AceTcpProtoSpec.new(
+                     :name => val[0], :number => 43
+                     )
+                 }
+             | WWW
+                 {
+                   result = AceTcpProtoSpec.new(
+                     :name => val[0], :number => 80
+                     )
+                 }
+
+udp_port_qualifier: NUMBER
+                 {
+                   # port number (0-65535)
+                   result = AceUdpProtoSpec.new(
+                     :number => val[0]
+                     )
+                 }
+             | BIFF
+                 {
+                   result = AceUdpProtoSpec.new(
+                     :name => val[0], :number => 512
+                     )
+                 }
+             | BOOTPC
+                 {
+                   result = AceUdpProtoSpec.new(
+                     :name => val[0], :number => 68
+                     )
+                 }
+             | BOOTPS
+                 {
+                   result = AceUdpProtoSpec.new(
+                     :name => val[0], :number => 67
+                     )
+                 }
+             | DISCARD
+                 {
+                   result = AceUdpProtoSpec.new(
+                     :name => val[0], :number => 9
+                     )
+                 }
+             | DNSIX
+                 {
+                   result = AceUdpProtoSpec.new(
+                     :name => val[0], :number => 195
+                     )
+                 }
+             | DOMAIN
+                 {
+                   result = AceUdpProtoSpec.new(
+                     :name => val[0], :number => 53
+                     )
+                 }
+             | ECHO
+                 {
+                   result = AceUdpProtoSpec.new(
+                     :name => val[0], :number => 7
+                     )
+                 }
+             | ISAKMP
+                 {
+                   result = AceUdpProtoSpec.new(
+                     :name => val[0], :number => 500
+                     )
+                 }
+             | MOBILE_IP
+                 {
+                   result = AceUdpProtoSpec.new(
+                     :name => val[0], :number => 434
+                     )
+                 }
+             | NAMESERVER
+                 {
+                   result = AceUdpProtoSpec.new(
+                     :name => val[0], :number => 42
+                     )
+                 }
+             | NETBIOS_DGM
+                 {
+                   result = AceUdpProtoSpec.new(
+                     :name => val[0], :number => 138
+                     )
+                 }
+             | NETBIOS_NS
+                 {
+                   result = AceUdpProtoSpec.new(
+                     :name => val[0], :number => 137
+                     )
+                 }
+             | NETBIOS_SS
+                 {
+                   result = AceUdpProtoSpec.new(
+                     :name => val[0], :number => 139
+                     )
+                 }
+             | NON500_ISAKMP
+                 {
+                   result = AceUdpProtoSpec.new(
+                     :name => val[0], :number => 4500
+                     )
+                 }
+             | NTP
+                 {
+                   result = AceUdpProtoSpec.new(
+                     :name => val[0], :number => 123
+                     )
+                 }
+             | PIM_AUTO_RP
+                 {
+                   result = AceUdpProtoSpec.new(
+                     :name => val[0], :number => 496
+                     )
+                 }
+             | RIP
+                 {
+                   result = AceUdpProtoSpec.new(
+                     :name => val[0], :number => 520
+                     )
+                 }
+             | SNMP
+                 {
+                   result = AceUdpProtoSpec.new(
+                     :name => val[0], :number => 161
+                     )
+                 }
+             | SNMPTRAP
+                 {
+                   result = AceUdpProtoSpec.new(
+                     :name => val[0], :number => 162
+                     )
+                 }
+             | SUNRPC
+                 {
+                   result = AceUdpProtoSpec.new(
+                     :name => val[0], :number => 111
+                     )
+                 }
+             | SYSLOG
+                 {
+                   result = AceUdpProtoSpec.new(
+                     :name => val[0], :number => 514
+                     )
+                 }
+             | TACACS
+                 {
+                   result = AceUdpProtoSpec.new(
+                     :name => val[0], :number => 49
+                     )
+                 }
+             | TALK
+                 {
+                   result = AceUdpProtoSpec.new(
+                     :name => val[0], :number => 517
+                     )
+                 }
+             | TFTP
+                 {
+                   result = AceUdpProtoSpec.new(
+                     :name => val[0], :number => 69
+                     )
+                 }
+             | TIME
+                 {
+                   result = AceUdpProtoSpec.new(
+                     :name => val[0], :number => 37
+                     )
+                 }
+             | WHO
+                 {
+                   result = AceUdpProtoSpec.new(
+                     :name => val[0], :number => 513
+                     )
+                 }
+             | XDMCP
+                 {
+                   result = AceUdpProtoSpec.new(
+                     :name => val[0], :number => 177
+                     )
+                 }
+
+# tcp flags list
+
+tcp_flags_qualifier:
+             | tcp_flags_list
+             | MATCH_ALL pm_tcp_flags_list
+             | MATCH_ANY pm_tcp_flags_list
+
+tcp_flags_list: tcp_flags
+                 {
+                   list = AceTcpFlagList.new
+                   list.push( val[0] )
+                   result = list
+                 }
+             | tcp_flags_list tcp_flags
+                 {
+                   val[0].push( val[1] )
+                   result = val[0]
+                 }
+
+    tcp_flags: ESTABL
+                 {
+                   dputs "## tcp_flags, established: #{val[0]}"
+                   result = AceTcpFlag.new( val[0] )
+                 }
+             | ACK
+                 {
+                   result = AceTcpFlag.new( val[0] )
+                 }
+             | SYN
+                 {
+                   result = AceTcpFlag.new( val[0] )
+                 }
+             | FIN
+                 {
+                   result = AceTcpFlag.new( val[0] )
+                 }
+             | PSH
+                 {
+                   result = AceTcpFlag.new( val[0] )
+                 }
+             | URG
+                 {
+                   result = AceTcpFlag.new( val[0] )
+                 }
+             | RST
+                 {
+                   result = AceTcpFlag.new( val[0] )
+                 }
+
+pm_tcp_flags_list: pm_tcp_flags
+             | pm_tcp_flags_list pm_tcp_flags
+
+ pm_tcp_flags: PM_ACK
+             | PM_SYN
+             | PM_FIN
+             | PM_PSH
+             | PM_URG
+             | PM_RST
+
+# oether qualifier list
+
+other_qualifier_list:
+             | other_qualifier_list other_qualifier
+                 {
+                   dputs "## other qualifier list, #{val[0]}/#{val[1]}"
+                   if val[0]
+                     list = val[0]
+                   else
+                     list = AceOtherQualifierList.new
+                   end
+                   list.push( val[1] )
+                   result = list
+                 }
+
+other_qualifier: dscp_rule
+             | FRAGMENTS
+             | logging
+                 {
+                   dputs "## other qualifier, logging, #{val[0]})"
+                   result = val[0]
+                 }
+             | tos_qualifier
+             | precedence_qualifier
+             | time_range_spec
+             | recursive_qualifier
+                 {
+                   result = val[0]
+                 }
+             | ttl_qualifier      # IOS 12.4
+             | option_qualifier   # IOS 12.3(4)T,12.2(25)S, IP Options
+
+    dscp_rule: DSCP dscp_spec
+                 ;
+
+    dscp_spec: NUMBER   # 0-63
+             | AF11     # 001010
+             | AF12     # 001100
+             | AF13     # 001110
+             | AF21     # 010010
+             | AF22     # 010100
+             | AF23     # 010110
+             | AF31     # 011010
+             | AF32     # 011100
+             | AF33     # 011110
+             | AF41     # 100010
+             | AF42     # 100100
+             | AF43     # 100110
+             | CS1      # 001000
+             | CS2      # 010000
+             | CS3      # 011000
+             | CS4      # 100000
+             | CS5      # 101000
+             | CS6      # 110000
+             | CS7      # 111000
+             | DEFAULT  # 000000
+             | EF       # 101110
+
+      logging: LOG_INPUT log_cookie
+                 {
+                   result = AceLogSpec.new( val[1], true )
+                 }
+             | LOG log_cookie
+                 {
+                   result = AceLogSpec.new( val[1] )
+                 }
+
+   log_cookie:
+             | STRING
+                 {
+                   result = val[0]
+                 }
+
+tos_qualifier: TOS tos_string
+             | TOS NUMBER
+
+   tos_string: TOS_MAX_REL
+             | TOS_MAX_THRPUT
+             | TOS_MIN_DELAY
+             | TOS_MIN_MONET_COST
+             | TOS_NORMAL
+
+precedence_qualifier: PRECEDENCE precedence_string
+             | PRECEDENCE NUMBER # 0-7
+
+precedence_string: PREC_CRITICAL # 5
+             | PREC_FLASH        # 3
+             | PREC_FLASH_OVERR  # 4
+             | PREC_IMMED        # 2
+             | PREC_INET         # 6
+             | NETWORK           # 7
+             | PREC_PRIO         # 1
+             | PREC_ROUTINE      # 0
+
+time_range_spec: TIME_RANGE STRING
+
+recursive_qualifier: REFLECT STRING timeout_spec
+                 {
+                   ## TBD: timeout_spec not implemented yet.
+                   result = AceRecursiveQualifier.new( val[1] )
+                 }
+
+ttl_qualifier: TTL unary_operator NUMBER # 0-255
+             | TTL RANGE NUMBER NUMBER
+
+option_qualifier: OPTION option_spec
+
+  option_spec: ADD_EXT   # opt 147
+             | ANY_OPTS
+             | COM_SECURITY  # opt 134
+             | DPS           # opt 151
+             | ENCODE        # opt 15
+             | EOOL          # opt 0
+             | EXT_IP        # opt 145
+             | EXT_SECURITY  # opt 133
+             | FINN          # opt 205
+             | IMITD         # opt 144
+             | LSR           # opt 131
+             | MTUP          # opt 11
+             | MTUR          # opt 12
+             | NO_OP         # opt 1
+             | NSAPA         # opt 150
+             | RECORD_ROUTE  # opt 7
+             | ROUTER_ALERT  # opt 148
+             | SDB           # opt 149
+             | SECURITY      # opt 130
+             | SSR           # opt 137
+             | STREAM_ID     # opt 136
+             | TIMESTAMP     # opt 68
+             | TRACERT       # opt 82
+             | UMP           # opt 152
+             | VISA          # opt 142
+             | ZSU           # opt 10
+             | NUMBER        # ip options vlaue (0-255)
+
+---- header
+
+require 'term/ansicolor'
+require "CiscoAclIntp/scanner"
+require "CiscoAclIntp/acl"
+
+module CiscoAclIntp
+
+---- inner
+
+# @return [Hash] ACL Table by ACL name key
+attr_reader :acl_table
+
+# Constructor
+# @param [Hash] opts Options
+# @option [Boolean] :yydebug Enable Racc debug print.
+#   (default: false)
+# @option [Boolean] :debug Enable debug print.
+#   (default: false)
+# @option [Boolean] :color Enable Term ANSI Color.
+#   (default: false)
+# @return [CiscoACLParser]
+def initialize opts
+  @yydebug = opts[ :yydebug ] or false
+  @debug_print = opts[ :debug ] or false
+  @color_mode = opts[ :color ] or false
+
+  if @color_mode
+    AclContainerBase.enable_color
+  else
+    AclContainerBase.disable_color
+  end
+
+  @acl_table = {}
+  @curr_acl_name = ''
+  @line_number = 0
+end
+
+# Scan ACL from file to parse
+# @param [String] file File name
+# @param [IO] file IO Object
+# @return [Hash] ACL Table
+def parse_file filename
+  begin
+    file = nil
+    case filename
+    when String
+      file = File.new( filename )
+    when IO
+      file = filename
+    end
+
+    if file
+      scanner = Scanner.new
+      @q = scanner.scan_file( file )
+      do_parse
+    else
+      raise AclError, "File: #{ filename } not found."
+    end
+
+  rescue Racc::ParseError => err
+    puts c_err( "Parse aborted. Found syntax error:\n  #{ err.message }\n" )
+  rescue AclArgumentError => err
+    puts c_err( "Parse aborted. Found acl argment error:\n  #{ err.message }\n  #{ err_pos_str }\n" )
+  rescue AclError => err
+    puts c_err( "Parse aborted. Found acl error:\n  #{ err.message }\n" )
+  rescue => err
+    puts c_err( "Parse aborted. Found unknown error:\n  #{ err.message }\n" )
+  end
+  return @acl_table
+end
+
+# Syntax error handler
+# @raise [Racc::ParseError]
+def on_error tok, val, vstack
+  errstr = [
+    err_pos_str,
+    "near value: #{ val }",
+    "(token: #{ token_to_str( tok ) })",
+  ].join(", ")
+
+  # raise Racc::ParseError, errstr
+  puts c_err( errstr )
+end
+
+private
+
+# print error message and enter error recovery mode
+# @param [String] str Error message
+def yyerror_with str
+  puts c_err( [ err_pos_str, str ].join(", ") )
+  yyerror
+end
+
+# debug print
+# @param [String] str String to print
+def dputs str
+  puts str if @debug_print
+end
+
+# Get next token
+# @return [Array] Next token array
+def next_token
+  @q.shift
+end
+
+# Coloring error string
+# @param [String] str Message string
+# @return [String] Colored message string
+def c_err str
+  if @color_mode
+    c = Term::ANSIColor
+    str = [ c.red, c.bold, str, c.clear ].join
+  end
+  return str
+end
+
+# Generate error string
+# @return [String] error position string
+def err_pos_str
+  line_num = @acl_table[ @curr_acl_name ] ?
+    @acl_table[ @curr_acl_name ].length + 1 : ""
+  [ "in acl: #{ @curr_acl_name }",
+    "line: #{ line_num }",
+  ].join(", ")
+end
+
+---- footer
+
+end # module
+
+### Local variables:
+### mode: Racc
+### coding: utf-8-unix
+### indent-tabs-mode: nil
+### End:

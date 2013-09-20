@@ -1,0 +1,49 @@
+access-list 1 permit 192.168.0.0 0.0.255.255
+access-list 1 deny   any log
+access-list 100 remark General Internet Access
+access-list 100 permit icmp any any
+access-list 100 permit ip 192.168.0.0 0.0.255.255 any
+access-list 100 permit tcp any host 210.197.74.200
+access-list 100 remark !wrong acl number!
+access-list 10 permit udp any eq ntp any eq ntp
+access-list 100 remark !------cleared------!
+access-list 100 remark !wrong header! caccess-list
+caccess-list 100 remark 6to4
+access-list 100 remark !------cleared------!
+access-list 100 permit 41 any host 192.88.99.1
+access-list 100 remark !wrong ip proto number!
+access-list 100 permit 256 any host 192.88.99.1
+access-list 100 remark !------cleared------!
+access-list 100 remark !wrong ip proto!
+access-list 100 permit hoge any host 192.88.99.1
+access-list 100 remark !------cleared------!
+access-list 100 permit ip any host 192.88.99.1
+access-list 100 remark others
+access-list 100 permit tcp any eq 0 any eq 0
+access-list 100 permit udp any eq 0 any eq 0
+access-list 100 deny   ip any any log
+access-list 110 remark SPLIT_VPN
+access-list 110 permit ip 192.168.0.0 0.0.255.255 any
+
+ip access-list extended FA8-OUT
+ deny   udp any any eq bootpc
+ deny   udp any any eq bootps
+ remark !argment error! 65536
+ permit tcp host 192.168.3.4 173.30.240.0 0.0.0.255 range 32768 65536
+ remark !------cleared------!
+ remark !argment error! 255 => 256
+ deny udp 192.168.3.0 0.0.240.256 lt 1024 any eq 80
+ remark !------cleared------!
+ remark network access-list remark!!
+ permit tcp any any established
+ deny tcp any any syn rst
+ remark !syntax error! tcp -> tp (typo)
+ deny up any any log-input hoge
+ remark !------cleared------!
+ permit ip any any log
+!
+ip access-list standard remote-ipv4
+ permit 192.168.0.0 0.0.255.255
+ remark standard access-list last deny!?
+ deny   any log
+!
