@@ -1216,8 +1216,8 @@ option_qualifier: OPTION option_spec
 ---- header
 
 require 'term/ansicolor'
-require "CiscoAclIntp/scanner"
-require "CiscoAclIntp/acl"
+require "cisco_acl_intp/scanner"
+require "cisco_acl_intp/acl"
 
 module CiscoAclIntp
 

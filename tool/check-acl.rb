@@ -1,7 +1,7 @@
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 
 require 'optparse'
-require 'CiscoAclIntp'
+require 'cisco_acl_intp'
 
 include CiscoAclIntp
 

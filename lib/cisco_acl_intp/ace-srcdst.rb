@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
 require 'netaddr'
-require 'CiscoAclIntp/ace-ip'
-require 'CiscoAclIntp/ace-port'
-require 'CiscoAclIntp/ace-other-qualifiers'
-require 'CiscoAclIntp/ace-tcp-flags'
+require 'cisco_acl_intp/ace-ip'
+require 'cisco_acl_intp/ace-port'
+require 'cisco_acl_intp/ace-other-qualifiers'
+require 'cisco_acl_intp/ace-tcp-flags'
 
 module CiscoAclIntp
 

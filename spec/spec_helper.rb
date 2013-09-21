@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 
-require 'CiscoAclIntp'
+require 'cisco_acl_intp'
 
 RSpec::Matchers.define :be_aclstr do | expected_str |
   match do | actual_str |

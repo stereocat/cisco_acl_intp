@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in CiscoAclParser.gemspec
+# Specify your gem's dependencies in cisco_acl_intp.gemspec
 gemspec
 
 gem 'racc', "~> 1.4.9"

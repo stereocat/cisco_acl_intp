@@ -2,10 +2,10 @@
 
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'CiscoAclIntp/version'
+require 'cisco_acl_intp/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "CiscoAclIntp"
+  spec.name          = "cisco_acl_intp"
   spec.version       = CiscoAclIntp::VERSION
   spec.authors       = ["stereocat"]
   spec.email         = ["stereocat@gmail.com"]

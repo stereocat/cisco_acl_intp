@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 require 'forwardable'
-require 'CiscoAclIntp/ace'
+require 'cisco_acl_intp/ace'
 
 module CiscoAclIntp
 
