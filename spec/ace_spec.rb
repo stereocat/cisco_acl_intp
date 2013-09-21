@@ -32,6 +32,7 @@ describe StandardAce do
         sa = StandardAce.new( :action => 'permit', :src => asds )
         sa.to_s.should be_aclstr("permit 192.168.3.128 0.0.0.127")
       end
+
     end
 
     context "Argument error case" do
@@ -70,6 +71,7 @@ describe StandardAce do
         @sa.matches?( :dst_ip => @ip_match )
       }.should raise_error(AclArgumentError)
     end
+
   end
 end
 
@@ -103,6 +105,7 @@ describe ExtendedAce do
         )
         ea.to_s.should be_aclstr("deny tcp 192.168.8.9 0.0.7.6 host 192.168.30.3 range 1024 65535")
       end
+
     end
 
     context "Argument error case" do
@@ -152,6 +155,7 @@ describe ExtendedAce do
           )
         }.should raise_error(AclArgumentError)
       end
+
     end
   end
 
@@ -218,7 +222,7 @@ describe ExtendedAce do
       tests.each do | each |
         codes.push <<"EOC"
       it 'should be #{ each[:res] }, when #{each[:opts][:protocol] };#{ each[:opts][:src_ip] }/#{ each[:opts][:src_port]} > #{ each[:opts][:dst_ip] }/#{ each[:opts][:dst_port] }' do
-        @ea.matches?( #{ each[:opts].to_s } ).should be_#{ each[:res] }
+        @ea.matches?( #{ _pph(each[:opts]) } ).should be_#{ each[:res] }
       end # it
 EOC
       end # tests.each

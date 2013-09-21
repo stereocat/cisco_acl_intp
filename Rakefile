@@ -14,7 +14,7 @@ PARSER_RUBY = "#{ CLASS_DIR }/parser.rb"
 CLEAN.include(
   "#{ ACL_SPEC_TESTDATA_DIR }/*.acl.yml",
   "#{ ACL_SPEC_TESTDATA_DIR }/*.token.yml",
-  "#{ LIB_DIR }/*.output",
+  "#{ LIB_DIR }/*.output"
 )
 CLOBBER.include(
   PARSER_RUBY,

@@ -211,7 +211,7 @@ describe AceSrcDstSpec do
         )
         port_any = AcePortSpec.new( :operator => 'any' )
         ip1 = AceIpSpec.new(
-          :ipaddr => '192.168.15.15', :wildcard => '0.0.7.6',
+          :ipaddr => '192.168.15.15', :wildcard => '0.0.7.6'
         )
         port1 = AcePortSpec.new(
           :operator => 'range',

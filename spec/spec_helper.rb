@@ -12,3 +12,16 @@ RSpec::Matchers.define :be_aclstr do | expected_str |
     ## 'remark foo  --  bar' みたいなのがただしく扱えない。
   end
 end
+
+# hash to hash-code-string
+def _pph hash
+  kv = []
+  hash.each do | k, v |
+    if String === v
+      kv.push %Q{:#{k.to_s}=>"#{v.to_s}"}
+    else
+      kv.push %Q{:#{k.to_s}=>#{v.to_s}}
+    end
+  end
+  return kv.join(',')
+end

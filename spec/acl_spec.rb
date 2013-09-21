@@ -105,7 +105,7 @@ EOS
         :action => 'deny',
         :protocol => 'ip',
         :src => { :ipaddr => '0.0.0.0', :wildcard => '255.255.255.255' },
-        :dst => { :ipaddr => '10.0.0.0', :wildcard => '0.0.0.255' },
+        :dst => { :ipaddr => '10.0.0.0', :wildcard => '0.0.0.255' }
       )
     end
 
@@ -282,11 +282,11 @@ EOS
       )
       @acl.add_entry_by_params(
         :action => 'deny',
-        :src => { :ipaddr => '192.168.10.3', :wildcard => '0.0.0.0' },
+        :src => { :ipaddr => '192.168.10.3', :wildcard => '0.0.0.0' }
       )
       @acl.add_entry_by_params(
         :action => 'deny',
-        :src => { :ipaddr => '10.0.0.0', :wildcard => '0.0.0.255' },
+        :src => { :ipaddr => '10.0.0.0', :wildcard => '0.0.0.255' }
       )
     end
 
