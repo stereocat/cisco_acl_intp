@@ -29,12 +29,12 @@ module CiscoAclIntp
     # @note Variable '@protocol'
     #   should be assigned in inherited class constructor,
     #   at first. (before call super class constructor)
-    def initialize opts
+    def initialize(opts)
       # set defaults
-      @protocol = nil if not @protocol
+      @protocol = nil unless @protocol
 
-      @name = opts[:name] or nil
-      @number = opts[:number] or nil
+      @name = opts[:name] || nil
+      @number = opts[:number] || nil
 
       # arguments     |
       # :name :number | @name         @number
@@ -49,29 +49,29 @@ module CiscoAclIntp
       # (*2) args are set in parser (assume correct args)
       # (*3)
 
-      if @number and not valid_range?( @number )
+      if @number && (!valid_range?(@number))
         # (*1)(*3)
-        raise AclArgumentError, "Wrong protocol number: #{ @number }"
+        fail AclArgumentError, "Wrong protocol number: #{ @number }"
       end
 
-      if @name and @number
+      if @name && @number
         # (*1) check parameter match
         # Do not overwrite name by number converted name,
         # because args are configured in parser,
         # that name mismatch looks like a bug.
-        if @name != number_to_name( @number )
-          raise AclArgumentError, "Specified protocol name and literal/number not match"
+        if @name != number_to_name(@number)
+          fail AclArgumentError, 'Specified protocol name and literal/number not match'
         end
-      elsif @name and not @number
+      elsif @name && (!@number)
         # (*2) no-op
         # Usually, args are configured in parser.
         # If not specified the number, it is empty explicitly
-      elsif not @name and @number
+      elsif (!@name) && @number
         # (*3) no-op
         # @name is used to stringify, convert @number to name in to_s
       else
         # (*4)
-        raise AclArgumentError, "Not specified protocol name and number"
+        fail AclArgumentError, 'Not specified protocol name and number'
       end
 
     end
@@ -80,13 +80,13 @@ module CiscoAclIntp
     # @abstract
     # @param [Integer] port IP/TCP/UDP port/protocol number
     # @return [Boolean]
-    def valid_range? port
+    def valid_range?(port)
     end
 
     # Generate string for Cisco IOS access list
     # @return [String]
     def to_s
-      @name or number_to_name( @number )
+      @name || number_to_name(@number)
     end
 
     # Convert protocol/port number to string (its name)
@@ -95,7 +95,7 @@ module CiscoAclIntp
     # @return [String] Name of protocol/port number.
     #   If does not match the number in IOS proto/port literal,
     #   return number.to_s string
-    def number_to_name number
+    def number_to_name(number)
       number.to_s
     end
 
@@ -105,34 +105,34 @@ module CiscoAclIntp
     end
 
     # @return [Boolean] Compare with protocol/port number
-    def < other
+    def <(other)
       @number < other.to_i
     end
 
     # @return [Boolean] Compare with protocol/port number
-    def > other
+    def >(other)
       @number > other.to_i
     end
 
     # @return [Boolean] Compare with protocol/port number
-    def <= other
+    def <=(other)
       @number <= other.to_i
     end
 
     # @return [Boolean] Compare with protocol/port number
-    def >= other
+    def >=(other)
       @number >= other.to_i
     end
 
     # @return [Fixnum] Compare with protocol/port number
-    def <=> other
+    def <=>(other)
       @number <=> other.to_i
     end
 
     # @return [Boolean] Compare with protocol/port number
-    def == other
-      @protocol == other.protocol and
-        @name == other.name and
+    def ==(other)
+      @protocol == other.protocol &&
+        @name == other.name &&
         @number == other.number
     end
   end
@@ -148,7 +148,7 @@ module CiscoAclIntp
     # Constructor
     # @param [Hash] opts Options of {AceProtoSpecBase}
     # @return [AceIpProtoSpec]
-    def initialize opts
+    def initialize(opts)
       @protocol = :ip
       super
     end
@@ -156,14 +156,14 @@ module CiscoAclIntp
     # Check the port number in valid range of port number
     # @param [Integer] port IP/TCP/UDP port/protocol number
     # @return [Boolean]
-    def valid_range? port
+    def valid_range?(port)
       MIN_PORT <= port.to_i && port.to_i <= MAX_PORT
     end
 
     # Convert protocol/port number to string (its name)
     # @param [Integer] number Protocol/Port number
     # @return [String] Name of protocol/port number.
-    def number_to_name number
+    def number_to_name(number)
       case number
       when  51 then 'ahp'
       when  88 then 'eigrp'
@@ -189,12 +189,12 @@ module CiscoAclIntp
     # Minimum port/protocol number
     MIN_PORT = 0
     # Maximum port/protocol number
-    MAX_PORT = 65535
+    MAX_PORT = 65_535
 
     # Check the port number in valid range of port number
     # @param [Integer] port TCP/UDP port/protocol number
     # @return [Boolean]
-    def valid_range? port
+    def valid_range?(port)
       MIN_PORT <= port.to_i && port.to_i <= MAX_PORT
     end
   end
@@ -206,7 +206,7 @@ module CiscoAclIntp
     # Constructor
     # @param [Hash] opts Options of {AceProtoSpecBase}
     # @return [AceTcpProtoSpec]
-    def initialize opts
+    def initialize(opts)
       @protocol = :tcp
       super
     end
@@ -214,7 +214,7 @@ module CiscoAclIntp
     # Convert protocol/port number to string (its name)
     # @param [Integer] number Protocol/Port number
     # @return [String] Name of protocol/port number.
-    def number_to_name number
+    def number_to_name(number)
       case number
       when  179 then 'bgp'
       when   19 then 'chargen'
@@ -263,7 +263,7 @@ module CiscoAclIntp
     # Constructor
     # @param [Hash] opts Options of {AceProtoSpecBase}
     # @return [AceUdpProtoSpec]
-    def initialize opts
+    def initialize(opts)
       @protocol = :udp
       super
     end
@@ -271,7 +271,7 @@ module CiscoAclIntp
     # Convert protocol/port number to string (its name)
     # @param [Integer] number Protocol/Port number
     # @return [String] Name of protocol/port number.
-    def number_to_name number
+    def number_to_name(number)
       case number
       when  512 then 'biff'
       when   68 then 'bootpc'

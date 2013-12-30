@@ -24,12 +24,12 @@ module CiscoAclIntp
     # Generate string for Cisco IOS access list
     # @return [String]
     def to_s
-      c_pp( @list.map { | each | each.to_s }.join(' ') )
+      c_pp(@list.map { | each | each.to_s }.join(' '))
     end
 
     # @param [AceOtherQualifierList] other RHS Object
     # @return [Boolean]
-    def == other
+    def == (other)
       @list == other.list
     end
   end
@@ -55,7 +55,7 @@ module CiscoAclIntp
     # @param [String] cookie Log cookie
     # @param [Boolean] input set true 'log-input' logging
     # @return [AceLogSpec]
-    def initialize cookie = nil, input = false
+    def initialize(cookie = nil, input = false)
       @input = input
       @cookie = cookie
     end
@@ -63,10 +63,10 @@ module CiscoAclIntp
     # Generate string for Cisco IOS access list
     # @return [String]
     def to_s
-      sprintf( "%s %s",
-        @input ? "log-input" : "log",
-        @cookie ? @cookie : ""
-      )
+      sprintf('%s %s',
+               @input ? 'log-input' : 'log',
+               @cookie ? @cookie : ''
+     )
     end
   end
 
@@ -79,18 +79,18 @@ module CiscoAclIntp
 
     # Constructor
     # @param [String] name Recursive name
-    def initialize name
-      if name and ( not name.empty? )
+    def initialize (name)
+      if name && (! name.empty?)
         @recursive_name = name
       else
-        raise AclArgumentError, "Not specified recursive name"
+        fail AclArgumentError, 'Not specified recursive name'
       end
     end
 
     # Generate string for Cisco IOS access list
     # @return [String]
     def to_s
-      sprintf "reflect %s", c_name( @recursive_name )
+      sprintf 'reflect %s', c_name(@recursive_name)
     end
   end
 

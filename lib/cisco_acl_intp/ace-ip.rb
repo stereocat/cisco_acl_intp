@@ -39,40 +39,40 @@ module CiscoAclIntp
     # @option opts [Integer] :netmask Network Mask Length
     # @raise [AclArgumentError]
     # @return [AceIpSpec]
-    def initialize opts
+    def initialize(opts)
       if opts[:ipaddr]
         case
         when opts[:wildcard]
           @wildcard = opts[:wildcard]
           @ipaddr = NetAddr::CIDR.create(
             opts[:ipaddr],
-            :WildcardMask => [ @wildcard, true ]
+            WildcardMask: [@wildcard, true]
           )
           @netmask = nil ## TBD : これでOK? 可能な場合は変換すべき?
         when opts[:netmask]
           @netmask = opts[:netmask]
           @ipaddr = NetAddr::CIDR.create(
-            [ opts[:ipaddr], @netmask ].join('/')
+            [opts[:ipaddr], @netmask].join('/')
           )
           @wildcard = @ipaddr.wildcard_mask(true)
         else
           # default mask
-          @netmask = "255.255.255.255"
+          @netmask = '255.255.255.255'
           @ipaddr = NetAddr::CIDR.create(
-            [ opts[:ipaddr], @netmask ].join(' ')
+            [opts[:ipaddr], @netmask].join(' ')
           )
           @wildcard = @ipaddr.wildcard_mask(true)
         end
       else
-        raise AclArgumentError, "Not specified IP address"
+        fail AclArgumentError, 'Not specified IP address'
       end
     end
 
     # @param [AceIpSpec] other RHS Object
     # @return [Boolean]
-    def == other
-      @ipaddr == other.ipaddr and
-        @netmask == other.netmask and
+    def ==(other)
+      @ipaddr == other.ipaddr &&
+        @netmask == other.netmask &&
         @wildcard == other.wildcard
     end
 
@@ -81,21 +81,13 @@ module CiscoAclIntp
     def to_s
       if to_wmasked_ip_s == '0.0.0.0'
         # ip = '0.0.0.0' or wildcard = '255.255.255.255'
-        c_ip( "any" )
+        c_ip('any')
       else
         if @wildcard == '0.0.0.0'
           # /32 mask
-          sprintf(
-            "%s %s",
-            c_mask( "host" ),
-            c_ip( @ipaddr.ip )
-          )
+          sprintf('%s %s', c_mask('host'), c_ip(@ipaddr.ip))
         else
-          sprintf(
-            "%s %s",
-            c_ip( to_wmasked_ip_s ),
-            c_mask( @wildcard )
-          )
+          sprintf('%s %s', c_ip(to_wmasked_ip_s), c_mask(@wildcard))
         end
       end
     end
@@ -103,10 +95,10 @@ module CiscoAclIntp
     # Generate wildcard-masked ip address string
     # @return [String] wildcard-masked ip address string
     def to_wmasked_ip_s
-      ai = NetAddr.ip_to_i( @ipaddr.ip )
-      mi = NetAddr.ip_to_i( @ipaddr.wildcard_mask )
+      ai = NetAddr.ip_to_i(@ipaddr.ip)
+      mi = NetAddr.ip_to_i(@ipaddr.wildcard_mask)
       ami = ai & mi
-      NetAddr.i_to_ip( ami )
+      NetAddr.i_to_ip(ami)
     end
 
   end

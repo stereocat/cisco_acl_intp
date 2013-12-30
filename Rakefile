@@ -1,10 +1,10 @@
-require "bundler/gem_tasks"
-require "rspec/core/rake_task"
-require "rake/clean"
+require 'bundler/gem_tasks'
+require 'rspec/core/rake_task'
+require 'rake/clean'
 
-LIB_DIR = "./lib"
-PACKAGE_NAME = "cisco_acl_intp"
-ACL_SPEC_TESTDATA_DIR = "./spec/data"
+LIB_DIR = './lib'
+PACKAGE_NAME = 'cisco_acl_intp'
+ACL_SPEC_TESTDATA_DIR = './spec/data'
 CLASS_DIR = "#{ LIB_DIR }/#{ PACKAGE_NAME }"
 CLASS_GRAPH_DOT = "doc/#{ PACKAGE_NAME }.dot"
 CLASS_GRAPH_PNG = "doc/#{ PACKAGE_NAME }.png"
@@ -22,9 +22,9 @@ CLOBBER.include(
   CLASS_GRAPH_PNG
 )
 
-task :default => [ :parser, :spec ]
-task :parser => [ PARSER_RUBY ]
-task :spec => [ ACL_SPEC_TESTDATA_DIR ]
+task default: [:parser, :spec]
+task parser: [PARSER_RUBY]
+task spec: [ACL_SPEC_TESTDATA_DIR]
 
 task :doc do
   sh "yard doc #{ LIB_DIR }/*/*.rb"
@@ -34,24 +34,21 @@ end
 
 directory ACL_SPEC_TESTDATA_DIR
 
-file PARSER_RUBY => [ PARSER_RACC ] do
+file PARSER_RUBY => [PARSER_RACC] do
   sh "racc -v -g #{ PARSER_RACC } -o #{ PARSER_RUBY }"
 end
 
-RSpec::Core::RakeTask.new( :spec ) do | spec |
-  spec.pattern = FileList[ "spec/**/*_spec.rb" ]
-  spec.rspec_opts = "--format documentation --color"
+RSpec::Core::RakeTask.new(:spec) do | spec |
+  spec.pattern = FileList['spec/**/*_spec.rb']
+  spec.rspec_opts = '--format documentation --color'
 end
 
 if RUBY_VERSION >= '1.9.0'
-  task :quality => :rubocop
+  task quality: :rubocop
   require 'rubocop/rake_task'
   Rubocop::RakeTask.new do |task|
-    task.patterns = %w(lib/**/*.rb
-                       spec/**/*.rb
-                       Rakefile
-                       Gemfile
-                       cisco_acl_intp.gemspec)
+    # file patterns in ".rubocop.yml"
+    task.fail_on_error = false
   end
 end
 

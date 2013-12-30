@@ -15,7 +15,7 @@ module CiscoAclIntp
     # Constructor
     # @param [String] flag TCP flag name
     # @return [AceTcpFlag]
-    def initialize flag
+    def initialize(flag)
       @flag = flag
     end
 
@@ -27,7 +27,7 @@ module CiscoAclIntp
 
     # @param [AceTcpFlag] other RHS Object
     # @return [Boolean]
-    def == other
+    def ==(other)
       @flag == other.flag
     end
   end
@@ -49,16 +49,15 @@ module CiscoAclIntp
     # Generate string for Cisco IOS access list
     # @return [String]
     def to_s
-      c_pp( @list.map { | each | each.to_s }.join(' ') )
+      c_pp(@list.map { | each | each.to_s }.join(' '))
     end
 
     # @param [AceTcpFlagList] other RHS Object
     # @return [Boolean]
-    def == other
+    def ==(other)
       @list == other.list
     end
   end
-
 
 end # module
 

@@ -11,7 +11,7 @@ module CiscoAclIntp
 
     # @return [String] name ACL name,
     #   when numbered acl, /\d+/ string
-    attr_reader :name 
+    attr_reader :name
     # @return [Array] list ACE object Array
     attr_reader :list
     # @return [String, Symbol] acl_type ACL type
@@ -27,7 +27,7 @@ module CiscoAclIntp
     # Constructor
     # @param [String] name ACL name
     # @return [SingleAclBase]
-    def initialize name
+    def initialize(name)
       @name = name
       @list = []
       @seq_number = 0
@@ -38,11 +38,11 @@ module CiscoAclIntp
 
     # Add ACE to ACL
     # @param [AceBase] ace ACE object
-    def add_entry ace
+    def add_entry(ace)
       # 'ace' is AceBase Object
       # it will be ExtendedAce/StandardAce/RemarkAce/EvaluateAce
-      if not ace.has_seq_number?
-        ace.seq_number = ( @list.length + 1 ) * SEQ_NUM_DIV
+      unless ace.has_seq_number?
+        ace.seq_number = (@list.length + 1) * SEQ_NUM_DIV
       end
       @list.push ace
     end
@@ -58,10 +58,10 @@ module CiscoAclIntp
     end
 
     # @return [Boolean]
-    def == other
-      if @acl_type and
-          @name_type and
-          @acl_type == other.acl_type and
+    def ==(other)
+      if @acl_type &&
+          @name_type &&
+          @acl_type == other.acl_type &&
           @name_type == other.name_type
         @list == other.list
       end
@@ -77,10 +77,10 @@ module CiscoAclIntp
     # @option [String] dst_port Destination Port
     # @return [AceBase] Matched ACE object or nil(not found)
     # @raise [AclArgumentError]
-    def search_ace opts
+    def search_ace(opts)
       ## TBD ##
       @list.each do | each |
-        return each if each.matches?( opts )
+        return each if each.matches?(opts)
       end
       nil
     end
@@ -97,7 +97,7 @@ module CiscoAclIntp
     # Generate a Extended ACE by parameters
     #   and Add it to ACL
     # @param [Hash] opts Options to create {ExtendedAce}
-    def add_entry_by_params opts
+    def add_entry_by_params(opts)
       ace = ExtendedAce.new opts
       add_entry ace
     end
@@ -111,7 +111,7 @@ module CiscoAclIntp
     # Generate a Standard ACE by parameters
     #   and Add it to ACL
     # @param [Hash] opts Options to create {StandardAce}
-    def add_entry_by_params opts
+    def add_entry_by_params(opts)
       ace = StandardAce.new opts
       add_entry ace
     end
@@ -127,11 +127,11 @@ module CiscoAclIntp
     def to_s
       strings = [
         sprintf(
-          "%s %s %s",
-          c_hdr( "ip access-list" ),
-          c_type( @acl_type ),
-          c_name( @name )
-        )
+          '%s %s %s',
+          c_hdr('ip access-list'),
+          c_type(@acl_type),
+          c_name(@name)
+       )
       ]
       @list.each { | entry | strings.push entry.to_s }
       strings.join("\n")
@@ -148,7 +148,7 @@ module CiscoAclIntp
     # @param [String, Integer] name ACL number
     # @raise [AclArgumentError]
     # @return [NumberedAcl]
-    def initialize name
+    def initialize(name)
       super
 
       ## TBD
@@ -163,10 +163,10 @@ module CiscoAclIntp
           @name = name
           @number = name.to_i
         else
-          raise AclArgumentError, "acl number string is not integer"
+          fail AclArgumentError, 'acl number string is not integer'
         end
       else
-        raise AclArgumentError, "acl number error"
+        fail AclArgumentError, 'acl number error'
       end
     end
 
@@ -176,11 +176,11 @@ module CiscoAclIntp
       strings = []
       @list.each do | entry |
         strings.push sprintf(
-          "%s %s %s",
-          c_hdr( "access-list" ),
-          c_name( @name ),
+          '%s %s %s',
+          c_hdr('access-list'),
+          c_name(@name),
           entry
-        )
+       )
       end
       strings.join("\n")
     end
@@ -195,7 +195,7 @@ module CiscoAclIntp
     # Constructor
     # @param [String] name ACL name
     # @return [NamedExtAcl]
-    def initialize name
+    def initialize(name)
       super
       @name_type = :named
       @acl_type = :extended
@@ -209,7 +209,7 @@ module CiscoAclIntp
     # Constructor
     # @param [String, Integer] name ACL name
     # @return [NumberedExtAcl]
-    def initialize name
+    def initialize(name)
       super
       @name_type = :numbered
       @acl_type = :extended
@@ -223,7 +223,7 @@ module CiscoAclIntp
     # Constructor
     # @param [String] name ACL name
     # @return [NamedStdAcl]
-    def initialize name
+    def initialize(name)
       super
       @name_type = :named
       @acl_type = :standard
@@ -237,7 +237,7 @@ module CiscoAclIntp
     # Constructor
     # @param [String, Integer] name ACL name
     # @return [NumberedStdAcl]
-    def initialize name
+    def initialize(name)
       super
       @name_type = :numbered
       @acl_type = :standard

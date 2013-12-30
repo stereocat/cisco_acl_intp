@@ -35,59 +35,59 @@ module CiscoAclIntp
     # @option opts [Integer] :port2 port number (higher)
     # @raise [AclArgumentError]
     # @return [AceSrcDstSpec]
-    # @note If not specified port (:port_spec or :operator, :port1, :port2 )
+    # @note If not specified port (:port_spec or :operator, :port1, :port2)
     #   it assumed with ANY port.
-    def initialize opts
+    def initialize(opts)
       if opts[:ip_spec]
         @ip_spec = opts[:ip_spec]
       elsif opts[:ipaddr]
         @ip_spec = AceIpSpec.new(
-          :ipaddr => opts[:ipaddr],
-          :wildcard => opts[:wildcard]
-        )
+          ipaddr: opts[:ipaddr],
+          wildcard: opts[:wildcard]
+       )
       else
-        raise AclArgumentError, "Not specified: ip spec"
+        fail AclArgumentError, 'Not specified: ip spec'
       end
 
       if opts[:port_spec]
         @port_spec = opts[:port_spec]
       elsif opts[:operator]
         @port_spec = AcePortSpec.new(
-          :operator => opts[:operator],
-          :port1 => opts[:port1],
-          :port2 => opts[:port2]
-        )
+          operator: opts[:operator],
+          port1: opts[:port1],
+          port2: opts[:port2]
+       )
       else
         # in standard acl, not used port_spec
         # if not specified port spec: default: any port
-        @port_spec = AcePortSpec.new( :operator => 'any' )
+        @port_spec = AcePortSpec.new(operator: 'any')
       end
     end
 
     # @param [AceSrcDstSpec] other RHS Object
     # @return [Boolean]
-    def == other
-      @port_spec == other.port_spec and
+    def ==(other)
+      @port_spec == other.port_spec &&
         @ip_spec == other.ip_spec
     end
 
     # Generate string for Cisco IOS access list
     # @return [String]
     def to_s
-      sprintf("%s %s", @ip_spec, @port_spec)
+      sprintf('%s %s', @ip_spec, @port_spec)
     end
 
     # Check address and port number matche this object.
     # @param [String] address IP address (dotted notation)
     # @param [Integer] port Port No.
     # @return [Boolean]
-    def matches? address, port=nil
+    def matches?(address, port = nil)
       if port
-        @port_spec.matches?( port ) and
-          @ip_spec.matches?( address )
+        @port_spec.matches?(port) &&
+          @ip_spec.matches?(address)
       else
         # if not specified port
-        @ip_spec.matches?( address )
+        @ip_spec.matches?(address)
       end
     end
 

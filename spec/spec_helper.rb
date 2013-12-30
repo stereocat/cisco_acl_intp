@@ -14,14 +14,15 @@ RSpec::Matchers.define :be_aclstr do | expected_str |
 end
 
 # hash to hash-code-string
-def _pph hash
+def _pph(hash)
   kv = []
   hash.each do | k, v |
-    if String === v
+    case v
+    when String
       kv.push %Q{:#{k.to_s}=>"#{v.to_s}"}
     else
       kv.push %Q{:#{k.to_s}=>#{v.to_s}}
     end
   end
-  return kv.join(',')
+  kv.join(',')
 end

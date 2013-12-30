@@ -18,7 +18,7 @@ module CiscoAclIntp
     # @param [Hash] opts
     # @option opts [Integer] :number Sequence number
     # @return [AceBase]
-    def initialize opts
+    def initialize(opts)
       if opts[:number]
         @seq_number = opts[:number]
       else
@@ -34,21 +34,21 @@ module CiscoAclIntp
 
     # @param [AceBase] other RHS object
     # @return [Integer] Compare with protocol/port number
-    def <=> other
+    def <=>(other)
       @seq_number <=> other.seq_number
     end
 
     # @param [AceBase] other RHS object
     # @return [Boolean]
     # @abstract
-    def == other
+    def ==(other)
     end
 
     # Search matched ACE
     # @param [Hash] opts Options (target packet info)
     # @return [Boolean] Matched or not
     # @abstract
-    def matches? opts
+    def matches?(opts)
       false
     end
   end
@@ -63,26 +63,26 @@ module CiscoAclIntp
     # Constructor
     # @param [String] str Comment string
     # @return [RemarkAce]
-    def initialize str
+    def initialize(str)
       @comment = str.strip
       @seq_number = NO_SEQ_NUMBER # remark does not takes line number
     end
 
     # @return [Boolean] Compare with comment string
-    def == other
+    def ==(other)
       @comment == other.comment
     end
 
     # Generate string for Cisco IOS access list
     # @return [String] Comment string
     def to_s
-      sprintf " remark %s", c_rmk( @comment.to_s )
+      sprintf ' remark %s', c_rmk(@comment.to_s)
     end
 
     # Search matched ACE
     # @param [Hash] opts Options
     # return [Boolean] false, Remark does not match anithyng.
-    def matches? opts=nil
+    def matches?(opts = nil)
       false
     end
   end
@@ -100,31 +100,31 @@ module CiscoAclIntp
     # @option opts [String] :recursive_name Recursive entry name
     # @raise [AclArgumentError]
     # @return [EvaluateAce]
-    def initialize opts
+    def initialize(opts)
       super
 
       if opts[:recursive_name]
         @recursive_name = opts[:recursive_name]
       else
-        raise AclArgumentError, "name not specified"
+        fail AclArgumentError, 'name not specified'
       end
     end
 
     # @return [Boolean] Compare with recursive entry name
-    def == other
+    def ==(other)
       @recursive_name == other.recursive_name
     end
 
     # Generate string for Cisco IOS access list
     # @return [String]
     def to_s
-      sprintf "evaluate %s", c_name( @recursive_name )
+      sprintf 'evaluate %s', c_name(@recursive_name)
     end
 
     # Search matched ACE
     # @param [Hash] opts Options
     # return [Boolean] false, Recursive does not implemented yet
-    def matches? opts=nil
+    def matches?(opts = nil)
       false
     end
   end
@@ -153,13 +153,13 @@ module CiscoAclIntp
     # @option opts [AceLogSpec] :log Log spec object
     # @raise [AclArgumentError]
     # @return [StandardAce]
-    def initialize opts
+    def initialize(opts)
       super
 
       if opts[:action]
         @action = opts[:action]
       else
-        raise AclArgumentError, "Not specified action"
+        fail AclArgumentError, 'Not specified action'
       end
 
       if opts[:src]
@@ -169,29 +169,29 @@ module CiscoAclIntp
         when AceSrcDstSpec
           @src_spec = opts[:src]
         else
-          raise AclArgumentError, "src spec: unknown class"
+          fail AclArgumentError, 'src spec: unknown class'
         end
       else
-        raise AclArgumentError, "Not specified src spec"
+        fail AclArgumentError, 'Not specified src spec'
       end
 
-      @log_spec = opts[:log] or nil
+      @log_spec = opts[:log] || nil
     end
 
     # @return [Boolean]
-    def == other
-      @action == other.action and @src_spec == other.src_spec
+    def ==(other)
+      @action == other.action && @src_spec == other.src_spec
     end
 
     # Generate string for Cisco IOS access list
     # @return [String]
     def to_s
       sprintf(
-        " %s %s %s",
-        c_act( @action.to_s ),
+        ' %s %s %s',
+        c_act(@action.to_s),
         @src_spec,
-        @log_spec ? @log_spec : ""
-      )
+        @log_spec ? @log_spec : ''
+     )
     end
 
     # Search matched ACE
@@ -199,11 +199,11 @@ module CiscoAclIntp
     # @option opts [String] :src_ip Source IP Address
     # @return [Boolean] Matched or not
     # @raise [AclArgumentError] Invalid src_ip
-    def matches? opts
-      if opts[ :src_ip ]
-        return @src_spec.ip_spec.matches?( opts[ :src_ip ] )
+    def matches?(opts)
+      if opts[:src_ip]
+        return @src_spec.ip_spec.matches?(opts[:src_ip])
       else
-        raise AclArgumentError, "Invalid match target src IP address"
+        fail AclArgumentError, 'Invalid match target src IP address'
       end
     end
   end
@@ -260,9 +260,9 @@ module CiscoAclIntp
     #     :action => 'permit',
     #     :src => { :ipaddr => '192.168.3.0', :wildcard => '0.0.0.127' },
     #     :dst => { :ipaddr => '172.30.0.0', :wildcard => '0.0.7.127',
-    #               :operator => 'eq', :port1 => 80 } )
+    #               :operator => 'eq', :port1 => 80 })
     #
-    def initialize opts
+    def initialize(opts)
       super
 
       if opts[:protocol]
@@ -271,12 +271,12 @@ module CiscoAclIntp
           @protocol = opts[:protocol]
         else
           @protocol = AceIpProtoSpec.new(
-            :name => opts[:protocol],
-            :number => opts[:protocol_num]
-          )
+            name: opts[:protocol],
+            number: opts[:protocol_num]
+         )
         end
       else
-        raise AclArgumentError, "Not specified IP protocol"
+        fail AclArgumentError, 'Not specified IP protocol'
       end
 
       if opts[:dst]
@@ -286,13 +286,13 @@ module CiscoAclIntp
         when AceSrcDstSpec
           @dst_spec = opts[:dst]
         else
-          raise AclArgumentError, "Dst spec: unknown class"
+          fail AclArgumentError, 'Dst spec: unknown class'
         end
       else
-        raise AclArgumentError, "Not specified dst spec"
+        fail AclArgumentError, 'Not specified dst spec'
       end
 
-      if @protocol.name == 'tcp' and opts[:tcp_flags_qualifier]
+      if @protocol.name == 'tcp' && opts[:tcp_flags_qualifier]
         @tcp_flags = opts [:tcp_flags_qualifier]
       else
         @tcp_flags = nil
@@ -303,11 +303,11 @@ module CiscoAclIntp
 
     # @param [ExtendACE] other RHS object
     # @return [Boolean]
-    def == other
-      @action == other.action and
-        @protocol == other.protocol and
-        @src_spec == other.src_spec and
-        @dst_spec == other.dst_spec and
+    def ==(other)
+      @action == other.action &&
+        @protocol == other.protocol &&
+        @src_spec == other.src_spec &&
+        @dst_spec == other.dst_spec &&
         @tcp_flags == other.tcp_flags
       ## does it need to compare? : tcp_other_qualifiers
     end
@@ -316,14 +316,14 @@ module CiscoAclIntp
     # @return [String]
     def to_s
       sprintf(
-        " %s %s %s %s %s %s",
-        c_act( @action.to_s ),
-        c_pp( @protocol.to_s ),
+        ' %s %s %s %s %s %s',
+        c_act(@action.to_s),
+        c_pp(@protocol.to_s),
         @src_spec,
         @dst_spec,
-        @tcp_flags ? @tcp_flags : "",
-        @tcp_other_qualifiers ? @tcp_other_qualifiers : ""
-      )
+        @tcp_flags ? @tcp_flags : '',
+        @tcp_other_qualifiers ? @tcp_other_qualifiers : ''
+     )
     end
 
     # Search matched ACE
@@ -336,34 +336,34 @@ module CiscoAclIntp
     # @option opts [String] :dst_port Destination Port No.
     # @return [Boolean] Matched or not
     # @raise [AclArgumentError]
-    def matches? opts
-      if opts[ :protocol ]
+    def matches?(opts)
+      if opts[:protocol]
         match_proto = true
-        if @protocol.to_s != "ip"
+        if @protocol.to_s != 'ip'
           ## TBD
           ## 名前リテラルなし、プロトコル番号での指定とかどうする?
           ## 原則ぜんぶオブジェクトに変換してから比較をすべき。
-          match_proto = ( opts[ :protocol ] == @protocol.to_s )
+          match_proto = (opts[:protocol] == @protocol.to_s)
         end
 
         match_src = false
-        if opts[ :src_ip ]
-          match_src = @src_spec.matches?( opts[ :src_ip ], opts[ :src_port ] )
+        if opts[:src_ip]
+          match_src = @src_spec.matches?(opts[:src_ip], opts[:src_port])
         else
-          raise AclArgumentError, "Not specified match target src IP Addr"
+          fail AclArgumentError, 'Not specified match target src IP Addr'
         end
 
         match_dst = false
-        if opts[ :dst_ip ]
-          match_dst = @dst_spec.matches?( opts[ :dst_ip ], opts[ :dst_port ] )
+        if opts[:dst_ip]
+          match_dst = @dst_spec.matches?(opts[:dst_ip], opts[:dst_port])
         else
-          raise AclArgumentError, "Not specified match target dst IP Addr"
+          fail AclArgumentError, 'Not specified match target dst IP Addr'
         end
       else
-        raise AclArgumentError, "Invalid match target protocol"
+        fail AclArgumentError, 'Invalid match target protocol'
       end
 
-      return ( match_proto and match_src and match_dst )
+      (match_proto && match_src && match_dst)
     end
 
   end

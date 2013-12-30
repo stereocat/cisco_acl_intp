@@ -32,7 +32,7 @@ module CiscoAclIntp
     #   with port number and protocol name.
     #   it need the number when operate/compare protocol number,
     #   and need the name when stringize the object.
-    def initialize opts
+    def initialize(opts)
 
       ## TBD
       ## ACL において eq/neq はポートのリストをうけとることができる??
@@ -40,26 +40,26 @@ module CiscoAclIntp
 
       if opts[:operator]
         @operator = opts[:operator]
-        @port1 = opts[:port1] or nil
-        @port2 = opts[:port2] or nil
+        @port1 = opts[:port1] || nil
+        @port2 = opts[:port2] || nil
 
-        if ( not @port1 ) and ( @operator != 'any' )
-          raise AclArgumentError, "Not specified port_1"
+        if (!@port1) && (@operator != 'any')
+          fail AclArgumentError, 'Not specified port_1'
         end
 
-        if opts[:port2] && ( opts[:port1] > opts[:port2] )
-          raise AclArgumentError, "Not specified port_2 or Invalid port range args sequence"
+        if opts[:port2] && (opts[:port1] > opts[:port2])
+          fail AclArgumentError, 'Not specified port_2 or Invalid port range args sequence'
         end
       else
-        raise AclArgumentError, "Not specified port operator"
+        fail AclArgumentError, 'Not specified port operator'
       end
     end
 
     # @param [AcePortSpec] other RHS Object
     # @return [Boolean]
-    def == other
-      @operator == other.operator and
-        @port1 == other.port1 and
+    def ==(other)
+      @operator == other.operator &&
+        @port1 == other.port1 &&
         @port2 == other.port2
     end
 
@@ -67,14 +67,14 @@ module CiscoAclIntp
     # @return [String]
     def to_s
       if @operator == 'any'
-        ""
+        ''
       else
         c_pp(
           sprintf(
-            "%s %s %s",
-            @operator ? @operator : "",
-            @port1 ? @port1 : "",
-            @port2 ? @port2 : ""
+            '%s %s %s',
+            @operator ? @operator : '',
+            @port1 ? @port1 : '',
+            @port2 ? @port2 : ''
           )
         )
       end
@@ -84,9 +84,9 @@ module CiscoAclIntp
     # @param [Integer] port TCP/UDP Port number
     # @raise [AclArgumentError]
     # @return [Boolean]
-    def matches? port
-      if not valid_range?( port )
-        raise AclArgumentError, "Port out of range: #{ port }"
+    def matches?(port)
+      unless valid_range?(port)
+        fail AclArgumentError, "Port out of range: #{ port }"
       end
 
       ## TBD

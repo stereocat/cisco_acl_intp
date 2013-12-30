@@ -74,7 +74,7 @@ std_acl_log_spec:
                    ## NOT implemented yet:
                    ##   dynamic_spec,
                    ##   other_qualifier_list (partially implemented)
-                   dputs "## ext_acl"
+                   dputs '## ext_acl'
                    val[1].tcp_other_qualifiers = val[2]
                    result = val[1]
                  }
@@ -216,7 +216,7 @@ std_acl_log_spec:
 
    icmp_proto: ICMP
                  {
-                   dputs "## icmp_proto"
+                   dputs '## icmp_proto'
                    result = AceIpProtoSpec.new(
                      :name => val[0], :number => 1
                      )
@@ -224,7 +224,7 @@ std_acl_log_spec:
 
     tcp_proto: TCP
                  {
-                   dputs "## tcp_proto"
+                   dputs '## tcp_proto'
                    result = AceIpProtoSpec.new(
                      :name => val[0], :number => 6
                      )
@@ -232,7 +232,7 @@ std_acl_log_spec:
 
     udp_proto: UDP
                  {
-                   dputs "## udp_proto"
+                   dputs '## udp_proto'
                    result = AceIpProtoSpec.new(
                      :name => val[0], :number => 17
                      )
@@ -583,7 +583,7 @@ icmp_qualifier:
 tcp_port_spec:
                  {
                    # tcp any
-                   dputs "## tcp port any"
+                   dputs '## tcp port any'
                    result = AcePortSpec.new( :operator => 'any' )
                  }
              | unary_operator tcp_port_qualifier
@@ -607,7 +607,7 @@ tcp_port_spec:
 udp_port_spec:
                  {
                    # udp any
-                   dputs "## udp port: any"
+                   dputs '## udp port: any'
                    result = AcePortSpec.new( :operator => 'any' )
                  }
              | unary_operator udp_port_qualifier
@@ -1216,8 +1216,8 @@ option_qualifier: OPTION option_spec
 ---- header
 
 require 'term/ansicolor'
-require "cisco_acl_intp/scanner"
-require "cisco_acl_intp/acl"
+require 'cisco_acl_intp/scanner'
+require 'cisco_acl_intp/acl'
 
 module CiscoAclIntp
 
@@ -1292,7 +1292,7 @@ def on_error tok, val, vstack
     err_pos_str,
     "near value: #{ val }",
     "(token: #{ token_to_str( tok ) })",
-  ].join(", ")
+  ].join(', ')
 
   # raise Racc::ParseError, errstr
   puts c_err( errstr )
@@ -1303,7 +1303,7 @@ private
 # print error message and enter error recovery mode
 # @param [String] str Error message
 def yyerror_with str
-  puts c_err( [ err_pos_str, str ].join(", ") )
+  puts c_err( [ err_pos_str, str ].join(', ') )
   yyerror
 end
 
@@ -1334,10 +1334,10 @@ end
 # @return [String] error position string
 def err_pos_str
   line_num = @acl_table[ @curr_acl_name ] ?
-    @acl_table[ @curr_acl_name ].length + 1 : ""
+    @acl_table[ @curr_acl_name ].length + 1 : ''
   [ "in acl: #{ @curr_acl_name }",
     "line: #{ line_num }",
-  ].join(", ")
+  ].join(', ')
 end
 
 ---- footer
