@@ -43,6 +43,18 @@ RSpec::Core::RakeTask.new( :spec ) do | spec |
   spec.rspec_opts = "--format documentation --color"
 end
 
+if RUBY_VERSION >= '1.9.0'
+  task :quality => :rubocop
+  require 'rubocop/rake_task'
+  Rubocop::RakeTask.new do |task|
+    task.patterns = %w(lib/**/*.rb
+                       spec/**/*.rb
+                       Rakefile
+                       Gemfile
+                       cisco_acl_intp.gemspec)
+  end
+end
+
 ### Local variables:
 ### mode: Ruby
 ### coding: utf-8-unix
