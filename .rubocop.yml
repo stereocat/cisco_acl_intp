@@ -1,0 +1,10 @@
+AllCops:
+  Includes:
+    - lib/**/*.rb
+    - tool/*.rb
+    - spec/**/*.rb
+    - Rakefile
+    - Gemfile
+    - cisco_acl_intp.gemspec
+  Excludes:
+    - lib/**/parser.rb
