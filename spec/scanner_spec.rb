@@ -84,8 +84,10 @@ EOL
       end
 
       # run test
-      test_erb_code = <<'EOL'
-      it 'should be parsed <%= File.basename(acl_file) %> as <%= File.basename(token_file) %> in tests of <%= each_test[:test_description] %>' do
+      test_erb_code = <<"EOL"
+      it 'should be parsed <%= File.basename(acl_file) %> \
+as <%= File.basename(token_file) %> \
+in tests of <%= each_test[:test_description] %>' do
         tokens = YAML.load_file('<%= token_file %>')
         s = Scanner.new
         File.open('<%= acl_file %>') do |file|
@@ -94,7 +96,7 @@ EOL
       end
 EOL
       test_erb = ERB.new(test_erb_code)
-      eval test_erb.result(binding)
+      instance_eval test_erb.result(binding)
 
     end # test.each
   end # describe

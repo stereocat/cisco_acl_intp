@@ -3,7 +3,7 @@ $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 
 require 'simplecov'
 SimpleCov.start do
-  add_group "Models", "lib/"
+  add_group 'Models', 'lib/'
 end
 
 require 'cisco_acl_intp'
@@ -13,8 +13,8 @@ RSpec::Matchers.define :be_aclstr do | expected_str |
     a = actual_str.strip
     b = expected_str.strip
     a.split(/\s+/) == b.split(/[\s\r\n]+/)
-    ## この方法だと空白よみとばしてしまうので、
-    ## 'remark foo  --  bar' みたいなのがただしく扱えない。
+    ## by this method, whitespaces are skipped.
+    ## because, it cannot handle correctly like 'remark foo  --  bar'
   end
 end
 

@@ -124,7 +124,9 @@ describe ExtendedAce do
           src: @src,
           dst: @dst
         )
-        ea.to_s.should be_aclstr('permit tcp 192.168.8.9 0.0.7.6 host 192.168.30.3 range 1024 65535')
+        ea.to_s.should be_aclstr(
+          'permit tcp 192.168.8.9 0.0.7.6 host 192.168.30.3 range 1024 65535'
+        )
       end
 
       it 'should be protocol tcp, action deny' do
@@ -134,7 +136,9 @@ describe ExtendedAce do
           src: @src,
           dst: @dst
         )
-        ea.to_s.should be_aclstr('deny tcp 192.168.8.9 0.0.7.6 host 192.168.30.3 range 1024 65535')
+        ea.to_s.should be_aclstr(
+          'deny tcp 192.168.8.9 0.0.7.6 host 192.168.30.3 range 1024 65535'
+        )
       end
 
     end
@@ -234,19 +238,19 @@ describe ExtendedAce do
       #----- begin code generation -----#
 
       ## generate test pattern data
-      protocol_match = 'tcp'
-      protocol_unmatch = 'udp'
-      src_ip_match = '192.168.9.11'
-      src_ip_unmatch = '192.168.9.12'
-      src_port_match = 32_768
-      src_port_unmatch = 8_080
-      dst_ip_match = '192.168.30.3'
-      dst_ip_unmatch = '192.168.30.4'
-      dst_port_match = 3_366
-      dst_port_unmatch = 100
+      data_table = {
+        protocol_match: 'tcp',
+        protocol_unmatch: 'udp',
+        src_ip_match: '192.168.9.11',
+        src_ip_unmatch: '192.168.9.12',
+        src_port_match: 32_768,
+        src_port_unmatch: 8_080,
+        dst_ip_match: '192.168.30.3',
+        dst_ip_unmatch: '192.168.30.4',
+        dst_port_match: 3_366,
+        dst_port_unmatch: 100
+      }
 
-      codes = []
-      tests = []
       bit = 5
       test_data = [
         :dst_port,
@@ -255,14 +259,16 @@ describe ExtendedAce do
         :src_ip,
         :protocol
       ]
+
+      codes = []
+      tests = []
       (0..(2**bit - 1)).each do |num|
         opts = {}
         flag = 1
-        (0..(bit - 1)).each do |b|
+        (0...bit).each do |b|
           pstr = ((num & flag) == 0 ? '_match' : '_unmatch')
-          str = test_data[b].to_s.concat(pstr)
-          # puts "#{num}, #{b}, #{flag} #{test_data[b]} => #{str}"
-          opts[test_data[b]] = eval str
+          key = test_data[b].to_s.concat(pstr)
+          opts[test_data[b]] = data_table[key.to_sym]
           flag = flag << 1
         end
         tests.push(
@@ -273,13 +279,16 @@ describe ExtendedAce do
 
       tests.each do | each |
         codes.push <<"EOL"
-      it 'should be #{ each[:res] }, when #{each[:opts][:protocol] };#{ each[:opts][:src_ip] }/#{ each[:opts][:src_port]} > #{ each[:opts][:dst_ip] }/#{ each[:opts][:dst_port] }' do
-        @ea.matches?(#{ _pph(each[:opts]) }).should be_#{ each[:res] }
+      it 'should be #{each[:res]}, \
+when #{each[:opts][:protocol]};\
+#{each[:opts][:src_ip]}/#{each[:opts][:src_port]} > \
+#{each[:opts][:dst_ip]}/#{each[:opts][:dst_port]}' do
+        @ea.matches?(#{_pph(each[:opts])}).should be_#{each[:res]}
       end # it
 EOL
       end # tests.each
 
-      eval codes.join
+      instance_eval codes.join
 
       #----- end code generation -----#
 

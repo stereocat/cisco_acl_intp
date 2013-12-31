@@ -99,8 +99,9 @@ EOL
   end
 
   describe '#search_ace' do
-    # extended ace については named でも numbered でも同様なので
-    # named ext ace についてだけテスト記載(numbered ext acl については省略)
+    # for extended ace, it is same as named/numbered ace.
+    # so that, tests only named-extended-ace
+    # and omit numbered-extended-acl
     before do
       @acl = NamedExtAcl.new 'test-ext-acl2'
       @acl.add_entry_by_params(
@@ -153,7 +154,9 @@ EOL
         dst_ip: '192.168.4.5',
         dst_port: 32_889
       )
-      ace.to_s.should be_aclstr('deny tcp host 192.168.10.3 192.168.4.0 0.0.0.255 gt 32768')
+      ace.to_s.should be_aclstr(
+        'deny tcp host 192.168.10.3 192.168.4.0 0.0.0.255 gt 32768'
+      )
     end
 
     it 'should be last entry' do
@@ -344,8 +347,9 @@ EOL
   end
 
   describe '#search_ace' do
-    # standard ace については named でも numbered でも同様なので
-    # standard ext ace についてだけテスト記載(numbered std acl については省略)
+    # for standard ace, it is same as named/numbered ace.
+    # so that, tests only named-standard-ace
+    # and omit numbered-standard-acl
     before do
       @acl = NamedStdAcl.new 'test-stdacl3'
       @acl.add_entry_by_params(
