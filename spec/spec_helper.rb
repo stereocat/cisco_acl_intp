@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 
+require 'simplecov'
+SimpleCov.start do
+  add_group "Models", "lib/"
+end
+
 require 'cisco_acl_intp'
 
 RSpec::Matchers.define :be_aclstr do | expected_str |
