@@ -41,28 +41,7 @@ module CiscoAclIntp
     # @return [AceIpSpec]
     def initialize(opts)
       if opts[:ipaddr]
-        case
-        when opts[:wildcard]
-          @wildcard = opts[:wildcard]
-          @ipaddr = NetAddr::CIDR.create(
-            opts[:ipaddr],
-            WildcardMask: [@wildcard, true]
-          )
-          @netmask = nil ## TBD : これでOK? 可能な場合は変換すべき?
-        when opts[:netmask]
-          @netmask = opts[:netmask]
-          @ipaddr = NetAddr::CIDR.create(
-            [opts[:ipaddr], @netmask].join('/')
-          )
-          @wildcard = @ipaddr.wildcard_mask(true)
-        else
-          # default mask
-          @netmask = '255.255.255.255'
-          @ipaddr = NetAddr::CIDR.create(
-            [opts[:ipaddr], @netmask].join(' ')
-          )
-          @wildcard = @ipaddr.wildcard_mask(true)
-        end
+        set_addrinfo(opts)
       else
         fail AclArgumentError, 'Not specified IP address'
       end
@@ -99,6 +78,54 @@ module CiscoAclIntp
       mi = NetAddr.ip_to_i(@ipaddr.wildcard_mask)
       ami = ai & mi
       NetAddr.i_to_ip(ami)
+    end
+
+    private
+
+    # Set instance variables
+    # @param [Hash] opts Options of constructor
+    def set_addrinfo(opts)
+      case
+      when opts[:wildcard]
+        set_addrinfo_with_wildcard(opts)
+      when opts[:netmask]
+        set_addrinfo_with_netmask(opts)
+      else
+        set_addrinfo_with_default_netmask(opts)
+      end
+    end
+
+    # Set instance variables with ip/wildcard
+    # @param [Hash] opts Options of constructor
+    def set_addrinfo_with_wildcard(opts)
+      @wildcard = opts[:wildcard]
+      @ipaddr = NetAddr::CIDR.create(
+        opts[:ipaddr],
+        WildcardMask: [@wildcard, true]
+      )
+      ## TBD : is it OK? must convert if possible?
+      @netmask = nil
+    end
+
+    # Set instance variables with ip/netmask
+    # @param [Hash] opts Options of constructor
+    def set_addrinfo_with_netmask(opts)
+      @netmask = opts[:netmask]
+      @ipaddr = NetAddr::CIDR.create(
+        [opts[:ipaddr], @netmask].join('/')
+      )
+      @wildcard = @ipaddr.wildcard_mask(true)
+    end
+
+    # Set instance variables with ip/default-netmask
+    # @param [Hash] opts Options of constructor
+    def set_addrinfo_with_default_netmask(opts)
+      # default mask
+      @netmask = '255.255.255.255'
+      @ipaddr = NetAddr::CIDR.create(
+        [opts[:ipaddr], @netmask].join(' ')
+      )
+      @wildcard = @ipaddr.wildcard_mask(true)
     end
 
   end

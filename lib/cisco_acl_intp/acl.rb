@@ -92,7 +92,8 @@ module CiscoAclIntp
   # Features for Extended ACL
   module ExtAcl
     ## TBD
-    ## add_entry で StandardAce がきたらはじく、とかやるか?
+    ## does it have to raise error
+    ## if add_entry called with StandardAce?
 
     # Generate a Extended ACE by parameters
     #   and Add it to ACL
@@ -106,7 +107,8 @@ module CiscoAclIntp
   # Features for Standard ACL
   module StdAcl
     ## TBD
-    ## add_entry で ExtendedAce がきたらはじく、とかやるか?
+    ## does it have to raise error
+    ## if add_entry called with ExtendedAce?
 
     # Generate a Standard ACE by parameters
     #   and Add it to ACL
@@ -152,19 +154,14 @@ module CiscoAclIntp
       super
 
       ## TBD
-      ## name の代入演算子もどうにかする必要があるはず。(attr_accessor)
+      ## it ought to do something about assignment operator...
+      ## (attr_reader)
 
       case name
       when Fixnum
-        @name = name.to_s
-        @number = name
+        set_name_and_number(name.to_s, name)
       when String
-        if name =~ /\A\d+\Z/
-          @name = name
-          @number = name.to_i
-        else
-          fail AclArgumentError, 'acl number string is not integer'
-        end
+        validate_name_by_string(name)
       else
         fail AclArgumentError, 'acl number error'
       end
@@ -184,6 +181,25 @@ module CiscoAclIntp
       end
       strings.join("\n")
     end
+
+    private
+
+    # validate instance variables
+    # @param [String] name ACL Name
+    def validate_name_by_string(name)
+      if name =~ /\A\d+\Z/
+        set_name_and_number(name, name.to_i)
+      else
+        fail AclArgumentError, 'acl number string is not integer'
+      end
+    end
+
+    # Set instance variables
+    def set_name_and_number(name, number)
+      @name = name
+      @number = number
+    end
+
   end
 
   ############################################################

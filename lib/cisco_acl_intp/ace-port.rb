@@ -33,23 +33,13 @@ module CiscoAclIntp
     #   it need the number when operate/compare protocol number,
     #   and need the name when stringize the object.
     def initialize(opts)
-
       ## TBD
-      ## ACL において eq/neq はポートのリストをうけとることができる??
-      ## IOS15以降?
+      ## in ACL, can "eq/neq" receive port list?
+      ## IOS15 later?
 
       if opts[:operator]
-        @operator = opts[:operator]
-        @port1 = opts[:port1] || nil
-        @port2 = opts[:port2] || nil
-
-        if (!@port1) && (@operator != 'any')
-          fail AclArgumentError, 'Not specified port_1'
-        end
-
-        if opts[:port2] && (opts[:port1] > opts[:port2])
-          fail AclArgumentError, 'Not specified port_2 or Invalid port range args sequence'
-        end
+        set_operators(opts)
+        validate_operators(opts)
       else
         fail AclArgumentError, 'Not specified port operator'
       end
@@ -69,14 +59,12 @@ module CiscoAclIntp
       if @operator == 'any'
         ''
       else
-        c_pp(
-          sprintf(
+        c_pp(sprintf(
             '%s %s %s',
             @operator ? @operator : '',
             @port1 ? @port1 : '',
             @port2 ? @port2 : ''
-          )
-        )
+        ))
       end
     end
 
@@ -88,9 +76,17 @@ module CiscoAclIntp
       unless valid_range?(port)
         fail AclArgumentError, "Port out of range: #{ port }"
       end
+      match_port?(port)
+    end
 
+    private
+
+    # Check the port number matches this?
+    # @param [Integer] port TCP/UDP Port number
+    # @return [Boolean]
+    def match_port?(port)
       ## TBD
-      ## operator は symbol で指定すべきでは?
+      ## operator must be specified by symbol?
 
       case @operator
       when 'any'   then true
@@ -100,6 +96,30 @@ module CiscoAclIntp
       when 'lt'    then @port1.to_i >  port
       when 'range' then @port1.to_i <= port && port <= @port2.to_i
       else              false
+      end
+    end
+
+    # Set instance variables
+    # @param [Hash] opts Options of constructor
+    def set_operators(opts)
+      @operator = opts[:operator]
+      @port1 = opts[:port1] || nil
+      @port2 = opts[:port2] || nil
+    end
+
+    # Varidate options
+    # @param [Hash] opts Options of constructor
+    # @raise [AclArgumentError]
+    def validate_operators(opts)
+      if (!@port1) && (@operator != 'any')
+        fail AclArgumentError, 'Not specified port_1'
+      end
+
+      if opts[:port2] && (opts[:port1] > opts[:port2])
+        fail(
+          AclArgumentError,
+          'Not specified port_2 or Invalid port range args sequence'
+        )
       end
     end
   end

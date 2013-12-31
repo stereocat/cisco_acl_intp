@@ -30,11 +30,7 @@ module CiscoAclIntp
     #   should be assigned in inherited class constructor,
     #   at first. (before call super class constructor)
     def initialize(opts)
-      # set defaults
-      @protocol = nil unless @protocol
-
-      @name = opts[:name] || nil
-      @number = opts[:number] || nil
+      set_defaults(opts)
 
       # arguments     |
       # :name :number | @name         @number
@@ -49,31 +45,8 @@ module CiscoAclIntp
       # (*2) args are set in parser (assume correct args)
       # (*3)
 
-      if @number && (!valid_range?(@number))
-        # (*1)(*3)
-        fail AclArgumentError, "Wrong protocol number: #{ @number }"
-      end
-
-      if @name && @number
-        # (*1) check parameter match
-        # Do not overwrite name by number converted name,
-        # because args are configured in parser,
-        # that name mismatch looks like a bug.
-        if @name != number_to_name(@number)
-          fail AclArgumentError, 'Specified protocol name and literal/number not match'
-        end
-      elsif @name && (!@number)
-        # (*2) no-op
-        # Usually, args are configured in parser.
-        # If not specified the number, it is empty explicitly
-      elsif (!@name) && @number
-        # (*3) no-op
-        # @name is used to stringify, convert @number to name in to_s
-      else
-        # (*4)
-        fail AclArgumentError, 'Not specified protocol name and number'
-      end
-
+      validate_protocol_number
+      validate_protocol_name_and_number
     end
 
     # Check the port number in valid range of port number
@@ -135,6 +108,50 @@ module CiscoAclIntp
         @name == other.name &&
         @number == other.number
     end
+
+    private
+
+    # Set instance variables with ip/default-netmask
+    # @param [Hash] opts Options of constructor
+    def set_defaults(opts)
+      @protocol = nil unless @protocol
+      @name = opts[:name] || nil
+      @number = opts[:number] || nil
+    end
+
+    # Validate protocol number
+    # @raise [AclArgumentError]
+    def validate_protocol_number
+      if @number && (!valid_range?(@number))
+        # Pattern (*1)(*3)
+        fail AclArgumentError, "Wrong protocol number: #{ @number }"
+      end
+    end
+
+    # Validate protocol name and number (combination)
+    # @raise [AclArgumentError]
+    def validate_protocol_name_and_number
+      if @name && @number
+        # Case (*1): check parameter match
+        # Do not overwrite name by number converted name,
+        # because args are configured in parser,
+        # that name mismatch looks like a bug.
+        if @name != number_to_name(@number)
+          fail AclArgumentError, 'Specified protocol name and number not match'
+        end
+      elsif @name && (!@number)
+        # Case (*2): no-op
+        # Usually, args are configured in parser.
+        # If not specified the number, it is empty explicitly
+      elsif (!@name) && @number
+        # Case (*3): no-op
+        # @name is used to stringify, convert @number to name in to_s
+      else
+        # Case (*4):
+        fail AclArgumentError, 'Not specified protocol name and number'
+      end
+    end
+
   end
 
   # IP protocol number/name container
@@ -144,6 +161,24 @@ module CiscoAclIntp
     MIN_PORT = 0
     # Maximum port/protocol number
     MAX_PORT = 255
+
+    # convert table of tcp port/name
+    IP_PROTO_NAME_TABLE = {
+      51 => 'ahp',
+      88 => 'eigrp',
+      50 => 'esp',
+      47 => 'gre',
+      2 => 'igmp',
+      9 => 'igrp',
+      94 => 'ipinip',
+      4 => 'nos',
+      89 => 'ospf',
+      108 => 'pcp',
+      103 => 'pim',
+      1 => 'icmp',
+      6 => 'tcp',
+      17 => 'udp'
+    }
 
     # Constructor
     # @param [Hash] opts Options of {AceProtoSpecBase}
@@ -164,24 +199,9 @@ module CiscoAclIntp
     # @param [Integer] number Protocol/Port number
     # @return [String] Name of protocol/port number.
     def number_to_name(number)
-      case number
-      when  51 then 'ahp'
-      when  88 then 'eigrp'
-      when  50 then 'esp'
-      when  47 then 'gre'
-      when   2 then 'igmp'
-      when   9 then 'igrp'
-      when  94 then 'ipinip'
-      when   4 then 'nos'
-      when  89 then 'ospf'
-      when 108 then 'pcp'
-      when 103 then 'pim'
-      when   1 then 'icmp'
-      when   6 then 'tcp'
-      when  17 then 'udp'
-      else          number.to_s
-      end
+      IP_PROTO_NAME_TABLE[number] || number.to_s
     end
+
   end
 
   # TCP/UDP port range validation feature
@@ -203,6 +223,43 @@ module CiscoAclIntp
   class AceTcpProtoSpec < AceProtoSpecBase
     include AceTcpUdpPortValidation
 
+    # convert table of tcp port/name
+    TCP_PORT_NAME_TABLE = {
+      179 => 'bgp',
+      19 => 'chargen',
+      514 => 'cmd',
+      13 => 'daytime',
+      9 => 'discard',
+      53 => 'domain',
+      3949 => 'drip',
+      7 => 'echo',
+      512 => 'exec',
+      79 => 'finger',
+      21 => 'ftp',
+      20 => 'ftp-data',
+      70 => 'gopher',
+      101 => 'hostname',
+      113 => 'ident',
+      194 => 'irc',
+      543 => 'klogin',
+      544 => 'kshell',
+      513 => 'login',
+      515 => 'lpd',
+      119 => 'nntp',
+      496 => 'pim-auto-rp',
+      109 => 'pop2',
+      110 => 'pop3',
+      25 => 'smtp',
+      111 => 'sunrpc',
+      49 => 'tacacs',
+      517 => 'talk',
+      23 => 'telnet',
+      37 => 'time',
+      540 => 'uucp',
+      43 => 'whois',
+      80 => 'www'
+    }
+
     # Constructor
     # @param [Hash] opts Options of {AceProtoSpecBase}
     # @return [AceTcpProtoSpec]
@@ -211,47 +268,11 @@ module CiscoAclIntp
       super
     end
 
-    # Convert protocol/port number to string (its name)
+    # Convert protocol to port number by string (its name)
     # @param [Integer] number Protocol/Port number
     # @return [String] Name of protocol/port number.
     def number_to_name(number)
-      case number
-      when  179 then 'bgp'
-      when   19 then 'chargen'
-      when  514 then 'cmd'
-      when   13 then 'daytime'
-      when    9 then 'discard'
-      when   53 then 'domain'
-      when 3949 then 'drip'
-      when    7 then 'echo'
-      when  512 then 'exec'
-      when   79 then 'finger'
-      when   21 then 'ftp'
-      when   20 then 'ftp-data'
-      when   70 then 'gopher'
-      when  101 then 'hostname'
-      when  113 then 'ident'
-      when  194 then 'irc'
-      when  543 then 'klogin'
-      when  544 then 'kshell'
-      when  513 then 'login'
-      when  515 then 'lpd'
-      when  119 then 'nntp'
-      when  496 then 'pim-auto-rp'
-      when  109 then 'pop2'
-      when  110 then 'pop3'
-      when   25 then 'smtp'
-      when  111 then 'sunrpc'
-      when  514 then 'syslog'
-      when   49 then 'tacacs'
-      when  517 then 'talk'
-      when   23 then 'telnet'
-      when   37 then 'time'
-      when  540 then 'uucp'
-      when   43 then 'whois'
-      when   80 then 'www'
-      else           number.to_s
-      end
+      TCP_PORT_NAME_TABLE[number] || number.to_s
     end
 
   end
@@ -259,6 +280,37 @@ module CiscoAclIntp
   # UDP protocol number/name container
   class AceUdpProtoSpec < AceProtoSpecBase
     include AceTcpUdpPortValidation
+
+    # convert table of UDP port/name
+    UDP_PORT_NAME_TABLE = {
+      512 => 'biff',
+      68 => 'bootpc',
+      67 => 'bootps',
+      9 => 'discard',
+      195 => 'dnsix',
+      53 => 'domain',
+      7 => 'echo',
+      500 => 'isakmp',
+      434 => 'mobile-ip',
+      42 => 'nameserver',
+      138 => 'netbios-dgm',
+      137 => 'netbios-ns',
+      139 => 'netbios-ss',
+      4500 => 'non500-isakmp',
+      123 => 'ntp',
+      496 => 'pim-auto-rp',
+      520 => 'rip',
+      161 => 'snmp',
+      162 => 'snmptrap',
+      111 => 'sunrpc',
+      514 => 'syslog',
+      49 => 'tacacs',
+      517 => 'talk',
+      69 => 'tftp',
+      37 => 'time',
+      513 => 'who',
+      177 => 'xdmcp'
+    }
 
     # Constructor
     # @param [Hash] opts Options of {AceProtoSpecBase}
@@ -272,36 +324,7 @@ module CiscoAclIntp
     # @param [Integer] number Protocol/Port number
     # @return [String] Name of protocol/port number.
     def number_to_name(number)
-      case number
-      when  512 then 'biff'
-      when   68 then 'bootpc'
-      when   67 then 'bootps'
-      when    9 then 'discard'
-      when  195 then 'dnsix'
-      when   53 then 'domain'
-      when    7 then 'echo'
-      when  500 then 'isakmp'
-      when  434 then 'mobile-ip'
-      when   42 then 'nameserver'
-      when  138 then 'netbios-dgm'
-      when  137 then 'netbios-ns'
-      when  139 then 'netbios-ss'
-      when 4500 then 'non500-isakmp'
-      when  123 then 'ntp'
-      when  496 then 'pim-auto-rp'
-      when  520 then 'rip'
-      when  161 then 'snmp'
-      when  162 then 'snmptrap'
-      when  111 then 'sunrpc'
-      when  514 then 'syslog'
-      when   49 then 'tacacs'
-      when  517 then 'talk'
-      when   69 then 'tftp'
-      when   37 then 'time'
-      when  513 then 'who'
-      when  177 then 'xdmcp'
-      else           number.to_s
-      end
+      UDP_PORT_NAME_TABLE[number] || number.to_s
     end
   end
 

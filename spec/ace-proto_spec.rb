@@ -9,7 +9,7 @@ def number_data_to_codes(data, classname)
   port_table = {}
   data.split(/\n/).each do | line |
     if line =~ /^\s+([\w\d\-]+)\s+.+[\s\(](\d+)\)$/
-      port_table[Regexp.last_match[1]] = Regexp.last_match[2]
+      port_table[$1] = $2
     end
   end
   codes = []
@@ -58,7 +58,8 @@ exprtr6(config-ext-nacl)#permit udp any eq ?
   who            Who service (rwho, 513)
   xdmcp          X Display Manager Control Protocol (177)
 EOL
-    eval(number_data_to_codes(udp_port_data, 'AceUdpProtoSpec'))
+    codes = number_data_to_codes(udp_port_data, 'AceUdpProtoSpec')
+    eval(codes)
 
     it 'should be number string when it not match IOS acl literal' do
       aups = AceUdpProtoSpec.new(number: 3_333)
@@ -125,7 +126,8 @@ exprtr6(config-ext-nacl)#permit tcp any eq ?
   whois        Nicname (43)
   www          World Wide Web (HTTP, 80)
 EOL
-    eval(number_data_to_codes(tcp_port_data, 'AceTcpProtoSpec'))
+    codes = number_data_to_codes(tcp_port_data, 'AceTcpProtoSpec')
+    eval(codes)
 
     it 'should be number string when it not match IOS acl literal' do
       aups = AceTcpProtoSpec.new(number: 6_633)
@@ -170,7 +172,8 @@ describe AceIpProtoSpec do
   tcp           Transmission Control Protocol (6)
   udp           User Datagram Protocol (17)
 EOL
-    eval(number_data_to_codes(ip_port_data, 'AceIpProtoSpec'))
+    codes = number_data_to_codes(ip_port_data, 'AceIpProtoSpec')
+    eval(codes)
 
     it 'should be number string when it not match IOS acl literal' do
       aups = AceIpProtoSpec.new(number: 255)

@@ -655,6 +655,7 @@ module CiscoAclIntp
       # end of string
       q.push [:EOS, nil]
 
+      # return tokens queue
       q
     end # def scan_one_line
 

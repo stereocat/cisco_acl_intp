@@ -156,26 +156,13 @@ module CiscoAclIntp
     def initialize(opts)
       super
 
-      if opts[:action]
-        @action = opts[:action]
-      else
-        fail AclArgumentError, 'Not specified action'
-      end
-
+      set_action(opts)
       if opts[:src]
-        case opts[:src]
-        when Hash
-          @src_spec = AceSrcDstSpec.new opts[:src]
-        when AceSrcDstSpec
-          @src_spec = opts[:src]
-        else
-          fail AclArgumentError, 'src spec: unknown class'
-        end
+        set_src_spec(opts)
       else
         fail AclArgumentError, 'Not specified src spec'
       end
-
-      @log_spec = opts[:log] || nil
+      set_log_spec(opts)
     end
 
     # @return [Boolean]
@@ -206,6 +193,41 @@ module CiscoAclIntp
         fail AclArgumentError, 'Invalid match target src IP address'
       end
     end
+
+    private
+
+    # Set instance variables
+    # @param [Hash] opts Options of constructor
+    # @raise [AclArgumentError]
+    def set_action(opts)
+      if opts[:action]
+        @action = opts[:action]
+      else
+        fail AclArgumentError, 'Not specified action'
+      end
+    end
+
+    # Set instance variables
+    # @param [Hash] opts Options of constructor
+    # @raise [AclArgumentError]
+    def set_src_spec(opts)
+      case opts[:src]
+      when Hash
+        @src_spec = AceSrcDstSpec.new opts[:src]
+      when AceSrcDstSpec
+        @src_spec = opts[:src]
+      else
+        fail AclArgumentError, 'src spec: unknown class'
+      end
+    end
+
+    # Set instance variables
+    # @param [Hash] opts Options of constructor
+    # @raise [AclArgumentError]
+    def set_log_spec(opts)
+      @log_spec = opts[:log] || nil
+    end
+
   end
 
   # ACE for extended access list
@@ -229,14 +251,17 @@ module CiscoAclIntp
     # @return [AceOtherQualifierList]
     attr_accessor :tcp_other_qualifiers
 
+    # Option,
+    # :src and :dst can handle multiple types of object generation,
+    # so that the argments can takes hash of AceSrcDstSpec.new or
+    # AceSrcDstSpec instance.
+    # :protocol and so on. (AceIpProtoSpec Object)
     #
-    # :src, :dst は object class によって処理をかえているので、おなじ引数で
-    # AceSrcDstSpec の引数hashをわたしてもよいし、 AceSrcDstSpec Object を
-    # わたしてもよい。
-    # :protocol も同様(ACEIPProtocolSpec Object)
-    #
-    # :protocol については name/number の指定がある(parser内部で指示)
-    # 基本的には名前だけでよい(名前<=>番号の相互変換をするか? 番号を使うか?)
+    # about :protocol, it has specification of name and number
+    # (specified in internal of parser).
+    # basically, it is OK that specify only name.
+    # (does it convert name <=> number each oether?)
+    # (does it use number?
     #
 
     # Constructor
@@ -264,41 +289,9 @@ module CiscoAclIntp
     #
     def initialize(opts)
       super
-
-      if opts[:protocol]
-        case opts[:protocol]
-        when AceIpProtoSpec
-          @protocol = opts[:protocol]
-        else
-          @protocol = AceIpProtoSpec.new(
-            name: opts[:protocol],
-            number: opts[:protocol_num]
-         )
-        end
-      else
-        fail AclArgumentError, 'Not specified IP protocol'
-      end
-
-      if opts[:dst]
-        case opts[:dst]
-        when Hash
-          @dst_spec = AceSrcDstSpec.new opts[:dst]
-        when AceSrcDstSpec
-          @dst_spec = opts[:dst]
-        else
-          fail AclArgumentError, 'Dst spec: unknown class'
-        end
-      else
-        fail AclArgumentError, 'Not specified dst spec'
-      end
-
-      if @protocol.name == 'tcp' && opts[:tcp_flags_qualifier]
-        @tcp_flags = opts [:tcp_flags_qualifier]
-      else
-        @tcp_flags = nil
-      end
-
-      @tcp_other_qualifiers = nil
+      validate_protocol(opts)
+      validate_dst_spec(opts)
+      set_tcp_info(opts)
     end
 
     # @param [ExtendACE] other RHS object
@@ -331,39 +324,113 @@ module CiscoAclIntp
     # @option opts [String] :protocol L3/L4 protocol name
     #   (allows "tcp", "udp" and "icmp")
     # @option opts [String] :src_ip Source IP Address
-    # @option opts [String] :src_port Source Port No.
+    # @option opts [Integer] :src_port Source Port No.
     # @option opts [String] :dst_ip Destination IP Address
-    # @option opts [String] :dst_port Destination Port No.
+    # @option opts [Integer] :dst_port Destination Port No.
     # @return [Boolean] Matched or not
     # @raise [AclArgumentError]
     def matches?(opts)
       if opts[:protocol]
-        match_proto = true
-        if @protocol.to_s != 'ip'
-          ## TBD
-          ## 名前リテラルなし、プロトコル番号での指定とかどうする?
-          ## 原則ぜんぶオブジェクトに変換してから比較をすべき。
-          match_proto = (opts[:protocol] == @protocol.to_s)
-        end
-
-        match_src = false
-        if opts[:src_ip]
-          match_src = @src_spec.matches?(opts[:src_ip], opts[:src_port])
-        else
-          fail AclArgumentError, 'Not specified match target src IP Addr'
-        end
-
-        match_dst = false
-        if opts[:dst_ip]
-          match_dst = @dst_spec.matches?(opts[:dst_ip], opts[:dst_port])
-        else
-          fail AclArgumentError, 'Not specified match target dst IP Addr'
-        end
+        match_proto = match_protocol?(opts[:protocol])
+        match_src = match_addr_port?(@src_spec, opts[:src_ip], opts[:src_port])
+        match_dst = match_addr_port?(@dst_spec, opts[:dst_ip], opts[:dst_port])
       else
         fail AclArgumentError, 'Invalid match target protocol'
       end
 
       (match_proto && match_src && match_dst)
+    end
+
+    private
+
+    # check protocol
+    # @option protocol [AceProtoSpecBase] protocol
+    # @return [Boolean] Matched or not
+    # @raise [AclArgumentError]
+    def match_protocol?(protocol)
+      if @protocol.to_s == 'ip'
+        is_match = true # allow tcp/udp
+      else
+        ## TBD
+        ## what to do when NO name and only protocol number is specified?
+        # In principle, it must be compared by object.
+        is_match = (protocol == @protocol.to_s)
+      end
+      is_match
+    end
+
+    # check src/dst address
+    # @option srcdst_spec [AceSrcDstSpec] src/dst address/port
+    # @option ip [String] ip addr to compare
+    # @option port [Integer] port number to compare
+    # @return [Boolean] Matched or not
+    # @raise [AclArgumentError]
+    def match_addr_port?(srcdst_spec, ip, port)
+      is_match = false
+      if ip
+        is_match = srcdst_spec.matches?(ip, port)
+      else
+        fail AclArgumentError, 'Not specified match target IP Addr'
+      end
+      is_match
+    end
+
+    # Validate options
+    # @param [Hash] opts Options of constructor
+    def validate_protocol(opts)
+      if opts[:protocol]
+        set_protocol(opts)
+      else
+        fail AclArgumentError, 'Not specified IP protocol'
+      end
+    end
+
+    # Validate options
+    # @param [Hash] opts Options of constructor
+    def validate_dst_spec(opts)
+      if opts[:dst]
+        set_dst_spec(opts)
+      else
+        fail AclArgumentError, 'Not specified dst spec'
+      end
+    end
+
+    # Set instance variables
+    # @param [Hash] opts Options of constructor
+    def set_protocol(opts)
+      case opts[:protocol]
+      when AceIpProtoSpec
+        @protocol = opts[:protocol]
+      else
+        @protocol = AceIpProtoSpec.new(
+          name: opts[:protocol],
+          number: opts[:protocol_num]
+        )
+      end
+    end
+
+    # Set instance variables
+    # @param [Hash] opts Options of constructor
+    def set_dst_spec(opts)
+      case opts[:dst]
+      when Hash
+        @dst_spec = AceSrcDstSpec.new opts[:dst]
+      when AceSrcDstSpec
+        @dst_spec = opts[:dst]
+      else
+        fail AclArgumentError, 'Dst spec: unknown class'
+      end
+    end
+
+    # Set instance variables
+    # @param [Hash] opts Options of constructor
+    def set_tcp_info(opts)
+      if @protocol.name == 'tcp' && opts[:tcp_flags_qualifier]
+        @tcp_flags = opts [:tcp_flags_qualifier]
+      else
+        @tcp_flags = nil
+      end
+      @tcp_other_qualifiers = nil
     end
 
   end

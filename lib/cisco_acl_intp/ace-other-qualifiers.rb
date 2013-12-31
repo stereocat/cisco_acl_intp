@@ -29,7 +29,7 @@ module CiscoAclIntp
 
     # @param [AceOtherQualifierList] other RHS Object
     # @return [Boolean]
-    def == (other)
+    def ==(other)
       @list == other.list
     end
   end
@@ -47,9 +47,11 @@ module CiscoAclIntp
 
     # Specified log-input logging?
     # @return [Boolean]
-    def input?
-      @input
-    end
+    attr_reader :input
+
+    # alias as boolean method
+    # @return [Boolean]
+    alias_method(:input?, :input)
 
     # Constructor
     # @param [String] cookie Log cookie
@@ -63,10 +65,11 @@ module CiscoAclIntp
     # Generate string for Cisco IOS access list
     # @return [String]
     def to_s
-      sprintf('%s %s',
-               @input ? 'log-input' : 'log',
-               @cookie ? @cookie : ''
-     )
+      sprintf(
+        '%s %s',
+        @input ? 'log-input' : 'log',
+        @cookie ? @cookie : ''
+      )
     end
   end
 
@@ -79,8 +82,8 @@ module CiscoAclIntp
 
     # Constructor
     # @param [String] name Recursive name
-    def initialize (name)
-      if name && (! name.empty?)
+    def initialize(name)
+      if name && (!name.empty?)
         @recursive_name = name
       else
         fail AclArgumentError, 'Not specified recursive name'
