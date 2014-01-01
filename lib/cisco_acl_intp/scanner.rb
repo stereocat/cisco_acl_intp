@@ -17,8 +17,6 @@ module CiscoAclIntp
         q.concat(scan_one_line(each))
       end
       q.push [false, 'EOF']
-
-      q
     end
 
     # Scan ACL from variable
@@ -37,8 +35,6 @@ module CiscoAclIntp
         q.concat(scan_one_line(each))
       end
       q.push [false, 'EOF']
-
-      q
     end
 
     # Tokens that takes string parameter
@@ -53,15 +49,15 @@ module CiscoAclIntp
       ['time-range', :word],
       ['reflect', :word],
       ['evaluate', :word],
-      ['object-group', :word],
       ['object-group', 'network', :word],
       ['object-group', 'service', :word],
+      ['object-group', :word], # longest match
       ['group-object', :word],
     ]
 
     # STRING regexp:
     # first letter is alphabet or digit
-    STR_REGEXP = '([a-zA-Z\d]\S*)'
+    STR_REGEXP = '[a-zA-Z\d]\S*'
 
     # Scan ACL
     # @param [String] line Access list string
@@ -80,29 +76,37 @@ module CiscoAclIntp
         when scan_match_arg_tokens(ss, q)
         when scan_match_acl_header(ss, q)
         when scan_match_ipaddr(ss, q)
-        when scan_match_common(ss, q, line)
+        when scan_match_common(ss, q)
+        else
+          ss.scan(/(.*)$/) # match all
+          q.push [:UNKNOWN, ss[1]]
         end
       end # until
       q.push [:EOS, nil] # Add end-of-string
     end
 
-    def gen_arg_token_lists
-      STRING_ARG_TOKENS.map do |set|
-        set_dup = set.dup
-        set_dup.map! do |each|
+    def convert_tokens_to_regexpstr(set)
+      # puts "## set #{set}"
+      set.map do |each|
+        case each
+        when String
+          '(' + each + ')'
+        when Symbol
           case each
-          when String
-            '(' + each + ')'
-          when Symbol
-            case each
-            when :word
-              STR_REGEXP
-            when :leftover
-              '(.*)$'
-            end
+          when :word
+            '(' + STR_REGEXP + ')'
+          when :leftover
+            '(.*)$'
           end
         end
-        [set_dup.join('\s+'), set.length]
+      end
+    end
+
+    def gen_arg_token_lists
+      STRING_ARG_TOKENS.map do |each|
+        re_str_list = convert_tokens_to_regexpstr(each)
+        # puts "### #{re_str_list}"
+        [re_str_list.join('\s+'), each.length]
       end
     end
 
@@ -151,17 +155,17 @@ module CiscoAclIntp
       ss.matched?
     end
 
-    def scan_match_common(ss, q, line)
+    def scan_match_common(ss, q)
       case
       when ss.scan(/(\d+)\s/)
         ## Number
         q.push [:NUMBER, ss[1].to_i]
-      when ss.scan(/#{STR_REGEXP}/)
+      when ss.scan(/([\+\-]#{STR_REGEXP})/)
+        ## for tcp flags e.g. +syn -ack
+        q.push [ss[1], ss[1]]
+      when ss.scan(/(#{STR_REGEXP})/)
         ## Tokens
         q.push [ss[1], ss[1]]
-      else
-        # NOT match
-        q.push [:UNKNOWN, line]
       end
       ss.matched?
     end
@@ -169,11 +173,12 @@ module CiscoAclIntp
     def scan_match_arg_tokens(ss, q)
       @arg_tokens.each do |(str, length)|
         if ss.scan(/#{str}/)
+          # puts "## check #{str}"
           (1...length).each do |idx|
-            # puts "##{idx} : #{ss[idx]} : #{str}"
+            # puts "## #{idx} : #{ss[idx]} : #{str}"
             q.push [ss[idx], ss[idx]]
           end
-          # puts "##{length} : #{ss[length] }"
+          # puts "## #{length} : #{ss[length] }"
           q.push [:STRING, ss[length]] # last element
         end
       end
