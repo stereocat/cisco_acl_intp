@@ -55,14 +55,14 @@ rule
                      :log => val[2]
                      )
                  }
-             | REMARK
+             | 'remark' STRING
                  {
-                   dputs "## std_acl: remark/#{val[0]}"
-                   result = RemarkAce.new( val[0] )
+                   dputs "## std_acl: remark/#{val[1]}"
+                   result = RemarkAce.new( val[1] )
                  }
 
 std_acl_log_spec:
-             | LOG log_cookie
+             | 'log' log_cookie
                  {
                    result = AceLogSpec.new( val[1] )
                  }
@@ -78,10 +78,10 @@ std_acl_log_spec:
                    val[1].tcp_other_qualifiers = val[2]
                    result = val[1]
                  }
-             | REMARK
+             | 'remark' STRING
                  {
-                   dputs "## ext_acl: remark/#{val[0]}"
-                   result = RemarkAce.new( val[0] )
+                   dputs "## ext_acl: remark/#{val[1]}"
+                   result = RemarkAce.new( val[1] )
                  }
 
  ext_acl_body: action ip_proto ip_spec ip_spec
@@ -130,73 +130,73 @@ std_acl_log_spec:
 
 # protocols
 
-     ip_proto: AHP
+     ip_proto: 'ahp'
                  {
                    result = AceIpProtoSpec.new(
                      :name => val[0], :number => 51
                      )
                  }
-             | EIGRP
+             | 'eigrp'
                  {
                    result = AceIpProtoSpec.new(
                      :name => val[0], :number => 88
                      )
                  }
-             | ESP
+             | 'esp'
                  {
                    result = AceIpProtoSpec.new(
                      :name => val[0], :number => 50
                      )
                  }
-             | GRE
+             | 'gre'
                  {
                    result = AceIpProtoSpec.new(
                      :name => val[0], :number => 47
                      )
                  }
-             | IGMP
+             | 'igmp'
                  {
                    result = AceIpProtoSpec.new(
                      :name => val[0], :number => 2
                      )
                  }
-             | IGRP
+             | 'igrp'
                  {
                    result = AceIpProtoSpec.new(
                      :name => val[0], :number => 9
                      )
                  }
-             | IP
+             | 'ip'
                  {
                    result = AceIpProtoSpec.new(
                      :name => val[0]
                      )
                  } # IS NOT 0! (no number)
-             | IPINIP
+             | 'ipinip'
                  {
                    result = AceIpProtoSpec.new(
                      :name => val[0], :number => 94
                      )
                  }
-             | NOS
+             | 'nos'
                  {
                    result = AceIpProtoSpec.new(
                      :name => val[0], :number => 4
                      )
                  }
-             | OSPF
+             | 'ospf'
                  {
                    result = AceIpProtoSpec.new(
                      :name => val[0], :number => 89
                      )
                  }
-             | PCP
+             | 'pcp'
                  {
                    result = AceIpProtoSpec.new(
                      :name => val[0], :number => 108
                      )
                  }
-             | PIM
+             | 'pim'
                  {
                    result = AceIpProtoSpec.new(
                      :name => val[0], :number => 103
@@ -214,7 +214,7 @@ std_acl_log_spec:
                    end
                  }
 
-   icmp_proto: ICMP
+   icmp_proto: 'icmp'
                  {
                    dputs '## icmp_proto'
                    result = AceIpProtoSpec.new(
@@ -222,7 +222,7 @@ std_acl_log_spec:
                      )
                  }
 
-    tcp_proto: TCP
+    tcp_proto: 'tcp'
                  {
                    dputs '## tcp_proto'
                    result = AceIpProtoSpec.new(
@@ -230,7 +230,7 @@ std_acl_log_spec:
                      )
                  }
 
-    udp_proto: UDP
+    udp_proto: 'udp'
                  {
                    dputs '## udp_proto'
                    result = AceIpProtoSpec.new(
@@ -263,7 +263,7 @@ udp_srcdst_spec: objgrp_srcdst_spec udp_port_spec
                  # つくれないので、エラーリカバリしようがない。
                  # acl_entry_list の中身については可能な範囲で parse して追加。
 
-std_named_acl_header: NAMED_ACL STANDARD STRING eos
+std_named_acl_header: NAMED_ACL 'standard' STRING eos
                  {
                    dputs "## std named acl: #{val[2]}"
                    @curr_acl_name = val[2]
@@ -289,7 +289,7 @@ std_named_acl_entry: seq_number std_acl eos
                    result = val[1]
                  }
 
-ext_named_acl_header: NAMED_ACL EXTENDED STRING eos
+ext_named_acl_header: NAMED_ACL 'extended' STRING eos
                  {
                    dputs "## ext named acl: #{val[2]}"
                    @curr_acl_name = val[2]
@@ -314,7 +314,7 @@ ext_named_acl_entry: seq_number ext_acl eos
                    val[1].seq_number = val[0].to_i
                    result = val[1]
                  }
-             | seq_number EVALUATE STRING eos
+             | seq_number 'evaluate' STRING eos
                  {
                    result = EvaluateAce.new(
                      :number => val[0].to_i,
@@ -330,17 +330,17 @@ ext_named_acl_entry: seq_number ext_acl eos
 
 # access-list common components
 
-       action: PERMIT
+       action: 'permit'
                  {
                    result = val[0]
                  }
-             | DENY
+             | 'deny'
                  {
                    result = val[0]
                  }
 
 
-      ip_spec: HOST IPV4_ADDR
+      ip_spec: 'host' IPV4_ADDR
                  {
                    begin
                      dputs "## ip_spec host: #{val[0]}/#{val[1]}"
@@ -362,7 +362,7 @@ ext_named_acl_entry: seq_number ext_acl eos
                      yyerror_with err.message
                    end
                  }
-             | ANY
+             | 'any'
                  {
                    dputs "## ip_spec any: #{val[0]}"
                    result = AceIpSpec.new(
@@ -371,10 +371,10 @@ ext_named_acl_entry: seq_number ext_acl eos
                  }
 
  dynamic_spec:
-             | DYNAMIC STRING timeout_spec
+             | 'dynamic' STRING timeout_spec
 
  timeout_spec:
-             | TIMEOUT NUMBER
+             | 'timeout' NUMBER
 
 # object-group
 
@@ -385,7 +385,7 @@ ext_named_acl_entry: seq_number ext_acl eos
        objgrp: objgrp_service
              | objgrp_network
 
-objgrp_service_spec: OBJGRP STRING # service object group
+objgrp_service_spec: 'object-group' STRING # service object group
                  {
                  }
 
@@ -395,13 +395,13 @@ objgrp_srcdst_spec: objgrp_network_spec
                    result = val[0]
                  }
 
-objgrp_network_spec: OBJGRP STRING # network object group
+objgrp_network_spec: 'object-group' STRING # network object group
                  {
                  }
 
 objgrp_network: objgrp_network_header objgrp_network_entry_list
 
-objgrp_network_header: OBJGRP NETWORK STRING
+objgrp_network_header: 'object-group' 'network' STRING
                  {
                  }
 
@@ -410,28 +410,28 @@ objgrp_network_entry_list:
                  {
                  }
 
-objgrp_network_entry: DESCRIPTION
+objgrp_network_entry: 'description' STRING
                  {
                  }
-             | HOST IPV4_ADDR
+             | 'host' IPV4_ADDR
                  {
                  }
              | IPV4_ADDR IPV4_ADDR
                  {
                  }
-             | IPV4_ADDR SLASH NUMBER # 0-32
+             | IPV4_ADDR '/' NUMBER # 0-32
                  {
                  }
-             | RANGE IPV4_ADDR IPV4_ADDR
+             | 'range' IPV4_ADDR IPV4_ADDR
                  {
                  }
-             | GRPOBJ STRING # nested object-group
+             | 'group-object' STRING # nested object-group
                  {
                  }
 
 objgrp_service: objgrp_service_header objgrp_service_entry_list
 
-objgrp_service_header: OBJGRP SERVICE STRING
+objgrp_service_header: 'object-group' 'service' STRING
                  {
                  }
 
@@ -440,7 +440,7 @@ objgrp_service_entry_list:
                  {
                  }
 
-objgrp_service_entry: DESCRIPTION
+objgrp_service_entry: 'description' STRING
              | ip_proto
                  {
                  }
@@ -453,17 +453,17 @@ objgrp_service_entry: DESCRIPTION
              | udp_proto objgrp_udp_proto
                  {
                  }
-             | TCPUDP objgrp_tcpudp_proto
+             | 'tcp-udp' objgrp_tcpudp_proto
                  {
                  }
-             | GRPOBJ STRING # nested object-group
+             | 'group-object' STRING # nested object-group
                  {
                  }
 
 objgrp_tcp_proto: objgrp_tcp_proto_spec
                  {
                  }
-             | SOURCE objgrp_tcp_proto_spec
+             | 'source' objgrp_tcp_proto_spec
                  {
                  }
 
@@ -471,7 +471,7 @@ objgrp_tcp_proto_spec:
              | unary_operator tcp_port_qualifier
                  {
                  }
-             | RANGE tcp_port_qualifier tcp_port_qualifier
+             | 'range' tcp_port_qualifier tcp_port_qualifier
                  {
                  }
              | tcp_port_qualifier
@@ -481,7 +481,7 @@ objgrp_tcp_proto_spec:
 objgrp_udp_proto: objgrp_udp_proto_spec
                  {
                  }
-             | SOURCE objgrp_udp_proto_spec
+             | 'source' objgrp_udp_proto_spec
                  {
                  }
 
@@ -489,7 +489,7 @@ objgrp_udp_proto_spec:
              | unary_operator udp_port_qualifier
                  {
                  }
-             | RANGE udp_port_qualifier udp_port_qualifier
+             | 'range' udp_port_qualifier udp_port_qualifier
                  {
                  }
              | udp_port_qualifier
@@ -499,7 +499,7 @@ objgrp_udp_proto_spec:
 objgrp_tcpudp_proto: objgrp_tcpudp_proto_spec
                  {
                  }
-             | SOURCE objgrp_tcpudp_proto_spec
+             | 'source' objgrp_tcpudp_proto_spec
                  {
                  }
 
@@ -507,7 +507,7 @@ objgrp_tcpudp_proto_spec:
              | unary_operator tcpudp_port_qualifier
                  {
                  }
-             | RANGE tcpudp_port_qualifier tcpudp_port_qualifier
+             | 'range' tcpudp_port_qualifier tcpudp_port_qualifier
                  {
                  }
              | tcpudp_port_qualifier
@@ -515,60 +515,60 @@ objgrp_tcpudp_proto_spec:
                  }
 
 tcpudp_port_qualifier: NUMBER        # port number (0-65535)
-             | DISCARD
-             | DOMAIN
-             | ECHO
-             | PIM_AUTO_RP
-             | SUNRPC
-             | SYSLOG
-             | TACACS
-             | TALK
+             | 'discard'
+             | 'domain'
+             | 'echo'
+             | 'pim-auto-rp'
+             | 'sunrpc'
+             | 'syslog'
+             | 'tacacs'
+             | 'talk'
 
 # icmp qualifier
 
 icmp_qualifier:
-             | ADM_PROHIB
-             | ALT_ADDR
-             | CONV_ERR
-             | DOD_HOST_PROHIB
-             | DOD_NET_PROHIB
-             | ECHO
-             | ECHO_REPLY
-             | GEN_PARAM_PROB
-             | HOST_ISOL
-             | MOB_REDIR
-             | NET_REDIR
-             | NET_TOS_REDIR
-             | NET_UNREACH
-             | NET_UNKN
-             | NO_ROOM_OPT
-             | OPT_MISSING
-             | PKT_TOO_BIG
-             | PARAM_PROB
-             | PORT_UNREACH
-             | PREC_UNREACH
-             | PROT_UNREACH
-             | HOST_PREC_UNREACH
-             | HOST_REDIR
-             | HOST_TOS_REDIR
-             | HOST_UNKN
-             | HOST_UNREACH
-             | INFO_REPLY
-             | INFO_REQ
-             | MASK_REPLY
-             | MASK_REQ
-             | REASS_TIMEOUT
-             | REDIR
-             | ROUTER_ADV
-             | ROUTER_SOL
-             | SRC_QUENCH
-             | SRC_ROUTE_FAIL
-             | TIME_EXC
-             | TIME_REPLY
-             | TIME_REQ
-             | TRACERT
-             | TTL_EXC
-             | UNREACH
+             | 'administratively-prohibited'
+             | 'alternate-address'
+             | 'conversion-error'
+             | 'dod-host-prohibited'
+             | 'dod-net-prohibited'
+             | 'echo'
+             | 'echo-reply'
+             | 'general-parameter-problem'
+             | 'host-isolated'
+             | 'mobile-redirect'
+             | 'net-redirect'
+             | 'net-tos-redirect'
+             | 'net-unreachable'
+             | 'net-unknown'
+             | 'no-room-for-option'
+             | 'option-missing'
+             | 'packet-too-big'
+             | 'parameter-problem'
+             | 'port-unreachable'
+             | 'precedence-unreachable'
+             | 'protocol-unreachable'
+             | 'host-precedence-unreachable'
+             | 'host-redirect'
+             | 'host-tos-redirect'
+             | 'host-unknown'
+             | 'host-unreachable'
+             | 'information-reply'
+             | 'information-request'
+             | 'mask-reply'
+             | 'mask-request'
+             | 'reassembly-timeout'
+             | 'redirect'
+             | 'router-advertisement'
+             | 'router-solicitation'
+             | 'source-quench'
+             | 'source-route-failed'
+             | 'time-exceeded'
+             | 'timestamp-reply'
+             | 'timestamp-request'
+             | 'traceroute'
+             | 'ttl-exceeded'
+             | 'unreachable'
              | icmp_numtype icmp_numcode
 
  icmp_numtype: NUMBER # icmp message type (0-255)
@@ -594,7 +594,7 @@ tcp_port_spec:
                      :port1 => val[1]
                      )
                  }
-             | RANGE tcp_port_qualifier tcp_port_qualifier
+             | 'range' tcp_port_qualifier tcp_port_qualifier
                  {
                    dputs "## tcp port spec: #{val[0]}/#{val[1]}/#{val[2]}"
                    result = AcePortSpec.new(
@@ -618,7 +618,7 @@ udp_port_spec:
                      :port1 => val[1]
                      )
                  }
-             | RANGE udp_port_qualifier udp_port_qualifier
+             | 'range' udp_port_qualifier udp_port_qualifier
                  {
                    dputs "## udp port spec: #{val[0]}/#{val[1]}/#{val[2]}"
                    result = AcePortSpec.new(
@@ -628,10 +628,10 @@ udp_port_spec:
                      )
                  }
 
-unary_operator: GT
-             | EQ
-             | NEQ
-             | LT
+unary_operator: 'gt'
+             | 'lt'
+             | 'eq'
+             | 'neq'
 
 tcp_port_qualifier: NUMBER
                  {
@@ -644,205 +644,205 @@ tcp_port_qualifier: NUMBER
                      yyerror_with err.message
                    end
                  }
-             | BGP
+             | 'bgp'
                  {
                    result = AceTcpProtoSpec.new(
                      :name => val[0], :number => 179
                      )
                  }
-             | CHARGEN
+             | 'chargen'
                  {
                    result = AceTcpProtoSpec.new(
                      :name => val[0], :number => 19
                      )
                  }
-             | CMD
+             | 'cmd'
                  {
                    result = AceTcpProtoSpec.new(
                      :name => val[0], :number => 514
                      )
                  }
-             | DAYTIME
+             | 'daytime'
                  {
                    result = AceTcpProtoSpec.new(
                      :name => val[0], :number => 13
                      )
                  }
-             | DISCARD
+             | 'discard'
                  {
                    result = AceTcpProtoSpec.new(
                      :name => val[0], :number => 9
                      )
                  }
-             | DOMAIN
+             | 'domain'
                  {
                    result = AceTcpProtoSpec.new(
                      :name => val[0], :number => 53
                      )
                  }
-             | DRIP
+             | 'drip'
                  {
                    result = AceTcpProtoSpec.new(
                      :name => val[0], :number => 3949
                      )
                  }
-             | ECHO
+             | 'echo'
                  {
                    result = AceTcpProtoSpec.new(
                      :name => val[0], :number => 7
                      )
                  }
-             | EXEC
+             | 'exec'
                  {
                    result = AceTcpProtoSpec.new(
                      :name => val[0], :number => 512
                      )
                  }
-             | FINGER
+             | 'finger'
                  {
                    result = AceTcpProtoSpec.new(
                      :name => val[0], :number => 79
                      )
                  }
-             | FTP
+             | 'ftp'
                  {
                    result = AceTcpProtoSpec.new(
                      :name => val[0], :number => 21
                      )
                  }
-             | FTP_DATA
+             | 'ftp-data'
                  {
                    result = AceTcpProtoSpec.new(
                      :name => val[0], :number => 20
                      )
                  }
-             | GOPHER
+             | 'gopher'
                  {
                    result = AceTcpProtoSpec.new(
                      :name => val[0], :number => 70
                      )
                  }
-             | HOSTNAME
+             | 'hostname'
                  {
                    result = AceTcpProtoSpec.new(
                      :name => val[0], :number => 101
                      )
                  }
-             | IDENT
+             | 'ident'
                  {
                    result = AceTcpProtoSpec.new(
                      :name => val[0], :number => 113
                      )
                  }
-             | IRC
+             | 'irc'
                  {
                    result = AceTcpProtoSpec.new(
                      :name => val[0], :number => 194
                      )
                  }
-             | KLOGIN
+             | 'klogin'
                  {
                    result = AceTcpProtoSpec.new(
                      :name => val[0], :number => 543
                      )
                  }
-             | KSHELL
+             | 'kshell'
                  {
                    result = AceTcpProtoSpec.new(
                      :name => val[0], :number => 544
                      )
                  }
-             | LOGIN
+             | 'login'
                  {
                    result = AceTcpProtoSpec.new(
                      :name => val[0], :number => 513
                      )
                  }
-             | LPD
+             | 'lpd'
                  {
                    result = AceTcpProtoSpec.new(
                      :name => val[0], :number => 515
                      )
                  }
-             | NNTP
+             | 'nntp'
                  {
                    result = AceTcpProtoSpec.new(
                      :name => val[0], :number => 119
                      )
                  }
-             | PIM_AUTO_RP
+             | 'pim-auto-rp'
                  {
                    result = AceTcpProtoSpec.new(
                      :name => val[0], :number => 496
                      )
                  }
-             | POP2
+             | 'pop2'
                  {
                    result = AceTcpProtoSpec.new(
                      :name => val[0], :number => 109
                      )
                  }
-             | POP3
+             | 'pop3'
                  {
                    result = AceTcpProtoSpec.new(
                      :name => val[0], :number => 110
                      )
                  }
-             | SMTP
+             | 'smtp'
                  {
                    result = AceTcpProtoSpec.new(
                      :name => val[0], :number => 25
                      )
                  }
-             | SUNRPC
+             | 'sunrpc'
                  {
                    result = AceTcpProtoSpec.new(
                      :name => val[0], :number => 111
                      )
                  }
-             | SYSLOG
+             | 'syslog'
                  {
                    result = AceTcpProtoSpec.new(
                      :name => val[0], :number => 514
                      )
                  }
-             | TACACS
+             | 'tacacs'
                  {
                    result = AceTcpProtoSpec.new(
                      :name => val[0], :number => 49
                      )
                  }
-             | TALK
+             | 'talk'
                  {
                    result = AceTcpProtoSpec.new(
                      :name => val[0], :number => 517
                      )
                  }
-             | TELNET
+             | 'telnet'
                  {
                    result = AceTcpProtoSpec.new(
                      :name => val[0], :number => 23
                      )
                  }
-             | TIME
+             | 'time'
                  {
                    result = AceTcpProtoSpec.new(
                      :name => val[0], :number => 37
                      )
                  }
-             | UUCP
+             | 'uucp'
                  {
                    result = AceTcpProtoSpec.new(
                      :name => val[0], :number => 540
                      )
                  }
-             | WHOIS
+             | 'whois'
                  {
                    result = AceTcpProtoSpec.new(
                      :name => val[0], :number => 43
                      )
                  }
-             | WWW
+             | 'www'
                  {
                    result = AceTcpProtoSpec.new(
                      :name => val[0], :number => 80
@@ -856,163 +856,163 @@ udp_port_qualifier: NUMBER
                      :number => val[0]
                      )
                  }
-             | BIFF
+             | 'biff'
                  {
                    result = AceUdpProtoSpec.new(
                      :name => val[0], :number => 512
                      )
                  }
-             | BOOTPC
+             | 'bootpc'
                  {
                    result = AceUdpProtoSpec.new(
                      :name => val[0], :number => 68
                      )
                  }
-             | BOOTPS
+             | 'bootps'
                  {
                    result = AceUdpProtoSpec.new(
                      :name => val[0], :number => 67
                      )
                  }
-             | DISCARD
+             | 'discard'
                  {
                    result = AceUdpProtoSpec.new(
                      :name => val[0], :number => 9
                      )
                  }
-             | DNSIX
+             | 'dnsix'
                  {
                    result = AceUdpProtoSpec.new(
                      :name => val[0], :number => 195
                      )
                  }
-             | DOMAIN
+             | 'domain'
                  {
                    result = AceUdpProtoSpec.new(
                      :name => val[0], :number => 53
                      )
                  }
-             | ECHO
+             | 'echo'
                  {
                    result = AceUdpProtoSpec.new(
                      :name => val[0], :number => 7
                      )
                  }
-             | ISAKMP
+             | 'isakmp'
                  {
                    result = AceUdpProtoSpec.new(
                      :name => val[0], :number => 500
                      )
                  }
-             | MOBILE_IP
+             | 'mobile-ip'
                  {
                    result = AceUdpProtoSpec.new(
                      :name => val[0], :number => 434
                      )
                  }
-             | NAMESERVER
+             | 'nameserver'
                  {
                    result = AceUdpProtoSpec.new(
                      :name => val[0], :number => 42
                      )
                  }
-             | NETBIOS_DGM
+             | 'netbios-dgm'
                  {
                    result = AceUdpProtoSpec.new(
                      :name => val[0], :number => 138
                      )
                  }
-             | NETBIOS_NS
+             | 'netbios-ns'
                  {
                    result = AceUdpProtoSpec.new(
                      :name => val[0], :number => 137
                      )
                  }
-             | NETBIOS_SS
+             | 'netbios-ss'
                  {
                    result = AceUdpProtoSpec.new(
                      :name => val[0], :number => 139
                      )
                  }
-             | NON500_ISAKMP
+             | 'non500-isakmp'
                  {
                    result = AceUdpProtoSpec.new(
                      :name => val[0], :number => 4500
                      )
                  }
-             | NTP
+             | 'ntp'
                  {
                    result = AceUdpProtoSpec.new(
                      :name => val[0], :number => 123
                      )
                  }
-             | PIM_AUTO_RP
+             | 'pim-auto-rp'
                  {
                    result = AceUdpProtoSpec.new(
                      :name => val[0], :number => 496
                      )
                  }
-             | RIP
+             | 'rip'
                  {
                    result = AceUdpProtoSpec.new(
                      :name => val[0], :number => 520
                      )
                  }
-             | SNMP
+             | 'snmp'
                  {
                    result = AceUdpProtoSpec.new(
                      :name => val[0], :number => 161
                      )
                  }
-             | SNMPTRAP
+             | 'snmptrap'
                  {
                    result = AceUdpProtoSpec.new(
                      :name => val[0], :number => 162
                      )
                  }
-             | SUNRPC
+             | 'sunrpc'
                  {
                    result = AceUdpProtoSpec.new(
                      :name => val[0], :number => 111
                      )
                  }
-             | SYSLOG
+             | 'syslog'
                  {
                    result = AceUdpProtoSpec.new(
                      :name => val[0], :number => 514
                      )
                  }
-             | TACACS
+             | 'tacacs'
                  {
                    result = AceUdpProtoSpec.new(
                      :name => val[0], :number => 49
                      )
                  }
-             | TALK
+             | 'talk'
                  {
                    result = AceUdpProtoSpec.new(
                      :name => val[0], :number => 517
                      )
                  }
-             | TFTP
+             | 'tftp'
                  {
                    result = AceUdpProtoSpec.new(
                      :name => val[0], :number => 69
                      )
                  }
-             | TIME
+             | 'time'
                  {
                    result = AceUdpProtoSpec.new(
                      :name => val[0], :number => 37
                      )
                  }
-             | WHO
+             | 'who'
                  {
                    result = AceUdpProtoSpec.new(
                      :name => val[0], :number => 513
                      )
                  }
-             | XDMCP
+             | 'xdmcp'
                  {
                    result = AceUdpProtoSpec.new(
                      :name => val[0], :number => 177
@@ -1023,8 +1023,8 @@ udp_port_qualifier: NUMBER
 
 tcp_flags_qualifier:
              | tcp_flags_list
-             | MATCH_ALL pm_tcp_flags_list
-             | MATCH_ANY pm_tcp_flags_list
+             | 'match_all' pm_tcp_flags_list
+             | 'match_any' pm_tcp_flags_list
 
 tcp_flags_list: tcp_flags
                  {
@@ -1038,32 +1038,32 @@ tcp_flags_list: tcp_flags
                    result = val[0]
                  }
 
-    tcp_flags: ESTABL
+    tcp_flags: 'established'
                  {
                    dputs "## tcp_flags, established: #{val[0]}"
                    result = AceTcpFlag.new( val[0] )
                  }
-             | ACK
+             | 'ack'
                  {
                    result = AceTcpFlag.new( val[0] )
                  }
-             | SYN
+             | 'syn'
                  {
                    result = AceTcpFlag.new( val[0] )
                  }
-             | FIN
+             | 'fin'
                  {
                    result = AceTcpFlag.new( val[0] )
                  }
-             | PSH
+             | 'psh'
                  {
                    result = AceTcpFlag.new( val[0] )
                  }
-             | URG
+             | 'urg'
                  {
                    result = AceTcpFlag.new( val[0] )
                  }
-             | RST
+             | 'rst'
                  {
                    result = AceTcpFlag.new( val[0] )
                  }
@@ -1071,12 +1071,18 @@ tcp_flags_list: tcp_flags
 pm_tcp_flags_list: pm_tcp_flags
              | pm_tcp_flags_list pm_tcp_flags
 
- pm_tcp_flags: PM_ACK
-             | PM_SYN
-             | PM_FIN
-             | PM_PSH
-             | PM_URG
-             | PM_RST
+ pm_tcp_flags: '+ack'
+             | '-ack'
+             | '+syn'
+             | '-syn'
+             | '+fin'
+             | '-fin'
+             | '+psh'
+             | '-psh'
+             | '+urg'
+             | '-urg'
+             | '+rst'
+             | '-rst'
 
 # oether qualifier list
 
@@ -1094,7 +1100,7 @@ other_qualifier_list:
                  }
 
 other_qualifier: dscp_rule
-             | FRAGMENTS
+             | 'fragments'
              | logging
                  {
                    dputs "## other qualifier, logging, #{val[0]})"
@@ -1110,37 +1116,37 @@ other_qualifier: dscp_rule
              | ttl_qualifier      # IOS 12.4
              | option_qualifier   # IOS 12.3(4)T,12.2(25)S, IP Options
 
-    dscp_rule: DSCP dscp_spec
+    dscp_rule: 'dscp' dscp_spec
                  ;
 
-    dscp_spec: NUMBER   # 0-63
-             | AF11     # 001010
-             | AF12     # 001100
-             | AF13     # 001110
-             | AF21     # 010010
-             | AF22     # 010100
-             | AF23     # 010110
-             | AF31     # 011010
-             | AF32     # 011100
-             | AF33     # 011110
-             | AF41     # 100010
-             | AF42     # 100100
-             | AF43     # 100110
-             | CS1      # 001000
-             | CS2      # 010000
-             | CS3      # 011000
-             | CS4      # 100000
-             | CS5      # 101000
-             | CS6      # 110000
-             | CS7      # 111000
-             | DEFAULT  # 000000
-             | EF       # 101110
+    dscp_spec: NUMBER     # 0-63
+             | 'af11'     # 001010
+             | 'af12'     # 001100
+             | 'af13'     # 001110
+             | 'af21'     # 010010
+             | 'af22'     # 010100
+             | 'af23'     # 010110
+             | 'af31'     # 011010
+             | 'af32'     # 011100
+             | 'af33'     # 011110
+             | 'af41'     # 100010
+             | 'af42'     # 100100
+             | 'af43'     # 100110
+             | 'CS1'      # 001000
+             | 'CS2'      # 010000
+             | 'CS3'      # 011000
+             | 'CS4'      # 100000
+             | 'CS5'      # 101000
+             | 'CS6'      # 110000
+             | 'CS7'      # 111000
+             | 'default'  # 000000
+             | 'ef'       # 101110
 
-      logging: LOG_INPUT log_cookie
+      logging: 'log-input' log_cookie
                  {
                    result = AceLogSpec.new( val[1], true )
                  }
-             | LOG log_cookie
+             | 'log' log_cookie
                  {
                    result = AceLogSpec.new( val[1] )
                  }
@@ -1151,67 +1157,67 @@ other_qualifier: dscp_rule
                    result = val[0]
                  }
 
-tos_qualifier: TOS tos_string
-             | TOS NUMBER
+tos_qualifier: 'tos' tos_string
+             | 'tos' NUMBER
 
-   tos_string: TOS_MAX_REL
-             | TOS_MAX_THRPUT
-             | TOS_MIN_DELAY
-             | TOS_MIN_MONET_COST
-             | TOS_NORMAL
+   tos_string: 'max-reliability'
+             | 'max-throughput'
+             | 'min-delay'
+             | 'min-monetary-cost'
+             | 'normal'
 
-precedence_qualifier: PRECEDENCE precedence_string
-             | PRECEDENCE NUMBER # 0-7
+precedence_qualifier: 'precedence' precedence_string
+             | 'precedence' NUMBER # 0-7
 
-precedence_string: PREC_CRITICAL # 5
-             | PREC_FLASH        # 3
-             | PREC_FLASH_OVERR  # 4
-             | PREC_IMMED        # 2
-             | PREC_INET         # 6
-             | NETWORK           # 7
-             | PREC_PRIO         # 1
-             | PREC_ROUTINE      # 0
+precedence_string: 'critical'   # 5
+             | 'flash'          # 3
+             | 'flash-override' # 4
+             | 'immediate'      # 2
+             | 'internet'       # 6
+             | 'network'        # 7
+             | 'priority'       # 1
+             | 'routine'        # 0
 
-time_range_spec: TIME_RANGE STRING
+time_range_spec: 'time-range' STRING
 
-recursive_qualifier: REFLECT STRING timeout_spec
+recursive_qualifier: 'reflect' STRING timeout_spec
                  {
                    ## TBD: timeout_spec not implemented yet.
                    result = AceRecursiveQualifier.new( val[1] )
                  }
 
-ttl_qualifier: TTL unary_operator NUMBER # 0-255
-             | TTL RANGE NUMBER NUMBER
+ttl_qualifier: 'ttl' unary_operator NUMBER # 0-255
+             | 'ttl' 'range' NUMBER NUMBER
 
-option_qualifier: OPTION option_spec
+option_qualifier: 'option' option_spec
 
-  option_spec: ADD_EXT   # opt 147
-             | ANY_OPTS
-             | COM_SECURITY  # opt 134
-             | DPS           # opt 151
-             | ENCODE        # opt 15
-             | EOOL          # opt 0
-             | EXT_IP        # opt 145
-             | EXT_SECURITY  # opt 133
-             | FINN          # opt 205
-             | IMITD         # opt 144
-             | LSR           # opt 131
-             | MTUP          # opt 11
-             | MTUR          # opt 12
-             | NO_OP         # opt 1
-             | NSAPA         # opt 150
-             | RECORD_ROUTE  # opt 7
-             | ROUTER_ALERT  # opt 148
-             | SDB           # opt 149
-             | SECURITY      # opt 130
-             | SSR           # opt 137
-             | STREAM_ID     # opt 136
-             | TIMESTAMP     # opt 68
-             | TRACERT       # opt 82
-             | UMP           # opt 152
-             | VISA          # opt 142
-             | ZSU           # opt 10
-             | NUMBER        # ip options vlaue (0-255)
+  option_spec: 'add-ext'       # opt 147
+             | 'any-options'
+             | 'com-security'  # opt 134
+             | 'dps'           # opt 151
+             | 'encode'        # opt 15
+             | 'eool'          # opt 0
+             | 'ext-ip'        # opt 145
+             | 'ext-security'  # opt 133
+             | 'finn'          # opt 205
+             | 'imitd'         # opt 144
+             | 'lsr'           # opt 131
+             | 'mtup'          # opt 11
+             | 'mtur'          # opt 12
+             | 'no-op'         # opt 1
+             | 'nsapa'         # opt 150
+             | 'record-route'  # opt 7
+             | 'route-alert'   # opt 148
+             | 'sdb'           # opt 149
+             | 'security'      # opt 130
+             | 'ssr'           # opt 137
+             | 'stream-id'     # opt 136
+             | 'timestamp'     # opt 68
+             | 'traceroute'    # opt 82
+             | 'ump'           # opt 152
+             | 'visa'          # opt 142
+             | 'zsu'           # opt 10
+             | NUMBER          # ip options vlaue (0-255)
 
 ---- header
 
