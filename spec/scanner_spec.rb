@@ -1,11 +1,6 @@
+# -*- coding: utf-8 -*-
 require 'spec_helper'
 require 'yaml'
-require 'erb'
-
-include CiscoAclIntp
-AclContainerBase.disable_color
-
-############################################################
 
 describe 'Scanner' do
   describe '#scan_line' do
@@ -45,26 +40,24 @@ EOL
     tokens = YAML.load_file(
       File.join(specdir.path, 'single_tokens.yml')
     )
-    codes = []
     tokens.each do |each|
-      code_erb = ERB.new(<<"EOL")
-    it 'should be parsed single token: <%= each %>' do
-      @s.scan_line('<%= each %>').should
-        eq [%w('<%= each %>' '<%= each %>'),
-            [:EOS, nil],
-            [:EOS, nil],
-            [false, 'EOF']
-           ]
+      # run test
+      it "should be parsed single token: #{each}" do
+        @s.scan_line(each).should
+        eq [
+          [each, each],
+          [:EOS, nil],
+          [:EOS, nil],
+          [false, 'EOF']
+        ]
+      end
     end
-EOL
-      codes.push code_erb.result(binding)
-    end
-    # puts codes.join("\n")
-    instance_eval codes.join("\n")
-
   end # scan_line
 
   describe '#scan_file' do
+    before do
+      @s = Scanner.new
+    end
 
     specdir = Dir.new('./spec/')
     datadir = Dir.new('./spec/data/')
@@ -115,19 +108,14 @@ EOL
       end
 
       # run test
-      test_erb_code = <<"EOL"
-      it 'should be parsed <%= File.basename(acl_file) %> \
-as <%= File.basename(token_file) %> \
-in tests of <%= each_test[:test_description] %>' do
-        tokens = YAML.load_file('<%= token_file %>')
-        s = Scanner.new
-        File.open('<%= acl_file %>') do |file|
-          s.scan_file(file).should eq tokens
+      it "should be parsed #{File.basename(acl_file)} as \
+#{File.basename(token_file)} in tests of \
+#{each_test[:test_description]}" do
+        tokens = YAML.load_file(token_file)
+        File.open(acl_file) do |file|
+          @s.scan_file(file).should eq tokens
         end
       end
-EOL
-      test_erb = ERB.new(test_erb_code)
-      instance_eval test_erb.result(binding)
     end # tests.each
 
   end # scan_file
