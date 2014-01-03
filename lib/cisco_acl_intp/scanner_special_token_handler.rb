@@ -4,7 +4,7 @@ require 'strscan'
 module CiscoAclIntp
 
   # Data and Handler functions of special tokens
-  module SpecialTokenMgr
+  module SpecialTokenHandler
 
     # STRING token regexp:
     # first letter is alphabet or digit

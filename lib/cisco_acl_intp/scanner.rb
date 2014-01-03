@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 require 'strscan'
-require 'cisco_acl_intp/scanner_special_token_mgr'
+require 'cisco_acl_intp/scanner_special_token_handler'
 
 module CiscoAclIntp
 
@@ -8,15 +8,20 @@ module CiscoAclIntp
   class Scanner
 
     # include special tokens data and its handlers
-    include SpecialTokenMgr
+    include SpecialTokenHandler
+
+    # Constructor
+    # @return [Scanner]
+    def initialize
+      @arg_tokens = gen_arg_token_lists
+    end
 
     # Scan ACL from file to parse
     # @param [File] file File name
     # @return [Array] Scanned tokens array (Queue)
     def scan_file(file)
       q = [] # queue
-
-      file.each_line do | each |
+      file.each_line do |each|
         q.concat(scan_one_line(each))
       end
       q.push [false, 'EOF']
@@ -27,10 +32,7 @@ module CiscoAclIntp
     # @return [Array] Scanned tokens array (Queue)
     def scan_line(str)
       q = [] # queue
-      @curr_line = ''
-      @old_line = ''
-
-      str.split(/$/).each do | each |
+      str.split(/$/).each do |each|
         each.chomp!
         # add word separator at end of line
         each.concat(' ')
@@ -43,7 +45,6 @@ module CiscoAclIntp
     # @param [String] line Access list string
     # @return [Array] Scanned tokens array (Queue)
     def scan_one_line(line)
-      @arg_tokens = gen_arg_token_lists # cache
       run_scanning(line)
     end # def scan_one_line
 
@@ -131,11 +132,10 @@ module CiscoAclIntp
       when ss.scan(/(\d+)\s/)
         ## Number
         q.push [:NUMBER, ss[1].to_i]
-      when ss.scan(/([\+\-]#{STR_REGEXP})/)
-        ## for tcp flags e.g. +syn -ack
-        q.push [ss[1], ss[1]]
-      when ss.scan(/(#{STR_REGEXP})/)
+      when ss.scan(/([\+\-]?#{STR_REGEXP})/)
         ## Tokens (echo back)
+        ## defined in module SpecialTokenHandler
+        ## plus/minus used in tcp flag token e.g. +syn -ack
         q.push [ss[1], ss[1]]
       else
         ## do not match any?
