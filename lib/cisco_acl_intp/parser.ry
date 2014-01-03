@@ -19,28 +19,28 @@ rule
                    yyerrok
                  }
 
-# standard access-list
+                 # standard access-list
 
  numbered_acl: NUMD_STD_ACL std_acl eos
                  {
                    dputs "## numd std acl: #{val[0]}/#{val[1]}"
                    @curr_acl_name = val[0]
-                   if not @acl_table[ @curr_acl_name ]
-                     @acl_table[ @curr_acl_name ] = NumberedStdAcl.new( @curr_acl_name )
+                   if not @acl_table[@curr_acl_name]
+                     @acl_table[@curr_acl_name] = NumberedStdAcl.new(@curr_acl_name)
                      @line_number = 0
                    end
-                   @acl_table[ @curr_acl_name ].add_entry( val[1] )
+                   @acl_table[@curr_acl_name].add_entry(val[1])
                    @line_number += 1
                  }
              | NUMD_EXT_ACL ext_acl eos
                  {
                    dputs "## numd ext acl: #{val[0]}/#{val[1]}"
                    @curr_acl_name = val[0]
-                   if not @acl_table[ @curr_acl_name ]
-                     @acl_table[ @curr_acl_name ] = NumberedExtAcl.new( @curr_acl_name )
+                   if not @acl_table[@curr_acl_name]
+                     @acl_table[@curr_acl_name] = NumberedExtAcl.new(@curr_acl_name)
                      @line_number = 0
                    end
-                   @acl_table[ @curr_acl_name ].add_entry( val[1] )
+                   @acl_table[@curr_acl_name].add_entry(val[1])
                    @line_number += 1
                  }
              | error eos
@@ -51,23 +51,23 @@ rule
                    dputs "## std_acl: #{val[0]}/#{val[1]}/#{val[2]}"
                    result = StandardAce.new(
                      :action => val[0],
-                     :src => AceSrcDstSpec.new( :ip_spec => val[1] ),
+                     :src => AceSrcDstSpec.new(:ip_spec => val[1]),
                      :log => val[2]
                      )
                  }
              | 'remark' STRING
                  {
                    dputs "## std_acl: remark/#{val[1]}"
-                   result = RemarkAce.new( val[1] )
+                   result = RemarkAce.new(val[1])
                  }
 
 std_acl_log_spec:
              | 'log' log_cookie
                  {
-                   result = AceLogSpec.new( val[1] )
+                   result = AceLogSpec.new(val[1])
                  }
 
-# extended access-list
+                 # extended access-list
 
       ext_acl: dynamic_spec ext_acl_body other_qualifier_list
                  {
@@ -81,7 +81,7 @@ std_acl_log_spec:
              | 'remark' STRING
                  {
                    dputs "## ext_acl: remark/#{val[1]}"
-                   result = RemarkAce.new( val[1] )
+                   result = RemarkAce.new(val[1])
                  }
 
  ext_acl_body: action ip_proto ip_spec ip_spec
@@ -90,8 +90,8 @@ std_acl_log_spec:
                    result = ExtendedAce.new(
                      :action => val[0],
                      :protocol => val[1],
-                     :src => AceSrcDstSpec.new( :ip_spec => val[2] ),
-                     :dst => AceSrcDstSpec.new( :ip_spec => val[3] )
+                     :src => AceSrcDstSpec.new(:ip_spec => val[2]),
+                     :dst => AceSrcDstSpec.new(:ip_spec => val[3])
                      )
                  }
              | action icmp_proto ip_spec ip_spec icmp_qualifier
@@ -99,8 +99,8 @@ std_acl_log_spec:
                    result = ExtendedAce.new(
                      :action => val[0],
                      :protocol => val[1],
-                     :src => AceSrcDstSpec.new( :ip_spec => val[2] ),
-                     :dst => AceSrcDstSpec.new( :ip_spec => val[3] )
+                     :src => AceSrcDstSpec.new(:ip_spec => val[2]),
+                     :dst => AceSrcDstSpec.new(:ip_spec => val[3])
                      ## TBD: icmp_qualifier: val[4]
                      )
                  }
@@ -128,7 +128,7 @@ std_acl_log_spec:
                    ## TBD: object group
                  }
 
-# protocols
+                 # protocols
 
      ip_proto: 'ahp'
                  {
@@ -254,7 +254,7 @@ udp_srcdst_spec: objgrp_srcdst_spec udp_port_spec
                      )
                  }
 
-# ip named access-list
+                 # ip named access-list
 
     named_acl: std_named_acl_header std_named_acl_entry_list
              | ext_named_acl_header ext_named_acl_entry_list
@@ -267,14 +267,14 @@ std_named_acl_header: NAMED_ACL 'standard' STRING eos
                  {
                    dputs "## std named acl: #{val[2]}"
                    @curr_acl_name = val[2]
-                   @acl_table[ @curr_acl_name ] = NamedStdAcl.new( @curr_acl_name )
+                   @acl_table[@curr_acl_name] = NamedStdAcl.new(@curr_acl_name)
                    dputs "## make NamedStdAcl obj, name = #{ @curr_acl_name }"
                  }
 
 std_named_acl_entry_list:
              | std_named_acl_entry_list std_named_acl_entry
                  {
-                   @acl_table[ @curr_acl_name ].add_entry( val[1] )
+                   @acl_table[@curr_acl_name].add_entry(val[1])
                    @line_number += 1
                  }
              | std_named_acl_entry_list error eos
@@ -293,14 +293,14 @@ ext_named_acl_header: NAMED_ACL 'extended' STRING eos
                  {
                    dputs "## ext named acl: #{val[2]}"
                    @curr_acl_name = val[2]
-                   @acl_table[ @curr_acl_name ] = NamedExtAcl.new( @curr_acl_name )
+                   @acl_table[@curr_acl_name] = NamedExtAcl.new(@curr_acl_name)
                    dputs "## make NamedExtAcl obj, name = #{ @curr_acl_name }"
                  }
 
 ext_named_acl_entry_list:
              | ext_named_acl_entry_list ext_named_acl_entry
                  {
-                   @acl_table[ @curr_acl_name ].add_entry( val[1] )
+                   @acl_table[@curr_acl_name].add_entry(val[1])
                    @line_number += 1
                  }
              | ext_named_acl_entry_list error eos
@@ -328,7 +328,7 @@ ext_named_acl_entry: seq_number ext_acl eos
                    result = val[0].to_i
                  }
 
-# access-list common components
+                 # access-list common components
 
        action: 'permit'
                  {
@@ -376,7 +376,7 @@ ext_named_acl_entry: seq_number ext_acl eos
  timeout_spec:
              | 'timeout' NUMBER
 
-# object-group
+                 # object-group
 
                  ## TBD
                  # object group syntax was not implemented
@@ -524,7 +524,7 @@ tcpudp_port_qualifier: NUMBER        # port number (0-65535)
              | 'tacacs'
              | 'talk'
 
-# icmp qualifier
+                 # icmp qualifier
 
 icmp_qualifier:
              | 'administratively-prohibited'
@@ -578,13 +578,13 @@ icmp_qualifier:
 
 
 
-# tcp/udp port spec
+                 # tcp/udp port spec
 
 tcp_port_spec:
                  {
                    # tcp any
                    dputs '## tcp port any'
-                   result = AcePortSpec.new( :operator => 'any' )
+                   result = AcePortSpec.new(:operator => 'any')
                  }
              | unary_operator tcp_port_qualifier
                  {
@@ -608,7 +608,7 @@ udp_port_spec:
                  {
                    # udp any
                    dputs '## udp port: any'
-                   result = AcePortSpec.new( :operator => 'any' )
+                   result = AcePortSpec.new(:operator => 'any')
                  }
              | unary_operator udp_port_qualifier
                  {
@@ -1019,7 +1019,7 @@ udp_port_qualifier: NUMBER
                      )
                  }
 
-# tcp flags list
+                 # tcp flags list
 
 tcp_flags_qualifier:
              | tcp_flags_list
@@ -1029,43 +1029,43 @@ tcp_flags_qualifier:
 tcp_flags_list: tcp_flags
                  {
                    list = AceTcpFlagList.new
-                   list.push( val[0] )
+                   list.push(val[0])
                    result = list
                  }
              | tcp_flags_list tcp_flags
                  {
-                   val[0].push( val[1] )
+                   val[0].push(val[1])
                    result = val[0]
                  }
 
     tcp_flags: 'established'
                  {
                    dputs "## tcp_flags, established: #{val[0]}"
-                   result = AceTcpFlag.new( val[0] )
+                   result = AceTcpFlag.new(val[0])
                  }
              | 'ack'
                  {
-                   result = AceTcpFlag.new( val[0] )
+                   result = AceTcpFlag.new(val[0])
                  }
              | 'syn'
                  {
-                   result = AceTcpFlag.new( val[0] )
+                   result = AceTcpFlag.new(val[0])
                  }
              | 'fin'
                  {
-                   result = AceTcpFlag.new( val[0] )
+                   result = AceTcpFlag.new(val[0])
                  }
              | 'psh'
                  {
-                   result = AceTcpFlag.new( val[0] )
+                   result = AceTcpFlag.new(val[0])
                  }
              | 'urg'
                  {
-                   result = AceTcpFlag.new( val[0] )
+                   result = AceTcpFlag.new(val[0])
                  }
              | 'rst'
                  {
-                   result = AceTcpFlag.new( val[0] )
+                   result = AceTcpFlag.new(val[0])
                  }
 
 pm_tcp_flags_list: pm_tcp_flags
@@ -1084,7 +1084,7 @@ pm_tcp_flags_list: pm_tcp_flags
              | '+rst'
              | '-rst'
 
-# oether qualifier list
+                 # oether qualifier list
 
 other_qualifier_list:
              | other_qualifier_list other_qualifier
@@ -1095,7 +1095,7 @@ other_qualifier_list:
                    else
                      list = AceOtherQualifierList.new
                    end
-                   list.push( val[1] )
+                   list.push(val[1])
                    result = list
                  }
 
@@ -1144,11 +1144,11 @@ other_qualifier: dscp_rule
 
       logging: 'log-input' log_cookie
                  {
-                   result = AceLogSpec.new( val[1], true )
+                   result = AceLogSpec.new(val[1], true)
                  }
              | 'log' log_cookie
                  {
-                   result = AceLogSpec.new( val[1] )
+                   result = AceLogSpec.new(val[1])
                  }
 
    log_cookie:
@@ -1183,7 +1183,7 @@ time_range_spec: 'time-range' STRING
 recursive_qualifier: 'reflect' STRING timeout_spec
                  {
                    ## TBD: timeout_spec not implemented yet.
-                   result = AceRecursiveQualifier.new( val[1] )
+                   result = AceRecursiveQualifier.new(val[1])
                  }
 
 ttl_qualifier: 'ttl' unary_operator NUMBER # 0-255
@@ -1229,122 +1229,153 @@ module CiscoAclIntp
 
 ---- inner
 
-# @return [Hash] ACL Table by ACL name key
-attr_reader :acl_table
+  # @return [Hash] ACL Table by ACL name key
+  attr_reader :acl_table, :error_count
 
-# Constructor
-# @param [Hash] opts Options
-# @option [Boolean] :yydebug Enable Racc debug print.
-#   (default: false)
-# @option [Boolean] :debug Enable debug print.
-#   (default: false)
-# @option [Boolean] :color Enable Term ANSI Color.
-#   (default: false)
-# @return [CiscoACLParser]
-def initialize opts
-  @yydebug = opts[ :yydebug ] or false
-  @debug_print = opts[ :debug ] or false
-  @color_mode = opts[ :color ] or false
+  # Constructor
+  # @param [Hash] opts Options
+  # @option [Boolean] :yydebug Enable Racc debug print.
+  #   (default: false)
+  # @option [Boolean] :debug Enable debug print.
+  #   (default: false)
+  # @option [Boolean] :color Enable Term ANSI Color.
+  #   (default: false)
+  # @return [CiscoACLParser]
+  def initialize opts
+    @yydebug = opts[:yydebug] or false
+    @debug_print = opts[:debug] or false
+    @color_mode = opts[:color] or false
 
-  if @color_mode
-    AclContainerBase.enable_color
-  else
-    AclContainerBase.disable_color
-  end
-
-  @acl_table = {}
-  @curr_acl_name = ''
-  @line_number = 0
-end
-
-# Scan ACL from file to parse
-# @param [String] file File name
-# @param [IO] file IO Object
-# @return [Hash] ACL Table
-def parse_file filename
-  begin
-    file = nil
-    case filename
-    when String
-      file = File.new( filename )
-    when IO
-      file = filename
-    end
-
-    if file
-      scanner = Scanner.new
-      @q = scanner.scan_file( file )
-      do_parse
+    if @color_mode
+      AclContainerBase.enable_color
     else
-      raise AclError, "File: #{ filename } not found."
+      AclContainerBase.disable_color
     end
 
-  rescue Racc::ParseError => err
-    puts c_err( "Parse aborted. Found syntax error:\n  #{ err.message }\n" )
-  rescue AclArgumentError => err
-    puts c_err( "Parse aborted. Found acl argment error:\n  #{ err.message }\n  #{ err_pos_str }\n" )
-  rescue AclError => err
-    puts c_err( "Parse aborted. Found acl error:\n  #{ err.message }\n" )
-  rescue => err
-    puts c_err( "Parse aborted. Found unknown error:\n  #{ err.message }\n" )
+    @acl_table = {}
+    @curr_acl_name = ''
+    @line_number = 0
+    @error_count = 0
   end
-  return @acl_table
-end
 
-# Syntax error handler
-# @raise [Racc::ParseError]
-def on_error tok, val, vstack
-  errstr = [
-    err_pos_str,
-    "near value: #{ val }",
-    "(token: #{ token_to_str( tok ) })",
-  ].join(', ')
+  # Scan ACL from file to parse
+  # @param [String] file File name
+  # @param [IO] file IO Object
+  # @return [Hash] ACL Table
+  def parse_file filename
+    begin
+      file = nil
+      case filename
+      when String
+        file = File.new(filename)
+      when IO
+        file = filename
+      end
 
-  # raise Racc::ParseError, errstr
-  puts c_err( errstr )
-end
-
-private
-
-# print error message and enter error recovery mode
-# @param [String] str Error message
-def yyerror_with str
-  puts c_err( [ err_pos_str, str ].join(', ') )
-  yyerror
-end
-
-# debug print
-# @param [String] str String to print
-def dputs str
-  puts str if @debug_print
-end
-
-# Get next token
-# @return [Array] Next token array
-def next_token
-  @q.shift
-end
-
-# Coloring error string
-# @param [String] str Message string
-# @return [String] Colored message string
-def c_err str
-  if @color_mode
-    c = Term::ANSIColor
-    str = [ c.red, c.bold, str, c.clear ].join
+      if file
+        scanner = Scanner.new
+        @q = scanner.scan_file(file)
+        @error_count = 0 # reset error count
+        do_parse
+      else
+        @error_count = 1
+        fail AclError, "File: #{filename} not found."
+      end
+    rescue Racc::ParseError => err
+      puts c_err(
+        ["Parse aborted. Found syntax error:",
+          "  #{err.message}"
+        ].join("\n")
+      )
+    rescue AclArgumentError => err
+      puts c_err(
+        ["Parse aborted. Found acl argment error:",
+          "  #{err.message}",
+          "  #{err_pos_str}"
+        ].join("\n")
+      )
+    rescue AclError => err
+      puts c_err(
+        ["Parse aborted. Found acl error:",
+          "  #{err.message}"
+        ].join("\n")
+      )
+    rescue => err
+      puts c_err(
+        [ "Parse aborted. Found unknown error:",
+          "  #{err.message}"
+        ].join("\n")
+      )
+    end
+    @acl_table
   end
-  return str
-end
 
-# Generate error string
-# @return [String] error position string
-def err_pos_str
-  line_num = @acl_table[ @curr_acl_name ] ?
-    @acl_table[ @curr_acl_name ].length + 1 : ''
-  [ "in acl: #{ @curr_acl_name }",
-    "line: #{ line_num }",
-  ].join(', ')
-end
+  # Syntax error handler
+  # @raise [Racc::ParseError]
+  def on_error tok, val, vstack
+    errstr = [
+      err_pos_str,
+      "near value: #{val}",
+      "(token: #{token_to_str(tok)})",
+    ].join(', ')
+
+    # raise Racc::ParseError, errstr
+    puts c_err(errstr)
+  end
+
+  # Parsed data contains error or not?
+  # @return [Boolean]
+  def contains_error?
+    @error_count > 0 ? true : false
+  end
+
+  private
+
+  def count_error
+    @error_count = @error_count + 1
+  end
+
+  # print error message and enter error recovery mode
+  # @param [String] str Error message
+  def yyerror_with str
+    count_error
+    puts c_err([err_pos_str, str].join(', '))
+    yyerror
+  end
+
+  # debug print
+  # @param [String] str String to print
+  def dputs str
+    puts str if @debug_print
+  end
+
+  # Get next token
+  # @return [Array] Next token array
+  def next_token
+    @q.shift
+  end
+
+  # Coloring error string
+  # @param [String] str Message string
+  # @return [String] Colored message string
+  def c_err str
+    count_error
+    if @color_mode
+      c = Term::ANSIColor
+      str = [c.red, c.bold, str, c.clear].join
+    end
+    str
+  end
+
+  # Generate error string
+  # @return [String] error position string
+  def err_pos_str
+    line_num = @acl_table[@curr_acl_name] ?
+    @acl_table[@curr_acl_name].length + 1 : ''
+    ["in acl: #{@curr_acl_name}",
+     "line: #{line_num}"
+    ].join(', ')
+  end
 
 ---- footer
 

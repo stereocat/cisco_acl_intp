@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 require 'spec_helper'
 
-include CiscoAclIntp
-AclContainerBase.disable_color
-
 describe AceIpSpec do
   describe '#to_s' do
     it 'should be "192.168.15.15 0.0.7.6"' do

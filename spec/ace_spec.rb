@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-
 require 'spec_helper'
-
-include CiscoAclIntp
-AclContainerBase.disable_color
 
 describe StandardAce do
   describe '#to_s' do
@@ -235,8 +231,6 @@ describe ExtendedAce do
         )
       end # before
 
-      #----- begin code generation -----#
-
       ## generate test pattern data
       data_table = {
         protocol_match: 'tcp',
@@ -260,7 +254,6 @@ describe ExtendedAce do
         :protocol
       ]
 
-      codes = []
       tests = []
       (0..(2**bit - 1)).each do |num|
         opts = {}
@@ -277,20 +270,19 @@ describe ExtendedAce do
         )
       end
 
-      tests.each do | each |
-        codes.push <<"EOL"
-      it 'should be #{each[:res]}, \
+      tests.each do |each|
+        # run test
+        it "should be #{each[:res]}, \
 when #{each[:opts][:protocol]};\
 #{each[:opts][:src_ip]}/#{each[:opts][:src_port]} > \
-#{each[:opts][:dst_ip]}/#{each[:opts][:dst_port]}' do
-        @ea.matches?(#{_pph(each[:opts])}).should be_#{each[:res]}
-      end # it
-EOL
+#{each[:opts][:dst_ip]}/#{each[:opts][:dst_port]}" do
+          if each[:res]
+            @ea.matches?(each[:opts]).should be_true
+          else
+            @ea.matches?(each[:opts]).should be_false
+          end
+        end # it
       end # tests.each
-
-      instance_eval codes.join
-
-      #----- end code generation -----#
 
     end # context full spec test
 

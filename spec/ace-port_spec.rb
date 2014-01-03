@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-
 require 'spec_helper'
-
-include CiscoAclIntp
-AclContainerBase.disable_color
 
 describe AcePortSpec do
   describe '#to_s' do
