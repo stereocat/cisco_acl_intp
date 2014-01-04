@@ -34,3 +34,15 @@ def _pph(hash)
   end
   kv.join(',')
 end
+
+# return specdir
+def _spec_dir(file)
+  specdir = Dir.new('./spec/')
+  File.join(specdir.path, file)
+end
+
+# return spec_data dir
+def _spec_data_dir(file)
+  datadir = Dir.new('./spec/data/')
+  File.join(datadir.path, file)
+end

@@ -1,0 +1,206 @@
+:acl:
+  - :data: 'access-list'
+    :valid: true
+:stdacl_num:
+  - :data: "1"
+    :valid: true
+    :msg: "area1 lower-bound"
+:extacl_num:
+  - :data: "100"
+    :valid: true
+    :msg: "area1 lower-bound"
+:dynamic_spec:
+  - :data: ''
+    :valid: true
+  - :data: 'dynamic dynamicname'
+    :valid: true
+  - :data: 'dynamic dynamicname timeout 3'
+    :valid: true
+  - :data: 'dynamic dynamicname timeout'
+    :valid: false
+    :msg: "missing timeout <min>"
+  - :data: 'dnamic dynamicname'
+    :valid: false
+    :msg: "typo <dynamic>"
+:action:
+  - :data: 'permit'
+    :valid: true
+  - :data: 'deny'
+    :valid: true
+:tcp_proto:
+  - :data: 'tcp'
+    :valid: true
+:udp_proto:
+  - :data: 'udp'
+    :valid: true
+:tcpudp_proto:
+  - :data: 'tcp'
+    :valid: true
+  - :data: 'udp'
+    :valid: true
+  - :data: 'object-group svgrp'
+    :valid: true
+:ip_spec1:
+  - :data: 'any'
+    :valid: true
+  - :data: 'host 192.168.0.1'
+    :valid: true
+  - :data: '192.168.0.0 0.0.0.128'
+    :valid: true
+  - :data: '192.168.0.2'
+    :valid: false
+    :msg: 'missing <host>'
+  - :data: '1921.68.0.2'
+    :valid: false
+    :msg: 'ip: out of range'
+:ip_spec2:
+  - :data: 'any'
+    :valid: true
+  - :data: 'host 10.1.0.1'
+    :valid: true
+  - :data: '10.1.0.0 0.0.128.255'
+    :valid: true
+  - :data: '10.1.0.2'
+    :valid: false
+    :msg: 'missing <host>'
+  - :data: '10.1.0.256'
+    :valid: false
+    :msg: 'ip: out of range'
+:ip_spec_objgrp1:
+  - :data: 'any'
+    :valid: true
+  - :data: 'host 192.168.0.1'
+    :valid: true
+  - :data: '192.168.0.0 0.0.0.128'
+    :valid: true
+  - :data: 'object-group nwgrp1'
+    :valid: true
+:ip_spec_objgrp2:
+  - :data: 'any'
+    :valid: true
+  - :data: 'host 10.1.0.1'
+    :valid: true
+  - :data: '10.1.0.0 0.0.128.255'
+    :valid: true
+  - :data: 'object-group nwgrp2'
+    :valid: true
+:null_port:
+  - :data: ""
+    :valid: true
+:tcp_port_spec1:
+  - :data: ""
+    :valid: true
+  - :data: "eq 80"
+    :valid: true
+  - :data: "eq any"
+    :valid: false
+    :msg: "unknown port-prot-name"
+  - :data: "lt ftp"
+    :valid: true
+  - :data: "gt telnet"
+    :valid: true
+  - :data: "range 53 443"
+    :valid: true
+:tcp_port_spec2:
+  - :data: ""
+    :valid: true
+  - :data: "eq www"
+    :valid: true
+  - :data: "lt domain"
+    :valid: true
+  - :data: "gt 4000"
+    :valid: true
+  - :data: "range 2000 3333"
+    :valid: true
+  - :data: "eq isakmp"
+    :valid: false
+    :msg: "udp port-proto-name"
+:udp_port_spec1:
+  - :data: ""
+    :valid: true
+  - :data: "eq 80"
+    :valid: true
+  - :data: "eq any"
+    :valid: false
+    :msg: "unknown port-prot-name"
+  - :data: "lt isakmp"
+    :valid: true
+  - :data: "gt ntp"
+    :valid: true
+  - :data: "range 53 443"
+    :valid: true
+:udp_port_spec2:
+  - :data: ""
+    :valid: true
+  - :data: "eq 500"
+    :valid: true
+  - :data: "lt domain"
+    :valid: true
+  - :data: "gt 4000"
+    :valid: true
+  - :data: "range 2000 3333"
+    :valid: true
+  - :data: "eq pop3"
+    :valid: false
+    :msg: "tcp port-proto-name"
+:ext_acl_log_spec:
+  - :data: ""
+    :valid: true
+  - :data: "log"
+    :valid: true
+  - :data: "log logcookie"
+    :valid: true
+  - :data: "log-input"
+    :valid: true
+  - :data: "log-input logcookie"
+    :valid: true
+:tcp_flags:
+  - :data: ''
+    :valid: true
+  - :data: 'established'
+    :valid: true
+  - :data: 'syn fin ack'
+    :valid: true
+  - :data: 'acck established'
+    :valid: false
+:tcp_flags2:
+  - :data: 'established'
+    :valid: true
+  - :data: 'established match-all +fin'
+    :valid: false
+  - :data: 'match-all +syn -fin -urg'
+    :valid: true
+  - :data: 'match-any -syn +fin +urg'
+    :valid: true
+  - :data: 'fin match-all +urg'
+    :valid: false
+  - :data: 'match-any -syn match-all -fin -urg'
+    :valid: false
+  - :data: 'match-any syn +fin'
+    :valid: false
+:precedence:
+  - :data: ''
+    :valid: true
+  - :data: 'precedence 3'
+    :valid: true
+  - :data: 'precedence network'
+    :valid: true
+:dscp:
+  - :data: ''
+    :valid: true
+  - :data: 'dscp af11'
+    :valid: true
+  - :data: 'dscp 6'
+    :valid: true
+:tos:
+  - :data: ''
+    :valid: true
+  - :data: 'tos 10'
+    :valid: true
+  - :data: 'tos min-delay'
+    :valid: true
+:time_range:
+  - :data: ''
+    :valid: true
+  - :data: 'time-range range_hoge'
+    :valid: true

@@ -2,8 +2,6 @@
 require 'spec_helper'
 require 'yaml'
 
-include CiscoAclIntp
-
 describe 'Parser' do
   describe '#parse_file' do
     before do
@@ -16,18 +14,14 @@ describe 'Parser' do
       # 'acldata_object-group.yml'
     ]
 
-    specdir = Dir.new('./spec/')
-    datadir = Dir.new('./spec/data/')
     data_files.each do |each_file|
-      tests = YAML.load_file(
-        File.join(specdir.path, each_file)
-      )
+      tests = YAML.load_file(_spec_dir(each_file))
       # puts YAML.dump data
 
       tests.each do |each_test|
         # filename
         acl_file_base = [each_test[:symbol], '.acl.yml'].join
-        acl_file = File.join(datadir.path, acl_file_base)
+        acl_file = _spec_data_dir(acl_file_base)
 
         # write acl to file
         File.open(acl_file, 'w') do |file|

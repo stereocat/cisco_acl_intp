@@ -1,0 +1,158 @@
+:acl:
+  - :data: 'access-list'
+    :valid: true
+  - :data: 'access-lsit'
+    :msg: "typo <access-list>"
+    :valid: false
+:stdacl_num:
+  - :data: "0"
+    :msg: "area1 lower out of range"
+    :valid: false
+  - :data: "1"
+    :msg: "area1 lower-bound"
+    :valid: true
+  - :data: "99"
+    :msg: "area1 upper-bound"
+    :valid: true
+  - :data: "1299"
+    :msg: "area2 lower out of range"
+    :valid: false
+  - :data: "1300"
+    :msg: "area2 lower-bound"
+    :valid: true
+  - :data: "1999"
+    :msg: "area2 upper-bound"
+    :valid: true
+:extacl_num:
+  - :data: "100"
+    :valid: true
+    :msg: "area1 lower-bound"
+  - :data: "199"
+    :valid: true
+    :msg: "area1 upper-bound"
+  # - :data: "99"
+  #   :valid: false
+  - :data: "200"
+    :valid: false
+    :msg: "area1 upper out of range"
+  - :data: "2000"
+    :valid: true
+    :msg: "area2 lower-bound"
+  - :data: "2699"
+    :valid: true
+    :msg: "area2 upper-bound"
+  # - :data: "1999"
+  #   :valid: false
+  - :data: "2700"
+    :valid: false
+    :msg: "area2 upper out of range"
+:dynamic_spec:
+  - :data: ''
+    :valid: true
+  - :data: 'dynamic dynamicname'
+    :valid: true
+  - :data: 'dynamic dynamicname timeout 3'
+    :valid: true
+  - :data: 'dynamic dynamicname timeout'
+    :valid: false
+    :msg: "missing timeout <min>"
+  - :data: 'dnamic dynamicname'
+    :valid: false
+    :msg: "typo <dynamic>"
+:action:
+  - :data: ''
+    :msg: 'missing <action>'
+    :valid: false
+  - :data: 'permit'
+    :valid: true
+  - :data: 'deny'
+    :valid: true
+  - :data: 'drop'
+    :msg: "unknown action or typo"
+    :valid: false
+:ip_proto:
+  - :data: ''
+    :msg: 'missing <protocol>'
+    :valid: false
+  - :data: 'ip'
+    :valid: true
+  - :data: 'ahp'
+    :valid: true
+  - :data: '0'
+    :msg: 'lower bound'
+    :valid: true
+  - :data: '255'
+    :msg: 'upper bound'
+    :valid: true
+  - :data: '256'
+    :msg: 'out of range'
+    :valid: false
+:ip_spec1:
+  - :data: 'any'
+    :valid: true
+  - :data: 'host 192.168.0.1'
+    :valid: true
+  - :data: '192.168.0.0 0.0.0.128'
+    :valid: true
+  - :data: '192.168.0.2'
+    :valid: false
+    :msg: 'missing <host>'
+  - :data: '1921.68.0.2'
+    :valid: false
+    :msg: 'ip: out of range'
+:ip_spec2:
+  - :data: 'any'
+    :valid: true
+  - :data: 'host 10.1.0.1'
+    :valid: true
+  - :data: '10.1.0.0 0.0.128.255'
+    :valid: true
+  - :data: '10.1.0.2'
+    :valid: false
+    :msg: 'missing <host>'
+  - :data: '10.1.0.256'
+    :valid: false
+    :msg: 'ip: out of range'
+:icmp_proto:
+  - :data: ""
+    :valid: false
+    :msg: 'missing <icmp>'
+  - :data: "icmp"
+    :valid: true
+:icmp_qualifier:
+  - :data: ""
+    :valid: true
+  - :data: 'administratively-prohibited'
+    :valid: true
+  - :data: '0'
+    :valid: true
+    :msg: "icmp type num only"
+  - :data: '0 255'
+    :valid: true
+    :msg: "icmp type/code num"
+  # - :data: "256 0"
+  #   :valid: false
+  #   # "type num: out of range"
+  #   todo : "not implemented: icmp_qualifier type num check"
+  # - :data: "0 256"
+  #   :valid: false
+  #   # code num: out of range
+  #   todo : "not implemented: icmp_qualifier code num check"
+:std_acl_log_spec:
+  - :data: ""
+    :valid: true
+  - :data: "log"
+    :valid: true
+  - :data: "log logcookie"
+    :valid: true
+:ext_acl_log_spec:
+  - :data: ""
+    :valid: true
+  - :data: "log"
+    :valid: true
+  - :data: "log logcookie"
+    :valid: true
+  - :data: "log-input"
+    :valid: true
+  - :data: "log-input logcookie"
+    :valid: true

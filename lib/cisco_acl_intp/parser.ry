@@ -1268,7 +1268,7 @@ module CiscoAclIntp
       case filename
       when String
         file = File.new(filename)
-      when IO
+      when IO, StringIO
         file = filename
       end
 

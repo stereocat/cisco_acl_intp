@@ -36,10 +36,7 @@ EOL
      ]
     end
 
-    specdir = Dir.new('./spec/')
-    tokens = YAML.load_file(
-      File.join(specdir.path, 'single_tokens.yml')
-    )
+    tokens = YAML.load_file(_spec_dir('single_tokens.yml'))
     tokens.each do |each|
       # run test
       it "should be parsed single token: #{each}" do
@@ -59,11 +56,7 @@ EOL
       @s = Scanner.new
     end
 
-    specdir = Dir.new('./spec/')
-    datadir = Dir.new('./spec/data/')
-    tests = YAML.load_file(
-      File.join(specdir.path, 'scanner_spec_data.yml')
-    )
+    tests = YAML.load_file(_spec_dir('scanner_spec_data.yml'))
 
     # generate test data (yaml file)
     tests.each do |each_test|
@@ -72,7 +65,7 @@ EOL
 
       # filename
       acl_file_base = [each_test[:test_symbol], '.acl.yml'].join
-      acl_file = File.join(datadir.path, acl_file_base)
+      acl_file = _spec_data_dir(acl_file_base)
 
       # generate access list string data file
       # (input for scanner)
@@ -99,7 +92,7 @@ EOL
 
       # filename
       token_file_base = [each_test[:test_symbol], '.token.yml'].join
-      token_file = File.join(datadir.path, token_file_base)
+      token_file = _spec_data_dir(token_file_base)
 
       # generate access list token data file
       # (expected output of scanner)

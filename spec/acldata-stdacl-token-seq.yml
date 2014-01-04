@@ -1,0 +1,8 @@
+- :testname: 10-stdacl
+  :casedata: acldata-tokens1.yml
+  :fieldseq:
+    - acl
+    - stdacl_num
+    - action
+    - ip_spec1
+    - std_acl_log_spec
