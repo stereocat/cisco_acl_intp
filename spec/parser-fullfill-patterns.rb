@@ -3,6 +3,13 @@ require 'yaml'
 require 'stringio'
 require 'erb'
 
+# data files
+TOKEN_SEQ_FILE_LIST = [
+  'acldata-stdacl-token-seq.yml',
+  'acldata-extacl-token-seq.yml',
+  # 'acldata-extacl-objgrp-token-seq.yml'
+]
+
 # return spec conf dir
 def _spec_conf_dir(file)
   specdir = Dir.new('./spec/conf/')
@@ -47,13 +54,7 @@ def single_data(curr, leftover)
 end
 
 def each_test
-  token_seq_file_list = [
-    'acldata-stdacl-token-seq.yml',
-    'acldata-extacl-token-seq.yml',
-    # 'acldata-extacl-objgrp-token-seq.yml'
-  ]
-
-  token_seq_file_list.each do |each_file|
+  TOKEN_SEQ_FILE_LIST.each do |each_file|
     token_seq_data = YAML.load_file(_spec_conf_dir(each_file))
     token_seq_data.each do |each|
       puts "Test Name: #{each[:testname]}"
@@ -66,7 +67,7 @@ end
 ##############################
 # generate test case data file
 
-puts "## generate test case data file"
+puts '## generate test case data file'
 each_test do |each|
   # read tokens pattern data
   tokens = YAML.load_file(_spec_conf_dir(each[:casedata]))
@@ -86,12 +87,8 @@ end
 # run test per test case file
 
 code_data = DATA.read
-puts "## generate spec code"
+puts '## generate spec code'
 each_test do |each|
-  tests = YAML.load_file(_spec_data_dir(each[:testname] + '.yml'))
-  test_total = tests.length
-  test_curr = 1
-
   spec_file_base = each[:testname] + '_spec.rb'
   puts "Spec code Data: #{spec_file_base}"
   File.open(_spec_data_dir(spec_file_base), 'w') do |file|
@@ -111,6 +108,10 @@ describe 'Parser' do
     end
 
 <%-
+  tests = YAML.load_file(_spec_data_dir(each[:testname] + '.yml'))
+  test_total = tests.length
+  test_curr = 1
+
   tests.each do |t|
     now = sprintf(
       "%d/%.1f\%", test_curr, (100.0 * test_curr / test_total)
@@ -118,7 +119,7 @@ describe 'Parser' do
     print "Generating: #{now}\r"
     if t[:valid]
 -%>
-    it "should be parsed acl [<%= now %>]: <%= t[:data] %>" do
+    it 'should be parsed acl [<%= now %>]: <%= t[:data] %>' do
       datastr = StringIO.new('<%= t[:data] %>', 'r')
       @parser.parse_file(datastr)
       @parser.contains_error?.should be_false
@@ -126,7 +127,7 @@ describe 'Parser' do
 <%-
     else
 -%>
-    it "should not be parsed acl [<%= now %>]: <%= t[:data] %>" do
+    it 'should not be parsed acl [<%= now %>]: <%= t[:data] %>' do
       datastr = StringIO.new('<%= t[:data] %>', 'r')
       @parser.parse_file(datastr)
       @parser.contains_error?.should be_true

@@ -42,7 +42,7 @@ RSpec::Core::RakeTask.new(:spec) do |spec|
   spec.rspec_opts = '--format documentation --color'
 end
 
-RSpec::Core::RakeTask.new(:fullspec => [:fullfill]) do |spec|
+RSpec::Core::RakeTask.new(fullspec: [:fullfill]) do |spec|
   spec.pattern = FileList["#{SPEC_ORIG_DIR}/**/*_spec.rb"]
   spec.rspec_opts = '--format documentation --color'
 end
