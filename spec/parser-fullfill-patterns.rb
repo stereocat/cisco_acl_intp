@@ -1,21 +1,19 @@
 # -*- coding: utf-8 -*-
-#require 'spec_helper'
 require 'yaml'
 require 'stringio'
 require 'erb'
 
-# return specdir
-def _spec_dir(file)
-  specdir = Dir.new('./spec/')
+# return spec conf dir
+def _spec_conf_dir(file)
+  specdir = Dir.new('./spec/conf/')
   File.join(specdir.path, file)
 end
 
-# return spec_data dir
+# return spec data dir
 def _spec_data_dir(file)
   datadir = Dir.new('./spec/data/')
   File.join(datadir.path, file)
 end
-
 
 def gen_testcase(tokens, fields)
   if fields.empty?
@@ -56,7 +54,7 @@ def each_test
   ]
 
   token_seq_file_list.each do |each_file|
-    token_seq_data = YAML.load_file(_spec_dir(each_file))
+    token_seq_data = YAML.load_file(_spec_conf_dir(each_file))
     token_seq_data.each do |each|
       puts "Test Name: #{each[:testname]}"
       puts "Test Case File: #{each[:casedata]}"
@@ -71,7 +69,7 @@ end
 puts "## generate test case data file"
 each_test do |each|
   # read tokens pattern data
-  tokens = YAML.load_file(_spec_dir(each[:casedata]))
+  tokens = YAML.load_file(_spec_conf_dir(each[:casedata]))
   # generate test case data
   testcase_list = gen_testcase(tokens, each[:fieldseq])
 

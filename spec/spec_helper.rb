@@ -37,7 +37,13 @@ end
 
 # return specdir
 def _spec_dir(file)
-  specdir = Dir.new('./spec/')
+  specdir = Dir.new('./spec/cisco_acl_intp/')
+  File.join(specdir.path, file)
+end
+
+# return test config/data dir
+def _spec_conf_dir(file)
+  specdir = Dir.new('./spec/conf/')
   File.join(specdir.path, file)
 end
 

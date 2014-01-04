@@ -36,7 +36,7 @@ EOL
      ]
     end
 
-    tokens = YAML.load_file(_spec_dir('single_tokens.yml'))
+    tokens = YAML.load_file(_spec_conf_dir('single_tokens.yml'))
     tokens.each do |each|
       # run test
       it "should be parsed single token: #{each}" do
@@ -56,7 +56,7 @@ EOL
       @s = Scanner.new
     end
 
-    tests = YAML.load_file(_spec_dir('scanner_spec_data.yml'))
+    tests = YAML.load_file(_spec_conf_dir('scanner_spec_data.yml'))
 
     # generate test data (yaml file)
     tests.each do |each_test|

@@ -4,17 +4,18 @@ require 'rake/clean'
 
 LIB_DIR = './lib'
 PACKAGE_NAME = 'cisco_acl_intp'
-ACL_SPEC_TESTDATA_DIR = './spec/data'
-CLASS_DIR = "#{ LIB_DIR }/#{ PACKAGE_NAME }"
-CLASS_GRAPH_DOT = "doc/#{ PACKAGE_NAME }.dot"
-CLASS_GRAPH_PNG = "doc/#{ PACKAGE_NAME }.png"
-PARSER_RACC = "#{ CLASS_DIR }/parser.ry"
-PARSER_RUBY = "#{ CLASS_DIR }/parser.rb"
-SPEC_DIR = './spec'
+SPEC_ORIG_DIR = 'spec'
+SPEC_DIR = "#{SPEC_ORIG_DIR}/#{PACKAGE_NAME}/"
+SPEC_DATA_DIR = "#{SPEC_ORIG_DIR}/data"
+CLASS_DIR = "#{LIB_DIR}/#{PACKAGE_NAME}"
+CLASS_GRAPH_DOT = "doc/#{PACKAGE_NAME}.dot"
+CLASS_GRAPH_PNG = "doc/#{PACKAGE_NAME}.png"
+PARSER_RACC = "#{CLASS_DIR}/parser.ry"
+PARSER_RUBY = "#{CLASS_DIR}/parser.rb"
 
 CLEAN.include(
-  "#{ ACL_SPEC_TESTDATA_DIR }/*.*",
-  "#{ LIB_DIR }/*.output"
+  "#{SPEC_DATA_DIR}/*.*",
+  "#{LIB_DIR}/*.output"
 )
 CLOBBER.include(
   PARSER_RUBY,
@@ -24,15 +25,25 @@ CLOBBER.include(
 
 task default: [:parser, :spec]
 task parser: [PARSER_RUBY]
-task spec: [ACL_SPEC_TESTDATA_DIR]
+task spec: [SPEC_DATA_DIR]
 
-directory ACL_SPEC_TESTDATA_DIR
+task :fullfill do
+  # generate full-fill pattern test scripts
+  sh "ruby #{SPEC_ORIG_DIR}/parser-fullfill-patterns.rb"
+end
+
+directory SPEC_DATA_DIR
 file PARSER_RUBY => [PARSER_RACC] do
   sh "racc -v -g #{PARSER_RACC} -o #{PARSER_RUBY}"
 end
 
 RSpec::Core::RakeTask.new(:spec) do |spec|
-  spec.pattern = FileList["#{SPEC_DIR}/**/*_spec.rb"]
+  spec.pattern = FileList["#{SPEC_DIR}/*_spec.rb"]
+  spec.rspec_opts = '--format documentation --color'
+end
+
+RSpec::Core::RakeTask.new(:fullspec => [:fullfill]) do |spec|
+  spec.pattern = FileList["#{SPEC_ORIG_DIR}/**/*_spec.rb"]
   spec.rspec_opts = '--format documentation --color'
 end
 
