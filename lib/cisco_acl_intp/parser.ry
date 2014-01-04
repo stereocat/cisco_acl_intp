@@ -1023,8 +1023,8 @@ udp_port_qualifier: NUMBER
 
 tcp_flags_qualifier:
              | tcp_flags_list
-             | 'match_all' pm_tcp_flags_list
-             | 'match_any' pm_tcp_flags_list
+             | 'match-all' pm_tcp_flags_list
+             | 'match-any' pm_tcp_flags_list
 
 tcp_flags_list: tcp_flags
                  {

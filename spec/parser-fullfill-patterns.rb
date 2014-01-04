@@ -1,7 +1,21 @@
 # -*- coding: utf-8 -*-
-require 'spec_helper'
+#require 'spec_helper'
 require 'yaml'
 require 'stringio'
+require 'erb'
+
+# return specdir
+def _spec_dir(file)
+  specdir = Dir.new('./spec/')
+  File.join(specdir.path, file)
+end
+
+# return spec_data dir
+def _spec_data_dir(file)
+  datadir = Dir.new('./spec/data/')
+  File.join(datadir.path, file)
+end
+
 
 def gen_testcase(tokens, fields)
   if fields.empty?
@@ -18,7 +32,9 @@ end
 def create_data(field_patterns, leftover_results)
   field_patterns.reduce([]) do |curr_results, each|
     leftover_results.each do |each_res|
-      curr_results.push(single_data(each, each_res))
+      ## do not add pattern that has multiple 'false'
+      ## add single fault pattern.
+      curr_results.push(single_data(each, each_res)) if each_res[:valid]
     end
     curr_results
   end
@@ -26,47 +42,69 @@ end
 
 def single_data(curr, leftover)
   {
-    data: create_datastr(curr, leftover),
-    msg: create_message(curr, leftover),
-    valid: create_valid(curr, leftover)
+    data: [curr[:data], leftover[:data]].join(' '),
+    msg: curr[:msg], # used only single fault case
+    valid: curr[:valid] # used only single fault case
   }
 end
 
-def create_datastr(curr, leftover)
-  [curr[:data], leftover[:data]].join(' ')
-end
+def each_test
+  token_seq_file_list = [
+    'acldata-stdacl-token-seq.yml',
+    'acldata-extacl-token-seq.yml',
+    # 'acldata-extacl-objgrp-token-seq.yml'
+  ]
 
-def create_message(curr, leftover)
-  if curr[:msg]
-    curr[:msg]
-  else
-    leftover[:msg] ? leftover[:msg] : ''
+  token_seq_file_list.each do |each_file|
+    token_seq_data = YAML.load_file(_spec_dir(each_file))
+    token_seq_data.each do |each|
+      puts "Test Name: #{each[:testname]}"
+      puts "Test Case File: #{each[:casedata]}"
+      yield(each)
+    end
   end
-end
-
-def create_valid(curr, leftover)
-  curr[:valid] && leftover[:valid]
 end
 
 ##############################
+# generate test case data file
 
-token_seq_file_list = [
-  'acldata-stdacl-token-seq.yml',
-  'acldata-extacl-token-seq.yml',
-  # 'acldata-extacl-objgrp-token-seq.yml'
-]
+puts "## generate test case data file"
+each_test do |each|
+  # read tokens pattern data
+  tokens = YAML.load_file(_spec_dir(each[:casedata]))
+  # generate test case data
+  testcase_list = gen_testcase(tokens, each[:fieldseq])
 
-testcase_list = []
-token_seq_file_list.each do |each_token_seq_file|
-  token_seq_data = YAML.load_file(_spec_dir(each_token_seq_file))
-  token_seq_data.each do |each|
-    # puts "Test Name: #{each[:testname]}"
-    # puts "Test Case File: #{each[:casedata]}"
-    tokens = YAML.load_file(_spec_dir(each[:casedata]))
-    testcase_list.push gen_testcase(tokens, each[:fieldseq])
+  # write datafile
+  case_file_base = [each[:testname], '.yml'].join
+  puts "Test Case Data: #{case_file_base}"
+  case_file = _spec_data_dir(case_file_base)
+  File.open(case_file, 'w') do |file|
+    file.puts YAML.dump(testcase_list.flatten)
   end
 end
-# puts YAML.dump(testcase_list.flatten)
+
+##############################
+# run test per test case file
+
+code_data = DATA.read
+puts "## generate spec code"
+each_test do |each|
+  tests = YAML.load_file(_spec_data_dir(each[:testname] + '.yml'))
+  test_total = tests.length
+  test_curr = 1
+
+  spec_file_base = each[:testname] + '_spec.rb'
+  puts "Spec code Data: #{spec_file_base}"
+  File.open(_spec_data_dir(spec_file_base), 'w') do |file|
+    code_erb = ERB.new(code_data, nil, '-')
+    file.puts code_erb.result(binding)
+  end
+end
+
+__END__
+# -*- coding: utf-8 -*-
+require 'spec_helper'
 
 describe 'Parser' do
   describe '#parse_file' do
@@ -74,27 +112,31 @@ describe 'Parser' do
       @parser = CiscoAclIntp::Parser.new(color: false)
     end
 
-    tlist = testcase_list.flatten
-    test_total = tlist.length
-    test_curr = 1
-    tlist.each do |each|
-      now = sprintf(
-        "%d/%.1f\%", test_curr, (100.0 * test_curr / test_total)
-      )
-      print "Generating: #{now}\r"
-      datastr = StringIO.new(each[:data], 'r')
-      if each[:valid]
-        it "should be parsed acl [#{now}]: #{each[:data]}" do
-          @parser.parse_file(datastr)
-          @parser.contains_error?.should be_false
-        end
-      else
-        it "should not be parsed acl [#{now}]: #{each[:data]}" do
-          @parser.parse_file(datastr)
-          @parser.contains_error?.should be_true
-        end
-      end
-      test_curr = test_curr + 1
+<%-
+  tests.each do |t|
+    now = sprintf(
+      "%d/%.1f\%", test_curr, (100.0 * test_curr / test_total)
+    )
+    print "Generating: #{now}\r"
+    if t[:valid]
+-%>
+    it "should be parsed acl [<%= now %>]: <%= t[:data] %>" do
+      datastr = StringIO.new('<%= t[:data] %>', 'r')
+      @parser.parse_file(datastr)
+      @parser.contains_error?.should be_false
     end
+<%-
+    else
+-%>
+    it "should not be parsed acl [<%= now %>]: <%= t[:data] %>" do
+      datastr = StringIO.new('<%= t[:data] %>', 'r')
+      @parser.parse_file(datastr)
+      @parser.contains_error?.should be_true
+    end
+<%-
+    end
+    test_curr = test_curr + 1
+  end
+-%>
   end # describe parse_file
 end # describe Parser
