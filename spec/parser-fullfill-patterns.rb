@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 require 'yaml'
-require 'stringio'
 require 'erb'
 
 # data files
@@ -100,6 +99,7 @@ end
 __END__
 # -*- coding: utf-8 -*-
 require 'spec_helper'
+require 'stringio'
 
 describe 'Parser' do
   describe '#parse_file' do
