@@ -339,7 +339,6 @@ ip access-list standard test-std-acl2
 EOL
       @acl.to_s.should be_aclstr(aclstr)
     end
-
   end
 
   describe '#search_ace' do
@@ -394,6 +393,7 @@ EOL
         src_port: 33_333
       ).should be_nil
     end
+
   end
 
 end
@@ -467,8 +467,50 @@ EOL
       @acl.to_s.should be_aclstr(aclstr)
     end
   end
-end
 
+  context 'list operations' do
+    before do
+      @acl = NumberedStdAcl.new 15
+      @acl.push RemarkAce.new('entry 1')
+      @acl.push RemarkAce.new('entry 2')
+      @acl.push RemarkAce.new('entry 3')
+      @acl.push RemarkAce.new('entry 4')
+    end
+
+    describe '#renumber' do
+      it 'should be -1, of each seq num (default)' do
+        @acl.each { |each| each.seq_number.should eq(-1) }
+      end
+
+      it 'should be renumbered' do
+        @acl.renumber
+        @acl.reduce(10) do |num, each|
+          each.seq_number.should eq num
+          num + 10
+        end
+      end
+    end
+
+    describe '#sort' do
+      it 'should be sorted by seq number' do
+        @acl.renumber # initialize seq number
+
+        last_ace = @acl.pop
+        last_ace.seq_number = 15
+        @acl.push last_ace
+        sorted_acl = @acl.sort # return Array<ACE obj>
+        @acl.list = sorted_acl # overwrite
+        aclstr = <<'EOL'
+access-list 15 remark entry 1
+access-list 15 remark entry 4
+access-list 15 remark entry 2
+access-list 15 remark entry 3
+EOL
+        @acl.to_s.should be_aclstr(aclstr)
+      end
+    end
+  end
+end
 ### Local variables:
 ### mode: Ruby
 ### coding: utf-8-unix

@@ -6,6 +6,7 @@ module CiscoAclIntp
 
   # Access control entry base model
   class AceBase < AclContainerBase
+    include Comparable
 
     # @param [Integer] value ACL sequence number
     # @return [Integer]
@@ -32,16 +33,15 @@ module CiscoAclIntp
       @seq_number > NO_SEQ_NUMBER
     end
 
+    # Compare by sequence number
+    #   Note: Using Comparable module, '==' operator defined by '<=>'.
+    #   But ACE object will be compared by its value (comparison by
+    #   the equivalence), instead of sequence number. The '=='
+    #   operator will be overriden in child class.
     # @param [AceBase] other RHS object
     # @return [Integer] Compare with protocol/port number
     def <=>(other)
       @seq_number <=> other.seq_number
-    end
-
-    # @param [AceBase] other RHS object
-    # @return [Boolean]
-    # @abstract
-    def ==(other)
     end
 
     # Search matched ACE

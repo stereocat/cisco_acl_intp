@@ -8,18 +8,24 @@ module CiscoAclIntp
   # Single access-list container base
   class SingleAclBase < AclContainerBase
     extend Forwardable
+    include Enumerable
 
     # @return [String] name ACL name,
     #   when numbered acl, /\d+/ string
     attr_reader :name
+    # Some Enumerable included methods returns Array of ACE objects
+    # (e.g. sort),the returned Array was used as ACE object by
+    # overwrite accessor 'list'.
     # @return [Array] list ACE object Array
-    attr_reader :list
+    attr_accessor :list
     # @return [String, Symbol] acl_type ACL type
     attr_reader :acl_type
     # @return [String, Symbol] name_type ACL name type
     attr_reader :name_type
 
-    def_delegators :@list, :pop, :unshift, :size, :length
+    def_delegators :@list, :each # for Enumerable
+    def_delegators :@list, :push, :pop, :shift, :unshift
+    def_delegators :@list, :size, :length
 
     # Increment number of ACL sequence number
     SEQ_NUM_DIV = 10
@@ -47,14 +53,13 @@ module CiscoAclIntp
       @list.push ace
     end
 
-    # Sort ACL by sequence number
-    def sort
-      ## TBD, sort by seq_number
-    end
-
     # Renumber ACL by list sequence
     def renumber
-      ## TBD, re-numbering seq_number of each entry
+      # re-numbering seq_number of each entry
+      @list.reduce(SEQ_NUM_DIV) do |number, each|
+        each.seq_number = number
+        number + SEQ_NUM_DIV
+      end
     end
 
     # @return [Boolean]
@@ -78,11 +83,7 @@ module CiscoAclIntp
     # @return [AceBase] Matched ACE object or nil(not found)
     # @raise [AclArgumentError]
     def search_ace(opts)
-      ## TBD ##
-      @list.each do | each |
-        return each if each.matches?(opts)
-      end
-      nil
+      @list.find { |each| each.matches?(opts) }
     end
 
   end

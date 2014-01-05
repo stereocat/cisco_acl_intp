@@ -51,8 +51,8 @@ end
 require 'yard'
 require 'yard/rake/yardoc_task'
 YARD::Rake::YardocTask.new do |task|
+  # yardoc options in .yardopts
   task.files = ["#{LIB_DIR}/**/*.rb"]
-  task.options = %w['--protected' '--private']
 end
 
 task :docgraph do
