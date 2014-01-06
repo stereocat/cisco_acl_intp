@@ -8,3 +8,4 @@ AllCops:
     - cisco_acl_intp.gemspec
   Excludes:
     - lib/**/parser.rb
+    - spec/data/*.rb

@@ -116,7 +116,6 @@ describe 'Parser' do
     now = sprintf(
       "%d/%.1f\%", test_curr, (100.0 * test_curr / test_total)
     )
-    print "Generating: #{now}\r"
     if t[:valid]
 -%>
     it 'should be parsed acl [<%= now %>]: <%= t[:data] %>' do

@@ -29,7 +29,7 @@ module CiscoAclIntp
 
     # Check this object has sequence number
     # @return [Boolean]
-    def has_seq_number?
+    def seq_number?
       @seq_number > NO_SEQ_NUMBER
     end
 

@@ -471,18 +471,14 @@ EOL
   context 'list operations' do
     before do
       @acl = NumberedStdAcl.new 15
-      @acl.push RemarkAce.new('entry 1')
-      @acl.push RemarkAce.new('entry 2')
-      @acl.push RemarkAce.new('entry 3')
-      @acl.push RemarkAce.new('entry 4')
+      @acl.add_entry RemarkAce.new('entry 1')
+      @acl.add_entry RemarkAce.new('entry 2')
+      @acl.add_entry RemarkAce.new('entry 3')
+      @acl.add_entry RemarkAce.new('entry 4')
     end
 
     describe '#renumber' do
-      it 'should be -1, of each seq num (default)' do
-        @acl.each { |each| each.seq_number.should eq(-1) }
-      end
-
-      it 'should be renumbered' do
+      it 'should has seq number by add_entry' do
         @acl.renumber
         @acl.reduce(10) do |num, each|
           each.seq_number.should eq num
@@ -497,16 +493,25 @@ EOL
 
         last_ace = @acl.pop
         last_ace.seq_number = 15
-        @acl.push last_ace
-        sorted_acl = @acl.sort # return Array<ACE obj>
-        @acl.list = sorted_acl # overwrite
+        @acl.add_entry last_ace
+        acl_new = @acl.dup_with_list(@acl.sort)
+
         aclstr = <<'EOL'
+access-list 15 remark entry 1
+access-list 15 remark entry 2
+access-list 15 remark entry 3
+access-list 15 remark entry 4
+EOL
+        aclstr_new = <<'EOL'
 access-list 15 remark entry 1
 access-list 15 remark entry 4
 access-list 15 remark entry 2
 access-list 15 remark entry 3
 EOL
+        @acl.name.should eq acl_new.name
+        @acl.acl_type.should eq acl_new.acl_type
         @acl.to_s.should be_aclstr(aclstr)
+        acl_new.to_s.should be_aclstr(aclstr_new)
       end
     end
   end

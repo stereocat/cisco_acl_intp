@@ -1,3 +1,4 @@
 --exclude parser.rb
+--exclude spec/data/*
 --private
 --protected

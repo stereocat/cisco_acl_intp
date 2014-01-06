@@ -42,14 +42,22 @@ module CiscoAclIntp
       @name_type = nil # :named or :numbered
     end
 
-    # Add ACE to ACL
+    # duplicate with list
+    # @param [Array<SingleAclBase>]
+    # @return [SingleAclBase]
+    def dup_with_list(list)
+      acl = dup
+      acl.list = list.dup
+      acl
+    end
+
+    # Add ACE to ACL (push with sequence number)
     # @param [AceBase] ace ACE object
     def add_entry(ace)
       # 'ace' is AceBase Object
       # it will be ExtendedAce/StandardAce/RemarkAce/EvaluateAce
-      unless ace.has_seq_number?
+      ace.seq_number? ||
         ace.seq_number = (@list.length + 1) * SEQ_NUM_DIV
-      end
       @list.push ace
     end
 
