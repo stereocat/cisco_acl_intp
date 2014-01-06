@@ -1,5 +1,5 @@
 - :testname: 20-extacl-icmp
-  :casedata: acldata-tokens1.yml
+  :casedata: tokens1.yml
   :fieldseq:
     - acl
     - extacl_num
@@ -11,7 +11,7 @@
     - icmp_qualifier
     - ext_acl_log_spec
 - :testname: 21-extacl-ip
-  :casedata: acldata-tokens1.yml
+  :casedata: tokens1.yml
   :fieldseq:
     - acl
     - extacl_num
@@ -22,7 +22,7 @@
     - ip_spec2
     - ext_acl_log_spec
 - :testname: 22-extacl-tcp
-  :casedata: acldata-tokens2.yml
+  :casedata: tokens2.yml
   :fieldseq:
     - acl
     - extacl_num
@@ -35,7 +35,7 @@
     - tcp_port_spec2
     - ext_acl_log_spec
 - :testname: 23-extacl-udp
-  :casedata: acldata-tokens2.yml
+  :casedata: tokens2.yml
   :fieldseq:
     - acl
     - extacl_num
@@ -48,7 +48,7 @@
     - udp_port_spec2
     - ext_acl_log_spec
 - :testname: 27-extacl-options1
-  :casedata: acldata-tokens2.yml
+  :casedata: tokens2.yml
   :fieldseq:
     - acl
     - extacl_num
@@ -62,7 +62,7 @@
     - precedence
     - time_range
 - :testname: 28-extacl-options2
-  :casedata: acldata-tokens2.yml
+  :casedata: tokens2.yml
   :fieldseq:
     - acl
     - extacl_num
@@ -75,7 +75,7 @@
     - dscp
     - tos
 - :testname: 29-extacl-tcpflag
-  :casedata: acldata-tokens2.yml
+  :casedata: tokens2.yml
   :fieldseq:
     - acl
     - extacl_num

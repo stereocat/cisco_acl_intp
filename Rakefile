@@ -29,7 +29,7 @@ task spec: [SPEC_DATA_DIR]
 
 task :fullfill do
   # generate full-fill pattern test scripts
-  sh "ruby #{SPEC_ORIG_DIR}/parser-fullfill-patterns.rb"
+  sh "ruby #{SPEC_ORIG_DIR}/parser_fullfill_patterns.rb"
 end
 
 directory SPEC_DATA_DIR

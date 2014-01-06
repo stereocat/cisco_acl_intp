@@ -2,7 +2,7 @@
 
 require 'forwardable'
 require 'netaddr'
-require 'cisco_acl_intp/acl-base'
+require 'cisco_acl_intp/acl_base'
 
 module CiscoAclIntp
 

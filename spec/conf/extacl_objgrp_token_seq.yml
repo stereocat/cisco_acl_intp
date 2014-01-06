@@ -1,5 +1,5 @@
 - :testname: 24-extacl-objgrp1
-  :casedata: acldata-tokens2.yml
+  :casedata: tokens2.yml
   :fieldseq:
     - acl
     - extacl_num
@@ -11,7 +11,7 @@
     - null_port
     - ext_acl_log_spec
 - :testname: 25-extacl-objgrp2
-  :casedata: acldata-tokens2.yml
+  :casedata: tokens2.yml
   :fieldseq:
     - acl
     - extacl_num
@@ -23,7 +23,7 @@
     - tcp_port_spec2
     - ext_acl_log_spec
 - :testname: 26-extacl-objgrp3
-  :casedata: acldata-tokens2.yml
+  :casedata: tokens2.yml
   :fieldseq:
     - acl
     - extacl_num

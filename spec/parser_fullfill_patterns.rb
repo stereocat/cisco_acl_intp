@@ -4,9 +4,9 @@ require 'erb'
 
 # data files
 TOKEN_SEQ_FILE_LIST = [
-  'acldata-stdacl-token-seq.yml',
-  'acldata-extacl-token-seq.yml',
-  # 'acldata-extacl-objgrp-token-seq.yml'
+  'stdacl_token_seq.yml',
+  'extacl_token_seq.yml',
+  # 'extacl_objgrp_token_seq.yml'
 ]
 
 # return spec conf dir

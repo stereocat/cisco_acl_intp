@@ -1,5 +1,5 @@
 - :testname: 10-stdacl
-  :casedata: acldata-tokens1.yml
+  :casedata: tokens1.yml
   :fieldseq:
     - acl
     - stdacl_num

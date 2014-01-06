@@ -10,8 +10,8 @@ describe 'Parser' do
 
     # test data file
     data_files = [
-      'acldata-extended-acl.yml',
-      # 'acldata_object-group.yml'
+      'extended_acl.yml',
+      # 'object_group.yml'
     ]
 
     data_files.each do |each_file|

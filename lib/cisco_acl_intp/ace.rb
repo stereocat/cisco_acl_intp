@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-require 'cisco_acl_intp/ace-srcdst'
+require 'cisco_acl_intp/ace_srcdst'
 
 module CiscoAclIntp
 
