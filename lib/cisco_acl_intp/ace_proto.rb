@@ -3,10 +3,8 @@
 require 'cisco_acl_intp/acl_base'
 
 module CiscoAclIntp
-
   # IP/TCP/UDP port number and protocol name container base
   class AceProtoSpecBase < AclContainerBase
-
     # @param [String] value Protocol name,
     #   it is literal used in Cisco IOS access-list
     # @return [String]
@@ -30,7 +28,7 @@ module CiscoAclIntp
     #   should be assigned in inherited class constructor,
     #   at first. (before call super class constructor)
     def initialize(opts)
-      set_defaults(opts)
+      define_values(opts)
 
       # arguments     |
       # :name :number | @name         @number
@@ -113,7 +111,7 @@ module CiscoAclIntp
 
     # Set instance variables with ip/default-netmask
     # @param [Hash] opts Options of constructor
-    def set_defaults(opts)
+    def define_values(opts)
       @protocol = nil unless @protocol
       @name = opts[:name] || nil
       @number = opts[:number] || nil
@@ -151,12 +149,10 @@ module CiscoAclIntp
         fail AclArgumentError, 'Not specified protocol name and number'
       end
     end
-
   end
 
   # IP protocol number/name container
   class AceIpProtoSpec < AceProtoSpecBase
-
     # Minimum port/protocol number
     MIN_PORT = 0
     # Maximum port/protocol number
@@ -201,7 +197,6 @@ module CiscoAclIntp
     def number_to_name(number)
       IP_PROTO_NAME_TABLE[number] || number.to_s
     end
-
   end
 
   # TCP/UDP port range validation feature
@@ -274,7 +269,6 @@ module CiscoAclIntp
     def number_to_name(number)
       TCP_PORT_NAME_TABLE[number] || number.to_s
     end
-
   end
 
   # UDP protocol number/name container
@@ -327,7 +321,6 @@ module CiscoAclIntp
       UDP_PORT_NAME_TABLE[number] || number.to_s
     end
   end
-
 end # module
 
 ### Local variables:

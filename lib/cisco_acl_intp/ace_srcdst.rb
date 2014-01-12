@@ -7,10 +7,8 @@ require 'cisco_acl_intp/ace_other_qualifiers'
 require 'cisco_acl_intp/ace_tcp_flags'
 
 module CiscoAclIntp
-
   # IP Address and TCP/UDP Port Info
   class AceSrcDstSpec < AclContainerBase
-
     ## TBD
     ## Src/Dst takes Network Object Group or IP/wildcard.
     ## object group is not implemented yet.
@@ -38,8 +36,8 @@ module CiscoAclIntp
     # @note If not specified port (:port_spec or :operator, :port1, :port2)
     #   it assumed with ANY port.
     def initialize(opts)
-      set_ipspec(opts)
-      set_portspec(opts)
+      define_ipspec(opts)
+      define_portspec(opts)
     end
 
     # @param [AceSrcDstSpec] other RHS Object
@@ -74,7 +72,7 @@ module CiscoAclIntp
     # Set instance variables
     # @param [Hash] opts Options of constructor
     # @raise [AclArgumentError]
-    def set_ipspec(opts)
+    def define_ipspec(opts)
       if opts[:ip_spec]
         @ip_spec = opts[:ip_spec]
       elsif opts[:ipaddr]
@@ -89,7 +87,7 @@ module CiscoAclIntp
 
     # Set instance variables
     # @param [Hash] opts Options of constructor
-    def set_portspec(opts)
+    def define_portspec(opts)
       if opts[:port_spec]
         @port_spec = opts[:port_spec]
       elsif opts[:operator]
@@ -103,9 +101,7 @@ module CiscoAclIntp
         @port_spec = AcePortSpec.new(operator: 'any')
       end
     end
-
   end
-
 end # module
 
 ### Local variables:

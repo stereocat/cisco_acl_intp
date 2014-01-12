@@ -4,7 +4,6 @@ require 'forwardable'
 require 'cisco_acl_intp/ace'
 
 module CiscoAclIntp
-
   # Single access-list container base
   class SingleAclBase < AclContainerBase
     extend Forwardable
@@ -93,7 +92,6 @@ module CiscoAclIntp
     def search_ace(opts)
       @list.find { |each| each.matches?(opts) }
     end
-
   end
 
   ############################################################
@@ -132,7 +130,6 @@ module CiscoAclIntp
 
   # Named ACL container base
   class NamedAcl < SingleAclBase
-
     # Generate string for Cisco IOS access list
     # @return [String]
     def to_s
@@ -151,7 +148,6 @@ module CiscoAclIntp
 
   # Numbered ACL container base
   class NumberedAcl < SingleAclBase
-
     # @return [Integer] Access list number
     attr_reader :number
 
@@ -208,7 +204,6 @@ module CiscoAclIntp
       @name = name
       @number = number
     end
-
   end
 
   ############################################################
@@ -268,7 +263,6 @@ module CiscoAclIntp
       @acl_type = :standard
     end
   end
-
 end # module
 
 ### Local variables:

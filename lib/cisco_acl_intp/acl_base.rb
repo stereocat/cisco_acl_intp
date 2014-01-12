@@ -1,7 +1,6 @@
 require 'term/ansicolor'
 
 module CiscoAclIntp
-
   # Standard Error Handler of CiscoAclParser
   class AclError < StandardError; end
 
@@ -102,7 +101,6 @@ module CiscoAclIntp
     def c_pp(str)
       AclContainerBase.c_str str, cyan
     end
-
   end
 end
 

@@ -38,7 +38,9 @@ def create_data(field_patterns, leftover_results)
     leftover_results.each do |each_res|
       ## do not add pattern that has multiple 'false'
       ## add single fault pattern.
-      curr_results.push(single_data(each, each_res)) if each_res[:valid]
+      if each[:valid] || each_res[:valid]
+        curr_results.push(single_data(each, each_res))
+      end
     end
     curr_results
   end
@@ -47,8 +49,11 @@ end
 def single_data(curr, leftover)
   {
     data: [curr[:data], leftover[:data]].join(' '),
-    msg: curr[:msg], # used only single fault case
-    valid: curr[:valid] # used only single fault case
+    # used only single fail case,
+    # (1) curr AND leftover are VALID case
+    # (2) one of curr OR leftover is FALSE case
+    msg: curr[:msg] || leftover[:msg],
+    valid: curr[:valid] && leftover[:valid]
   }
 end
 

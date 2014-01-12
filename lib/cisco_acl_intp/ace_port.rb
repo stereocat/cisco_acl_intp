@@ -4,7 +4,6 @@ require 'forwardable'
 require 'cisco_acl_intp/ace_proto'
 
 module CiscoAclIntp
-
   # TCP/UDP port number and operator container
   class AcePortSpec < AclContainerBase
     include AceTcpUdpPortValidation
@@ -38,7 +37,7 @@ module CiscoAclIntp
       ## IOS15 later?
 
       if opts[:operator]
-        set_operators(opts)
+        define_operators(opts)
         validate_operators(opts)
       else
         fail AclArgumentError, 'Not specified port operator'
@@ -101,7 +100,7 @@ module CiscoAclIntp
 
     # Set instance variables
     # @param [Hash] opts Options of constructor
-    def set_operators(opts)
+    def define_operators(opts)
       @operator = opts[:operator]
       @port1 = opts[:port1] || nil
       @port2 = opts[:port2] || nil
@@ -123,7 +122,6 @@ module CiscoAclIntp
       end
     end
   end
-
 end # module
 
 ### Local variables:

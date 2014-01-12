@@ -5,7 +5,6 @@ require 'netaddr'
 require 'cisco_acl_intp/acl_base'
 
 module CiscoAclIntp
-
   # IP Address and Wildcard mask container
   class AceIpSpec < AclContainerBase
     extend Forwardable
@@ -41,7 +40,7 @@ module CiscoAclIntp
     # @return [AceIpSpec]
     def initialize(opts)
       if opts[:ipaddr]
-        set_addrinfo(opts)
+        define_addrinfo(opts)
       else
         fail AclArgumentError, 'Not specified IP address'
       end
@@ -84,20 +83,20 @@ module CiscoAclIntp
 
     # Set instance variables
     # @param [Hash] opts Options of constructor
-    def set_addrinfo(opts)
+    def define_addrinfo(opts)
       case
       when opts[:wildcard]
-        set_addrinfo_with_wildcard(opts)
+        define_addrinfo_with_wildcard(opts)
       when opts[:netmask]
-        set_addrinfo_with_netmask(opts)
+        define_addrinfo_with_netmask(opts)
       else
-        set_addrinfo_with_default_netmask(opts)
+        define_addrinfo_with_default_netmask(opts)
       end
     end
 
     # Set instance variables with ip/wildcard
     # @param [Hash] opts Options of constructor
-    def set_addrinfo_with_wildcard(opts)
+    def define_addrinfo_with_wildcard(opts)
       @wildcard = opts[:wildcard]
       @ipaddr = NetAddr::CIDR.create(
         opts[:ipaddr],
@@ -109,7 +108,7 @@ module CiscoAclIntp
 
     # Set instance variables with ip/netmask
     # @param [Hash] opts Options of constructor
-    def set_addrinfo_with_netmask(opts)
+    def define_addrinfo_with_netmask(opts)
       @netmask = opts[:netmask]
       @ipaddr = NetAddr::CIDR.create(
         [opts[:ipaddr], @netmask].join('/')
@@ -119,7 +118,7 @@ module CiscoAclIntp
 
     # Set instance variables with ip/default-netmask
     # @param [Hash] opts Options of constructor
-    def set_addrinfo_with_default_netmask(opts)
+    def define_addrinfo_with_default_netmask(opts)
       # default mask
       @netmask = '255.255.255.255'
       @ipaddr = NetAddr::CIDR.create(
@@ -127,9 +126,7 @@ module CiscoAclIntp
       )
       @wildcard = @ipaddr.wildcard_mask(true)
     end
-
   end
-
 end # module
 
 ### Local variables:

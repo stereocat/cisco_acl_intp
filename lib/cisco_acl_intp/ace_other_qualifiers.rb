@@ -4,7 +4,6 @@ require 'forwardable'
 require 'cisco_acl_intp/acl_base'
 
 module CiscoAclIntp
-
   # List of other-qualifiers for extended ace
   class AceOtherQualifierList < AclContainerBase
     extend Forwardable
@@ -40,7 +39,6 @@ module CiscoAclIntp
 
   # Log spec container
   class AceLogSpec < AceOtherQualifierBase
-
     # @param [String] value Log cookie
     # @return [String]
     attr_accessor :cookie
@@ -75,7 +73,6 @@ module CiscoAclIntp
 
   # Recursive qualifier container
   class AceRecursiveQualifier < AceOtherQualifierBase
-
     # @param [String] value Recursive name
     # @return [String]
     attr_accessor :recursive_name
@@ -96,7 +93,6 @@ module CiscoAclIntp
       sprintf 'reflect %s', c_name(@recursive_name)
     end
   end
-
 end # module
 
 ### Local variables:

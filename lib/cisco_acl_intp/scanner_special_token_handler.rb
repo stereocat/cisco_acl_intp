@@ -2,10 +2,8 @@
 require 'strscan'
 
 module CiscoAclIntp
-
   # Data and Handler functions of special tokens
   module SpecialTokenHandler
-
     # STRING token regexp:
     # first letter is alphabet or digit
     STR_REGEXP = '[a-zA-Z\d]\S*'
@@ -65,9 +63,7 @@ module CiscoAclIntp
         [re_str_list.join('\s+'), each.length]
       end
     end
-
   end # module SpecialTokenMgr
-
 end # module CiscoAclIntp
 
 ### Local variables:

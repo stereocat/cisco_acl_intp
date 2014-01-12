@@ -3,10 +3,8 @@ require 'strscan'
 require 'cisco_acl_intp/scanner_special_token_handler'
 
 module CiscoAclIntp
-
   # Lexical analyzer (Scanner)
   class Scanner
-
     # include special tokens data and its handlers
     include SpecialTokenHandler
 
@@ -163,9 +161,7 @@ module CiscoAclIntp
       end
       ss.matched?
     end
-
   end # class Scanner
-
 end # module
 
 ### Local variables:

@@ -3,7 +3,6 @@
 require 'cisco_acl_intp/ace_srcdst'
 
 module CiscoAclIntp
-
   # Access control entry base model
   class AceBase < AclContainerBase
     include Comparable
@@ -55,7 +54,6 @@ module CiscoAclIntp
 
   # Remark entry container
   class RemarkAce < AceBase
-
     # @param [String] value Comment string
     # @return [String]
     attr_accessor :comment
@@ -89,7 +87,6 @@ module CiscoAclIntp
 
   # Evaluate entry container
   class EvaluateAce < AceBase
-
     # @param [String] value Recutsive entry name
     # @return [String]
     attr_accessor :recursive_name
@@ -131,7 +128,6 @@ module CiscoAclIntp
 
   # ACE for standard access list
   class StandardAce < AceBase
-
     # @param [String] value Action
     # @return [String]
     attr_accessor :action
@@ -156,13 +152,13 @@ module CiscoAclIntp
     def initialize(opts)
       super
 
-      set_action(opts)
+      define_action(opts)
       if opts[:src]
-        set_src_spec(opts)
+        define_src_spec(opts)
       else
         fail AclArgumentError, 'Not specified src spec'
       end
-      set_log_spec(opts)
+      define_log_spec(opts)
     end
 
     # @return [Boolean]
@@ -199,7 +195,7 @@ module CiscoAclIntp
     # Set instance variables
     # @param [Hash] opts Options of constructor
     # @raise [AclArgumentError]
-    def set_action(opts)
+    def define_action(opts)
       if opts[:action]
         @action = opts[:action]
       else
@@ -210,7 +206,7 @@ module CiscoAclIntp
     # Set instance variables
     # @param [Hash] opts Options of constructor
     # @raise [AclArgumentError]
-    def set_src_spec(opts)
+    def define_src_spec(opts)
       case opts[:src]
       when Hash
         @src_spec = AceSrcDstSpec.new opts[:src]
@@ -224,15 +220,13 @@ module CiscoAclIntp
     # Set instance variables
     # @param [Hash] opts Options of constructor
     # @raise [AclArgumentError]
-    def set_log_spec(opts)
+    def define_log_spec(opts)
       @log_spec = opts[:log] || nil
     end
-
   end
 
   # ACE for extended access list
   class ExtendedAce < StandardAce
-
     # @param [String] value L3/L4 protocol
     # @return [String]
     attr_accessor :protocol
@@ -291,7 +285,7 @@ module CiscoAclIntp
       super
       validate_protocol(opts)
       validate_dst_spec(opts)
-      set_tcp_info(opts)
+      define_tcp_info(opts)
     end
 
     # @param [ExtendACE] other RHS object
@@ -379,7 +373,7 @@ module CiscoAclIntp
     # @param [Hash] opts Options of constructor
     def validate_protocol(opts)
       if opts[:protocol]
-        set_protocol(opts)
+        define_protocol(opts)
       else
         fail AclArgumentError, 'Not specified IP protocol'
       end
@@ -389,7 +383,7 @@ module CiscoAclIntp
     # @param [Hash] opts Options of constructor
     def validate_dst_spec(opts)
       if opts[:dst]
-        set_dst_spec(opts)
+        define_dst_spec(opts)
       else
         fail AclArgumentError, 'Not specified dst spec'
       end
@@ -397,7 +391,7 @@ module CiscoAclIntp
 
     # Set instance variables
     # @param [Hash] opts Options of constructor
-    def set_protocol(opts)
+    def define_protocol(opts)
       case opts[:protocol]
       when AceIpProtoSpec
         @protocol = opts[:protocol]
@@ -411,7 +405,7 @@ module CiscoAclIntp
 
     # Set instance variables
     # @param [Hash] opts Options of constructor
-    def set_dst_spec(opts)
+    def define_dst_spec(opts)
       case opts[:dst]
       when Hash
         @dst_spec = AceSrcDstSpec.new opts[:dst]
@@ -424,7 +418,7 @@ module CiscoAclIntp
 
     # Set instance variables
     # @param [Hash] opts Options of constructor
-    def set_tcp_info(opts)
+    def define_tcp_info(opts)
       if @protocol.name == 'tcp' && opts[:tcp_flags_qualifier]
         @tcp_flags = opts [:tcp_flags_qualifier]
       else
@@ -432,9 +426,7 @@ module CiscoAclIntp
       end
       @tcp_other_qualifiers = nil
     end
-
   end
-
 end # module
 
 ### Local variables:

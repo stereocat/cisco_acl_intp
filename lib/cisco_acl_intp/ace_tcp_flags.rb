@@ -4,10 +4,8 @@ require 'forwardable'
 require 'cisco_acl_intp/acl_base'
 
 module CiscoAclIntp
-
   # TCP flag container
   class AceTcpFlag < AclContainerBase
-
     # @param [String] value TCP flag name
     # @return [String]
     attr_accessor :flag
@@ -58,7 +56,6 @@ module CiscoAclIntp
       @list == other.list
     end
   end
-
 end # module
 
 ### Local variables:
