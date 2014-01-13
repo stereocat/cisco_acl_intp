@@ -137,16 +137,17 @@ module CiscoAclIntp
         if @name != number_to_name(@number)
           fail AclArgumentError, 'Specified protocol name and number not match'
         end
-      elsif @name && (!@number)
+      elsif (!@name) && (!@number)
+        # Case (*4):
+        fail AclArgumentError, 'Not specified protocol name and number'
+      else
+        ## condition: @name && (!@number)
         # Case (*2): no-op
         # Usually, args are configured in parser.
         # If not specified the number, it is empty explicitly
-      elsif (!@name) && @number
+        ## condition: (!@name) && @number
         # Case (*3): no-op
         # @name is used to stringify, convert @number to name in to_s
-      else
-        # Case (*4):
-        fail AclArgumentError, 'Not specified protocol name and number'
       end
     end
   end
@@ -210,7 +211,7 @@ module CiscoAclIntp
     # @param [Integer] port TCP/UDP port/protocol number
     # @return [Boolean]
     def valid_range?(port)
-      MIN_PORT <= port.to_i && port.to_i <= MAX_PORT
+      (MIN_PORT .. MAX_PORT).include?(port.to_i)
     end
   end
 

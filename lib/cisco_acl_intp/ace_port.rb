@@ -67,6 +67,16 @@ module CiscoAclIntp
       end
     end
 
+    # Table of port match operator and operations
+    PORT_OPERATE = {
+      'any'   => proc { |p1, p2, p| true },
+      'eq'    => proc { |p1, p2, p| p1 == p },
+      'neq'   => proc { |p1, p2, p| p1 != p },
+      'gt'    => proc { |p1, p2, p| p1  < p },
+      'lt'    => proc { |p1, p2, p| p1  > p },
+      'range' => proc { |p1, p2, p| (p1 .. p2).include?(p) },
+    }
+
     # Check the port number matches this?
     # @param [Integer] port TCP/UDP Port number
     # @raise [AclArgumentError]
@@ -75,28 +85,11 @@ module CiscoAclIntp
       unless valid_range?(port)
         fail AclArgumentError, "Port out of range: #{ port }"
       end
-      match_port?(port)
+      # @operator was validated in constructor
+      PORT_OPERATE[@operator].call(@port1.to_i, @port2.to_i, port)
     end
 
     private
-
-    # Check the port number matches this?
-    # @param [Integer] port TCP/UDP Port number
-    # @return [Boolean]
-    def match_port?(port)
-      ## TBD
-      ## operator must be specified by symbol?
-
-      case @operator
-      when 'any'   then true
-      when 'eq'    then @port1.to_i == port
-      when 'neq'   then @port1.to_i != port
-      when 'gt'    then @port1.to_i <  port
-      when 'lt'    then @port1.to_i >  port
-      when 'range' then @port1.to_i <= port && port <= @port2.to_i
-      else              false
-      end
-    end
 
     # Set instance variables
     # @param [Hash] opts Options of constructor
@@ -112,13 +105,13 @@ module CiscoAclIntp
     def validate_operators(opts)
       if (!@port1) && (@operator != 'any')
         fail AclArgumentError, 'Not specified port_1'
-      end
-
-      if opts[:port2] && (opts[:port1] > opts[:port2])
+      elsif opts[:port2] && (opts[:port1] > opts[:port2])
         fail(
           AclArgumentError,
           'Not specified port_2 or Invalid port range args sequence'
         )
+      elsif !PORT_OPERATE[@operator]
+        fail AclArgumentError, "Unknown operator: #{@operator}"
       end
     end
   end

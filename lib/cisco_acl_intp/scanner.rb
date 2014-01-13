@@ -69,11 +69,9 @@ module CiscoAclIntp
     # @param [Integer] aclnum ACL number
     # @return [Array] Token list
     def check_numd_acl_type(aclnum)
-      if (1 <= aclnum && aclnum <= 99) ||
-          (1300 <= aclnum && aclnum <= 1999)
+      if (1..99).include?(aclnum) || (1300..1999).include?(aclnum)
         [:NUMD_STD_ACL, aclnum]
-      elsif (100 <= aclnum && aclnum <= 199) ||
-          (2000 <= aclnum && aclnum <= 2699)
+      elsif (100..199).include?(aclnum) || (2000..2699).include?(aclnum)
         [:NUMD_EXT_ACL, aclnum]
       else
         [:UNKNOWN, "access-list #{aclnum}"]

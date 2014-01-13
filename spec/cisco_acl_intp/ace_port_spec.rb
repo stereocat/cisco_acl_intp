@@ -2,6 +2,27 @@
 require 'spec_helper'
 
 describe AcePortSpec do
+  describe '#new' do
+    it 'shoud be error with unknown operator' do
+      lambda do
+        AcePortSpec.new(
+          operator: 'equal',
+          port1: 443
+        )
+      end.should raise_error(AclArgumentError)
+    end
+
+    it 'should be error with invalid ports' do
+      lambda do
+        AcePortSpec.new(
+          operator: 'range',
+          port1: 443,
+          port2: 139
+        )
+      end.should raise_error(AclArgumentError)
+    end
+  end
+
   describe '#to_s' do
     before do
       @p1 = AceTcpProtoSpec.new(number: 22)
