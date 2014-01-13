@@ -19,6 +19,12 @@ CiscoAclIntp CANNOT...
   implemented yet.
 * handle IPv6 ACL (`access-list ipv6`) (not implemented yet)
 
+Supports
+
+* Ruby/1.9 or later. (building and testing is under Ruby/2.0.0 and NOT
+  supported Ruby/1.8.x)
+* Racc/1.4.9 or later.
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -37,9 +43,11 @@ Or install it yourself as:
 
 ### ACL Validator
 
+#### Usage
+
 One of application of CiscoAclIntp is in `tools/check_acl.rb`.  The
-script works as ACL validator.  It reads ACL file (or read ACL from
-STDIN), parse it with CiscoAclIntp parser and output parser results.
+script works as ACL validator.  It reads a ACL file, parse it with
+CiscoAclIntp parser and output parser results.
 
 In directory `acl_examples`, there are some Cisco IOS ACL sample
 files. Run `check_acl.rb` with ACL sample files, like below.
@@ -67,12 +75,47 @@ files. Run `check_acl.rb` with ACL sample files, like below.
     access-list 110  permit ip 192.168.0.0 0.0.255.255  any
     $ ~/cisco_acl_intp$
 
-By putting `-c` (`--color`) option, `check_acl.rb` outputs color-coded
-ACL according to type of each word. It can parse multiple ACLs at the
-same time. In addition, in the case of the parsing of a ACL that
-contains errors, CiscoAclIntp parser outputs corresponding error
-messages. Please try to run using sample ACL file,
+By putting `-c` (`--color`) option, `check_acl.rb` outputs
+**color-coded ACL** according to type of each word. It can parse
+multiple ACLs at the same time. In addition, in the case of the
+parsing of a ACL that contains errors, CiscoAclIntp parser outputs
+corresponding error messages. Please try to run using sample ACL file,
 `acl_examples/err-acl.txt`, that contains some kind of errors.
+
+You can get short usage with `-h` option. If it runs without `-f`
+(`--file`) option, it reads ACLs from Standard I/O.
+
+#### Codes
+
+```ruby:check_acl.rb
+require 'optparse'
+require 'cisco_acl_intp'
+
+## CUT: option handling
+
+parser = CiscoAclIntp::Parser.new(popts)
+
+# read acl from file or STDIN
+if opts[:file]
+  parser.parse_file opts[:file]
+else
+  parser.parse_file $stdin
+end
+
+# print acl data
+aclt = parser.acl_table
+aclt.each do |name, acl|
+  puts "acl name : #{name}"
+  puts acl.to_s
+end
+```
+
+In the script, generate `CiscoAclIntp::Parser` instance and it reads
+ACLs from a file (or `STDIN`). The `parser` instance generate ACL
+objects (as Hash table of ACL name and ACL objects). An element of the
+table is "ACL object". "ACL object" is build by ACL components. For
+example, source/destination address obj, action obj, tcp/udp protocol
+obj,... See more detail in documents (see also, Documents section)
 
 ## Documents
 

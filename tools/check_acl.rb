@@ -3,8 +3,6 @@ $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 require 'optparse'
 require 'cisco_acl_intp'
 
-include CiscoAclIntp
-
 opts = {}
 OptionParser.new do | each |
   each.banner = "ruby #{$PROGRAM_NAME} [options] [args]"
@@ -44,7 +42,7 @@ end
 
 # print acl data
 aclt = parser.acl_table
-aclt.each do | name, acl |
+aclt.each do |name, acl|
   puts "acl name : #{name}"
   puts acl.to_s
 end
