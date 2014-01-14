@@ -18,25 +18,25 @@ module CiscoAclIntp
     # @param [File] file File name
     # @return [Array] Scanned tokens array (Queue)
     def scan_file(file)
-      q = [] # queue
+      queue = []
       file.each_line do |each|
-        q.concat(scan_one_line(each))
+        queue.concat(scan_one_line(each))
       end
-      q.push [false, 'EOF']
+      queue.push [false, 'EOF']
     end
 
     # Scan ACL from variable
     # @param [String] str Access list string
     # @return [Array] Scanned tokens array (Queue)
     def scan_line(str)
-      q = [] # queue
+      queue = []
       str.split(/$/).each do |each|
         each.chomp!
         # add word separator at end of line
         each.concat(' ')
-        q.concat(scan_one_line(each))
+        queue.concat(scan_one_line(each))
       end
-      q.push [false, 'EOF']
+      queue.push [false, 'EOF']
     end
 
     # Scan ACL
@@ -44,25 +44,25 @@ module CiscoAclIntp
     # @return [Array] Scanned tokens array (Queue)
     def scan_one_line(line)
       run_scanning(line)
-    end # def scan_one_line
+    end
 
     private
 
     # Scan a line
     # @param [String] line ACL String
-    # @param [Array] q Queue
+    # @param [Array] queue Queue
     # @return [Array] Scanned tokens array (Queue)
-    def run_scanning(line, q = [])
+    def run_scanning(line, queue = [])
       ss = StringScanner.new(line)
       until ss.eos?
         case
-        when scan_match_arg_tokens(ss, q)
-        when scan_match_acl_header(ss, q)
-        when scan_match_ipaddr(ss, q)
-        else scan_match_common(ss, q)
+        when scan_match_arg_tokens(ss, queue)
+        when scan_match_acl_header(ss, queue)
+        when scan_match_ipaddr(ss, queue)
+        else scan_match_common(ss, queue)
         end
       end
-      q.push [:EOS, nil] # Add end-of-string
+      queue.push [:EOS, nil] # Add end-of-string
     end
 
     # Numbered ACL header checker
@@ -80,84 +80,91 @@ module CiscoAclIntp
 
     # Scanner of acl header
     # @param [StringScanner] ss Scanned ACL line
-    # @param [Array] q Queue
+    # @param [Array] queue Queue
     # @return [Boolean] if line matched acl header
-    def scan_match_acl_header(ss, q)
+    def scan_match_acl_header(ss, queue)
       case
       when ss.scan(/\s*!.*$/), ss.scan(/\s*#.*$/)
         ## "!/# comment" and whitespace line, NO-OP
       when ss.scan(/\s+/), ss.scan(/\A\s*\Z/)
         ## whitespace, NO-OP
-        # q.push [:WHITESPACE, ""] # for debug
+        # queue.push [:WHITESPACE, ""] # for debug
       when ss.scan(/(?:access-list)\s+(\d+)\s/)
         ## Numbered ACL Header
         ## numbered acl has no difference
         ## in format between Standard and Extended...
-        q.push check_numd_acl_type(ss[1].to_i)
+        queue.push check_numd_acl_type(ss[1].to_i)
       when ss.scan(/(ip\s+access\-list)\s/)
         ## Named ACL Header
-        q.push [:NAMED_ACL, ss[1]]
+        queue.push [:NAMED_ACL, ss[1]]
       end
       ss.matched?
     end
 
     # Scanner of IP address
     # @param [StringScanner] ss Scanned ACL line
-    # @param [Array] q Queue
+    # @param [Array] queue Queue
     # @return [Boolean] if line matched IP address
-    def scan_match_ipaddr(ss, q)
+    def scan_match_ipaddr(ss, queue)
       case
       when ss.scan(/(\d+\.\d+\.\d+\.\d+)\s/)
         ## IP Address
-        q.push [:IPV4_ADDR, ss[1]]
+        queue.push [:IPV4_ADDR, ss[1]]
       when ss.scan(/(\d+\.\d+\.\d+\.\d+)(\/)(\d+)\s/)
         ## IP Address of 'ip/mask' notation
-        q.push [:IPV4_ADDR, ss[1]]
-        q.push ['/',        ss[2]]
-        q.push [:NUMBER,    ss[3].to_i]
+        queue.push [:IPV4_ADDR, ss[1]]
+        queue.push ['/',        ss[2]]
+        queue.push [:NUMBER,    ss[3].to_i]
       end
       ss.matched?
     end
 
     # Scanner of common tokens
     # @param [StringScanner] ss Scanned ACL line
-    # @param [Array] q Queue
+    # @param [Array] queue Queue
     # @return [Boolean] if line matched tokens
-    def scan_match_common(ss, q)
+    def scan_match_common(ss, queue)
       case
       when ss.scan(/(\d+)\s/)
         ## Number
-        q.push [:NUMBER, ss[1].to_i]
+        queue.push [:NUMBER, ss[1].to_i]
       when ss.scan(/([\+\-]?#{STR_REGEXP})/)
         ## Tokens (echo back)
         ## defined in module SpecialTokenHandler
         ## plus/minus used in tcp flag token e.g. +syn -ack
-        q.push [ss[1], ss[1]]
+        queue.push token_list(ss[1])
       else
         ## do not match any?
         ## then scanned whole line and
         ## put in queue as unknown.
         ss.scan(/(.*)$/) # match all
-        q.push [:UNKNOWN, ss[1]]
+        queue.push [:UNKNOWN, ss[1]]
       end
       ss.matched?
     end
 
     # Scanner of special tokens
     # @param [StringScanner] ss Scanned ACL line
-    # @param [Array] q Queue
+    # @param [Array] queue Queue
     # @return [Boolean] if line matched tokens
-    def scan_match_arg_tokens(ss, q)
+    def scan_match_arg_tokens(ss, queue)
       @arg_tokens.each do |(str, length)|
         if ss.scan(/#{str}/)
           (1...length).each do |idx|
-            q.push [ss[idx], ss[idx]]
+            queue.push token_list(ss[idx])
           end
-          q.push [:STRING, ss[length]] # last element
+          queue.push [:STRING, ss[length]] # last element
           break
         end
       end
       ss.matched?
+    end
+
+    # Generate echo-backed token array
+    # @param [String] token Token
+    # @return [Array] Token array for scanner queue
+    def token_list(token)
+      [token, token]
     end
   end # class Scanner
 end # module

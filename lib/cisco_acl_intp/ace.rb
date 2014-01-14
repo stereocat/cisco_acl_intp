@@ -19,11 +19,7 @@ module CiscoAclIntp
     # @option opts [Integer] :number Sequence number
     # @return [AceBase]
     def initialize(opts)
-      if opts[:number]
-        @seq_number = opts[:number]
-      else
-        @seq_number = NO_SEQ_NUMBER
-      end
+      @seq_number = opts[:number] || NO_SEQ_NUMBER
     end
 
     # Check this object has sequence number
@@ -99,8 +95,7 @@ module CiscoAclIntp
     # @return [EvaluateAce]
     def initialize(opts)
       super
-
-      if opts[:recursive_name]
+      if opts.key?(:recursive_name)
         @recursive_name = opts[:recursive_name]
       else
         fail AclArgumentError, 'name not specified'
@@ -152,13 +147,13 @@ module CiscoAclIntp
     def initialize(opts)
       super
 
-      define_action(opts)
+      @action = define_action(opts)
       if opts[:src]
-        define_src_spec(opts)
+        @src_spec = define_src_spec(opts)
       else
         fail AclArgumentError, 'Not specified src spec'
       end
-      define_log_spec(opts)
+      @log_spec = define_log_spec(opts)
     end
 
     # @return [Boolean]
@@ -183,8 +178,8 @@ module CiscoAclIntp
     # @return [Boolean] Matched or not
     # @raise [AclArgumentError] Invalid src_ip
     def matches?(opts)
-      if opts[:src_ip]
-        return @src_spec.ip_spec.matches?(opts[:src_ip])
+      if opts.key?(:src_ip)
+        @src_spec.ip_spec.matches?(opts[:src_ip])
       else
         fail AclArgumentError, 'Invalid match target src IP address'
       end
@@ -195,9 +190,10 @@ module CiscoAclIntp
     # Set instance variables
     # @param [Hash] opts Options of constructor
     # @raise [AclArgumentError]
+    # @return [String] Action string
     def define_action(opts)
-      if opts[:action]
-        @action = opts[:action]
+      if opts.key?(:action)
+        opts[:action]
       else
         fail AclArgumentError, 'Not specified action'
       end
@@ -206,12 +202,14 @@ module CiscoAclIntp
     # Set instance variables
     # @param [Hash] opts Options of constructor
     # @raise [AclArgumentError]
+    # @return [AceSrcDstSpec] Source spec object
     def define_src_spec(opts)
-      case opts[:src]
+      src = opts[:src]
+      case src
       when Hash
-        @src_spec = AceSrcDstSpec.new opts[:src]
+        AceSrcDstSpec.new(src)
       when AceSrcDstSpec
-        @src_spec = opts[:src]
+        src
       else
         fail AclArgumentError, 'src spec: unknown class'
       end
@@ -220,8 +218,9 @@ module CiscoAclIntp
     # Set instance variables
     # @param [Hash] opts Options of constructor
     # @raise [AclArgumentError]
+    # @return [String] Log spec object
     def define_log_spec(opts)
-      @log_spec = opts[:log] || nil
+      opts[:log] || nil
     end
   end
 
@@ -285,7 +284,8 @@ module CiscoAclIntp
       super
       validate_protocol(opts)
       validate_dst_spec(opts)
-      define_tcp_info(opts)
+      @tcp_flags = define_tcp_flags(opts)
+      @tcp_other_qualifiers = nil # not yet.
     end
 
     # @param [ExtendACE] other RHS object
@@ -324,7 +324,7 @@ module CiscoAclIntp
     # @return [Boolean] Matched or not
     # @raise [AclArgumentError]
     def matches?(opts)
-      if opts[:protocol]
+      if opts.key?(:protocol)
         match_proto = match_protocol?(opts[:protocol])
         match_src = match_addr_port?(@src_spec, opts[:src_ip], opts[:src_port])
         match_dst = match_addr_port?(@dst_spec, opts[:dst_ip], opts[:dst_port])
@@ -342,15 +342,15 @@ module CiscoAclIntp
     # @return [Boolean] Matched or not
     # @raise [AclArgumentError]
     def match_protocol?(protocol)
-      if @protocol.to_s == 'ip'
-        is_match = true # allow tcp/udp
+      protocol_str = @protocol.to_s
+      if protocol_str == 'ip'
+        true # allow tcp/udp
       else
         ## TBD
         ## what to do when NO name and only protocol number is specified?
         # In principle, it must be compared by object.
-        is_match = (protocol == @protocol.to_s)
+        protocol == protocol_str
       end
-      is_match
     end
 
     # check src/dst address
@@ -360,20 +360,18 @@ module CiscoAclIntp
     # @return [Boolean] Matched or not
     # @raise [AclArgumentError]
     def match_addr_port?(srcdst_spec, ip, port)
-      is_match = false
       if ip
-        is_match = srcdst_spec.matches?(ip, port)
+        srcdst_spec.matches?(ip, port)
       else
         fail AclArgumentError, 'Not specified match target IP Addr'
       end
-      is_match
     end
 
     # Validate options
     # @param [Hash] opts Options of constructor
     def validate_protocol(opts)
       if opts[:protocol]
-        define_protocol(opts)
+        @protocol = define_protocol(opts)
       else
         fail AclArgumentError, 'Not specified IP protocol'
       end
@@ -383,7 +381,7 @@ module CiscoAclIntp
     # @param [Hash] opts Options of constructor
     def validate_dst_spec(opts)
       if opts[:dst]
-        define_dst_spec(opts)
+        @dst_spec = define_dst_spec(opts)
       else
         fail AclArgumentError, 'Not specified dst spec'
       end
@@ -391,13 +389,15 @@ module CiscoAclIntp
 
     # Set instance variables
     # @param [Hash] opts Options of constructor
+    # @return [AceIpProtoSpec] IP protocol object
     def define_protocol(opts)
-      case opts[:protocol]
+      protocol = opts[:protocol]
+      case protocol
       when AceIpProtoSpec
-        @protocol = opts[:protocol]
+        protocol
       else
-        @protocol = AceIpProtoSpec.new(
-          name: opts[:protocol],
+        AceIpProtoSpec.new(
+          name: protocol,
           number: opts[:protocol_num]
         )
       end
@@ -405,12 +405,15 @@ module CiscoAclIntp
 
     # Set instance variables
     # @param [Hash] opts Options of constructor
+    # @raise [AclArgumentError]
+    # @return [AceSrcDstSpec] Destination spec object
     def define_dst_spec(opts)
-      case opts[:dst]
+      dst = opts[:dst]
+      case dst
       when Hash
-        @dst_spec = AceSrcDstSpec.new opts[:dst]
+        AceSrcDstSpec.new(dst)
       when AceSrcDstSpec
-        @dst_spec = opts[:dst]
+        dst
       else
         fail AclArgumentError, 'Dst spec: unknown class'
       end
@@ -418,13 +421,12 @@ module CiscoAclIntp
 
     # Set instance variables
     # @param [Hash] opts Options of constructor
-    def define_tcp_info(opts)
-      if @protocol.name == 'tcp' && opts[:tcp_flags_qualifier]
-        @tcp_flags = opts [:tcp_flags_qualifier]
+    def define_tcp_flags(opts)
+      if @protocol.name == 'tcp' && opts.key?(:tcp_flags_qualifier)
+        opts[:tcp_flags_qualifier]
       else
-        @tcp_flags = nil
+        nil
       end
-      @tcp_other_qualifiers = nil
     end
   end
 end # module

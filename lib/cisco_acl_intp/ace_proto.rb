@@ -189,7 +189,7 @@ module CiscoAclIntp
     # @param [Integer] port IP/TCP/UDP port/protocol number
     # @return [Boolean]
     def valid_range?(port)
-      MIN_PORT <= port.to_i && port.to_i <= MAX_PORT
+      (MIN_PORT .. MAX_PORT).include?(port.to_i)
     end
 
     # Convert protocol/port number to string (its name)

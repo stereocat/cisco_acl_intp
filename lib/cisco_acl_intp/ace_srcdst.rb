@@ -36,8 +36,8 @@ module CiscoAclIntp
     # @note If not specified port (:port_spec or :operator, :port1, :port2)
     #   it assumed with ANY port.
     def initialize(opts)
-      define_ipspec(opts)
-      define_portspec(opts)
+      @ip_spec = define_ipspec(opts)
+      @port_spec = define_portspec(opts)
     end
 
     # @param [AceSrcDstSpec] other RHS Object
@@ -58,13 +58,8 @@ module CiscoAclIntp
     # @param [Integer] port Port No.
     # @return [Boolean]
     def matches?(address, port = nil)
-      if port
-        @port_spec.matches?(port) &&
-          @ip_spec.matches?(address)
-      else
-        # if not specified port
-        @ip_spec.matches?(address)
-      end
+      ip_spec_match = @ip_spec.matches?(address)
+      ip_spec_match && @port_spec.matches?(port) if port
     end
 
     private
@@ -72,11 +67,12 @@ module CiscoAclIntp
     # Set instance variables
     # @param [Hash] opts Options of constructor
     # @raise [AclArgumentError]
+    # @return [AceIpSpec] IP address/Mask object
     def define_ipspec(opts)
-      if opts[:ip_spec]
-        @ip_spec = opts[:ip_spec]
-      elsif opts[:ipaddr]
-        @ip_spec = AceIpSpec.new(
+      if opts.key?(:ip_spec)
+        opts[:ip_spec]
+      elsif opts.key?(:ipaddr)
+        AceIpSpec.new(
           ipaddr: opts[:ipaddr],
           wildcard: opts[:wildcard]
         )
@@ -87,18 +83,19 @@ module CiscoAclIntp
 
     # Set instance variables
     # @param [Hash] opts Options of constructor
+    # @return [AcePortSpec] Port/Operator object
     def define_portspec(opts)
-      if opts[:port_spec]
-        @port_spec = opts[:port_spec]
-      elsif opts[:operator]
-        @port_spec = AcePortSpec.new(
+      if opts.key?(:port_spec)
+        opts[:port_spec]
+      elsif opts.key?(:operator)
+        AcePortSpec.new(
           operator: opts[:operator],
           port1: opts[:port1], port2: opts[:port2]
         )
       else
         # in standard acl, not used port_spec
         # if not specified port spec: default: any port
-        @port_spec = AcePortSpec.new(operator: 'any')
+        AcePortSpec.new(operator: 'any')
       end
     end
   end

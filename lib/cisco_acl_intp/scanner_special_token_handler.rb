@@ -26,18 +26,11 @@ module CiscoAclIntp
       ['group-object', :word],
     ]
 
-    # Convert STRING_ARG_TOKENS symbol
-    #   to Regexp String
-    # @param [Symbol] symbol :STRING symbol
-    # @return [String] Regexp string
-    def conver_symbol_to_regexpstr(symbol)
-      case symbol
-      when :word
-        '(' + STR_REGEXP + ')'
-      when :leftover
-        '(.*)$'
-      end
-    end
+    # Conversion table of string-tokens
+    SYMBOL_TO_REGEXPSTR = {
+      word: ['(', STR_REGEXP, ')'].join,
+      leftover: '(.*)$'
+    }
 
     # Convert STRING_ARG_TOKENS to Regexp string
     # @param [Array] set Special tokens set
@@ -49,7 +42,7 @@ module CiscoAclIntp
         when String
           '(' + each + ')'
         when Symbol
-          conver_symbol_to_regexpstr(each)
+          SYMBOL_TO_REGEXPSTR[each]
         end
       end
     end

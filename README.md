@@ -12,17 +12,17 @@ CiscoAclIntp can...
 * parse almost ACL syntaxes.
   * basic IPv4 acl (protocol `ip`/`tcp`/`udp`)
 
-CiscoAclIntp CANNOT...
+CiscoAclIntp *CANNOT*...
 
 * handle IPv4 tcp-flags-qualifier, object-groups, and other specific
   qualifiers (`dscp`, `ttl`, `tos`, ...).  These features are not
   implemented yet.
-* handle IPv6 ACL (`access-list ipv6`) (not implemented yet)
+* handle IPv6 ACL (`ip access-list ipv6`) (not implemented yet)
 
 Supports
 
-* Ruby/1.9 or later. (building and testing is under Ruby/2.0.0 and NOT
-  supported Ruby/1.8.x)
+* Ruby/1.9 or later. (Development and testing is being conducted in
+  Ruby/2.0.0 and *NOT* supported Ruby/1.8.x)
 * Racc/1.4.9 or later.
 
 ## Installation
@@ -45,8 +45,8 @@ Or install it yourself as:
 
 #### Usage
 
-One of application of CiscoAclIntp is in `tools/check_acl.rb`.  The
-script works as ACL validator.  It reads a ACL file, parse it with
+One of application using CiscoAclIntp is in `tools/check_acl.rb`.
+The script works as ACL validator.  It reads a ACL file, parse it with
 CiscoAclIntp parser and output parser results.
 
 In directory `acl_examples`, there are some Cisco IOS ACL sample
