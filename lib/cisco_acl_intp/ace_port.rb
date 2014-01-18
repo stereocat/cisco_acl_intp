@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-require 'forwardable'
 require 'cisco_acl_intp/ace_proto'
 
 module CiscoAclIntp
@@ -14,20 +13,25 @@ module CiscoAclIntp
 
     # @param [AceProtoSpecBase] value Port No. (single/lower)
     # @return [AceProtoSpecBase]
-    attr_accessor :port1
+    attr_accessor :begin_port
+
+    # alias for unary operator
+    alias_method :port, :begin_port
 
     # @param [AceProtoSpecBase] value Port No. (higher)
     # @return [AceProtoSpecBase]
-    attr_accessor :port2
+    attr_accessor :end_port
 
     # Constructor
     # @param [Hash] opts Options
     # @option opts [String] :operator Port operator, eq/neq/lt/gt/range
-    # @option opts [AceProtoSpecBase] :port1 Port No. (single/lower)
-    # @option opts [AceProtoSpecBase] :port2 Port No. (higher)
+    # @option opts [AceProtoSpecBase] :port Port No. (single/lower)
+    #   (same as :begin_port, alias for unary operator)
+    # @option opts [AceProtoSpecBase] :begin_port Port No. (single/lower)
+    # @option opts [AceProtoSpecBase] :end_port Port No. (higher)
     # @raise [AclArgumentError]
     # @return [AcePortSpec]
-    # @note '@port1' and '@port2' should managed
+    # @note '@begin_port' and '@end_port' should managed
     #   with port number and protocol name.
     #   it need the number when operate/compare protocol number,
     #   and need the name when stringize the object.
@@ -36,8 +40,7 @@ module CiscoAclIntp
       ## in ACL, can "eq/neq" receive port list?
       ## IOS15 later?
 
-      if opts[:operator]
-        define_operators(opts)
+      if opts.key?(:operator)
         validate_operators(opts)
       else
         fail AclArgumentError, 'Not specified port operator'
@@ -48,8 +51,8 @@ module CiscoAclIntp
     # @return [Boolean]
     def ==(other)
       @operator == other.operator &&
-        @port1 == other.port1 &&
-        @port2 == other.port2
+        @begin_port == other.begin_port &&
+        @end_port == other.end_port
     end
 
     # Generate string for Cisco IOS access list
@@ -58,23 +61,30 @@ module CiscoAclIntp
       if @operator == 'any'
         ''
       else
-        c_pp(sprintf(
-            '%s %s %s',
-            @operator ? @operator : '',
-            @port1 ? @port1 : '',
-            @port2 ? @port2 : ''
-        ))
+        c_pp(sprintf('%s %s %s', @operator, @begin_port, @end_port))
       end
     end
 
     # Table of port match operator and operations
     PORT_OPERATE = {
-      'any'   => proc { |p1, p2, p| true },
-      'eq'    => proc { |p1, p2, p| p1 == p },
-      'neq'   => proc { |p1, p2, p| p1 != p },
-      'gt'    => proc { |p1, p2, p| p1  < p },
-      'lt'    => proc { |p1, p2, p| p1  > p },
-      'range' => proc { |p1, p2, p| (p1 .. p2).include?(p) },
+      'any'   => proc do |begin_port, end_port, port|
+        true
+      end,
+      'eq'    => proc do |begin_port, end_port, port|
+        begin_port == port
+      end,
+      'neq'   => proc do |begin_port, end_port, port|
+        begin_port != port
+      end,
+      'gt'    => proc do |begin_port, end_port, port|
+        begin_port  < port
+      end,
+      'lt'    => proc do |begin_port, end_port, port|
+        begin_port  > port
+      end,
+      'range' => proc do |begin_port, end_port, port|
+        (begin_port .. end_port).include?(port)
+      end,
     }
 
     # Check the port number matches this?
@@ -86,32 +96,44 @@ module CiscoAclIntp
         fail AclArgumentError, "Port out of range: #{ port }"
       end
       # @operator was validated in constructor
-      PORT_OPERATE[@operator].call(@port1.to_i, @port2.to_i, port)
+      PORT_OPERATE[@operator].call(@begin_port.to_i, @end_port.to_i, port)
     end
 
     private
 
     # Set instance variables
     # @param [Hash] opts Options of constructor
-    def define_operators(opts)
-      @operator = opts[:operator]
-      @port1 = opts[:port1] || nil
-      @port2 = opts[:port2] || nil
+    def define_operator_and_ports(opts)
+      @operator = opts[:operator] || 'any'
+      @begin_port = opts[:port] || opts[:begin_port] || nil
+      @end_port = opts[:end_port] || nil
     end
 
     # Varidate options
     # @param [Hash] opts Options of constructor
     # @raise [AclArgumentError]
     def validate_operators(opts)
-      if (!@port1) && (@operator != 'any')
-        fail AclArgumentError, 'Not specified port_1'
-      elsif opts[:port2] && (opts[:port1] > opts[:port2])
-        fail(
-          AclArgumentError,
-          'Not specified port_2 or Invalid port range args sequence'
-        )
-      elsif !PORT_OPERATE[@operator]
+      define_operator_and_ports(opts)
+
+      if !PORT_OPERATE.key?(@operator)
         fail AclArgumentError, "Unknown operator: #{@operator}"
+      elsif !valid_operator_and_port?
+        fail AclArgumentError, 'Invalid port or ports sequence'
+      end
+    end
+
+    # Varidate combination operator and port number
+    # @return [Boolean]
+    def valid_operator_and_port?
+      case @operator
+      when 'any'
+        true
+      when 'range'
+        @begin_port &&
+          @end_port &&
+          @begin_port < @end_port
+      else
+        @begin_port
       end
     end
   end

@@ -591,7 +591,7 @@ tcp_port_spec:
                    dputs "## tcp port spec: #{val[0]}/#{val[1]}"
                    result = AcePortSpec.new(
                      :operator => val[0],
-                     :port1 => val[1]
+                     :port => val[1]
                      )
                  }
              | 'range' tcp_port_qualifier tcp_port_qualifier
@@ -599,8 +599,8 @@ tcp_port_spec:
                    dputs "## tcp port spec: #{val[0]}/#{val[1]}/#{val[2]}"
                    result = AcePortSpec.new(
                      :operator => val[0],
-                     :port1 => val[1],
-                     :port2 => val[2]
+                     :begin_port => val[1],
+                     :end_port => val[2]
                      )
                  }
 
@@ -615,7 +615,7 @@ udp_port_spec:
                    dputs "## udp port spec: #{val[0]}/#{val[1]}"
                    result = AcePortSpec.new(
                      :operator => val[0],
-                     :port1 => val[1]
+                     :port => val[1]
                      )
                  }
              | 'range' udp_port_qualifier udp_port_qualifier
@@ -623,8 +623,8 @@ udp_port_spec:
                    dputs "## udp port spec: #{val[0]}/#{val[1]}/#{val[2]}"
                    result = AcePortSpec.new(
                      :operator => val[0],
-                     :port1 => val[1],
-                     :port2 => val[2]
+                     :begin_port => val[1],
+                     :end_port => val[2]
                      )
                  }
 

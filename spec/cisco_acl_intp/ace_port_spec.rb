@@ -7,7 +7,7 @@ describe AcePortSpec do
       lambda do
         AcePortSpec.new(
           operator: 'equal',
-          port1: 443
+          port: 443
         )
       end.should raise_error(AclArgumentError)
     end
@@ -16,8 +16,8 @@ describe AcePortSpec do
       lambda do
         AcePortSpec.new(
           operator: 'range',
-          port1: 443,
-          port2: 139
+          begin_port: 443,
+          end_port: 139
         )
       end.should raise_error(AclArgumentError)
     end
@@ -32,21 +32,21 @@ describe AcePortSpec do
     context 'Normal case' do
       it 'should be "eq 22"' do
         p = AcePortSpec.new(
-          operator: 'eq', port1: @p1
+          operator: 'eq', port: @p1
         )
         p.to_s.should be_aclstr('eq 22')
       end
 
       it 'should be "lt www"' do
         p = AcePortSpec.new(
-          operator: 'lt', port1: @p2
+          operator: 'lt', port: @p2
         )
         p.to_s.should be_aclstr('lt www')
       end
 
       it 'should be "gt www"' do
         p = AcePortSpec.new(
-          operator: 'gt', port1: @p2
+          operator: 'gt', port: @p2
         )
         p.to_s.should be_aclstr('gt www')
       end
@@ -54,7 +54,7 @@ describe AcePortSpec do
       it 'should be "range 22 www"' do
         p = AcePortSpec.new(
           operator: 'range',
-          port1: @p1, port2: @p2
+          begin_port: @p1, end_port: @p2
         )
         p.to_s.should be_aclstr('range 22 www')
       end
@@ -62,7 +62,7 @@ describe AcePortSpec do
       it 'should be empty when any port' do
         p = AcePortSpec.new(
           operator: 'any',
-          port1: @p1, port2: @p2
+          begin_port: @p1, end_port: @p2
         )
         p.to_s.should be_empty
       end
@@ -72,16 +72,16 @@ describe AcePortSpec do
       it 'raise error when not specified operator' do
         lambda do
           AcePortSpec.new(
-            port2: @p1
+            end_port: @p1
           )
         end.should raise_error(AclArgumentError)
       end
 
-      it 'raise error when not specified port1' do
+      it 'raise error when not specified begin_port' do
         lambda do
           AcePortSpec.new(
             operator: 'eq',
-            port2: @p1
+            end_port: @p1
           )
         end.should raise_error(AclArgumentError)
       end
@@ -90,7 +90,7 @@ describe AcePortSpec do
         lambda do
           AcePortSpec.new(
             operator: 'range',
-            port1: @p2, port2: @p1
+            begin_port: @p2, end_port: @p1
           )
         end.should raise_error(AclArgumentError)
       end
@@ -106,20 +106,20 @@ describe AcePortSpec do
         operator: 'any'
       )
       @eq1 = AcePortSpec.new(
-        operator: 'eq', port1: @p1
+        operator: 'eq', begin_port: @p1
       )
       @neq1 = AcePortSpec.new(
-        operator: 'neq', port1: @p1
+        operator: 'neq', port: @p1
       )
       @lt1 = AcePortSpec.new(
-        operator: 'lt', port1: @p1
+        operator: 'lt', port: @p1
       )
       @gt1 = AcePortSpec.new(
-        operator: 'gt', port1: @p1
+        operator: 'gt', port: @p1
       )
       @range = AcePortSpec.new(
         operator: 'range',
-        port1: @p1, port2: @p2
+        port: @p1, end_port: @p2
       )
     end
 

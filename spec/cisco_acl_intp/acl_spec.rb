@@ -60,7 +60,7 @@ EOL
           ipaddr: '192.168.4.4',
           wildcard: '0.0.0.255',
           operator: 'gt',
-          port1: AceUdpProtoSpec.new(
+          port: AceUdpProtoSpec.new(
             number: 32_768
           )
         }
@@ -123,7 +123,7 @@ EOL
           ipaddr: '192.168.4.4',
           wildcard: '0.0.0.255',
           operator: 'gt',
-          port1: AceUdpProtoSpec.new(
+          port: AceUdpProtoSpec.new(
             number: 32_768
           )
         }
@@ -236,7 +236,7 @@ EOL
           ipaddr: '192.168.4.4',
           wildcard: '0.0.0.255',
           operator: 'gt',
-          port1: AceUdpProtoSpec.new(
+          port: AceUdpProtoSpec.new(
             number: 32_768
           )
         }

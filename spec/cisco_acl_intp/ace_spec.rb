@@ -104,10 +104,10 @@ describe ExtendedAce do
           ipaddr: '192.168.30.3',
           wildcard: '0.0.0.0',
           operator: 'range',
-          port1: AceTcpProtoSpec.new(
+          begin_port: AceTcpProtoSpec.new(
             number: 1_024
           ),
-          port2: AceTcpProtoSpec.new(
+          end_port: AceTcpProtoSpec.new(
             number: 65_535
           )
         )
@@ -149,10 +149,10 @@ describe ExtendedAce do
           ipaddr: '192.168.30.3',
           wildcard: '0.0.0.0',
           operator: 'range',
-          port1: AceTcpProtoSpec.new(
+          begin_port: AceTcpProtoSpec.new(
             number: 1_024
           ),
-          port2: AceTcpProtoSpec.new(
+          end_port: AceTcpProtoSpec.new(
             number: 65_535
           )
         )
@@ -208,7 +208,7 @@ describe ExtendedAce do
           ipaddr: '192.168.15.15',
           wildcard: '0.0.7.6',
           operator: 'gt',
-          port1: AceTcpProtoSpec.new(
+          port: AceTcpProtoSpec.new(
             number: 32_767
           )
         )
@@ -216,10 +216,10 @@ describe ExtendedAce do
           ipaddr: '192.168.30.3',
           wildcard: '0.0.0.0',
           operator: 'range',
-          port1: AceTcpProtoSpec.new(
+          begin_port: AceTcpProtoSpec.new(
             number: 1_024
           ),
-          port2: AceTcpProtoSpec.new(
+          end_port: AceTcpProtoSpec.new(
             number: 65_535
           )
         )
@@ -301,7 +301,7 @@ when #{each[:opts][:protocol]};\
         )
         src_port = AcePortSpec.new(
           operator: 'gt',
-          port1: AceTcpProtoSpec.new(
+          port: AceTcpProtoSpec.new(
             number: 32_767
           )
         )
@@ -312,10 +312,10 @@ when #{each[:opts][:protocol]};\
         )
         dst_port = AcePortSpec.new(
           operator: 'range',
-          port1: AceTcpProtoSpec.new(
+          begin_port: AceTcpProtoSpec.new(
             number: 1_024
           ),
-          port2: AceTcpProtoSpec.new(
+          end_port: AceTcpProtoSpec.new(
             number: 65_535
           )
         )

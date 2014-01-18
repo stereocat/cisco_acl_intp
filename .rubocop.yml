@@ -9,3 +9,5 @@ AllCops:
   Excludes:
     - lib/**/parser.rb
     - spec/data/*.rb
+MethodLength:
+  Max: 15

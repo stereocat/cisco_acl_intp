@@ -23,7 +23,7 @@ describe AceSrcDstSpec do
           ipaddr: '192.168.3.3',
           wildcard: '0.0.0.127',
           operator: 'eq',
-          port1: @p1
+          port: @p1
         )
         sds.to_s.should be_aclstr('192.168.3.0 0.0.0.127 eq www')
       end
@@ -60,22 +60,22 @@ describe AceSrcDstSpec do
         @sds1 = AceSrcDstSpec.new(
           ip_spec: ipaddr,
           operator: 'eq',
-          port1: @p1
+          port: @p1
         )
         @sds2 = AceSrcDstSpec.new(
           ip_spec: ipaddr,
           operator: 'neq',
-          port1: @p1
+          port: @p1
         )
         @sds3 = AceSrcDstSpec.new(
           ip_spec: ipaddr,
           operator: 'lt',
-          port1: @p1
+          port: @p1
         )
         @sds4 = AceSrcDstSpec.new(
           ip_spec: ipaddr,
           operator: 'gt',
-          port1: @p1
+          port: @p1
         )
         @ip_match = '192.168.9.11'
         @ip_unmatch = '192.168.9.12'
@@ -187,8 +187,8 @@ describe AceSrcDstSpec do
           ipaddr: '192.168.15.15',
           wildcard: '0.0.7.6',
           operator: 'range',
-          port1: p1,
-          port2: p2
+          begin_port: p1,
+          end_port: p2
         )
         @ip_match = '192.168.9.11'
         @ip_unmatch = '192.168.9.12'
@@ -235,18 +235,18 @@ describe AceSrcDstSpec do
           ipaddr: '192.168.15.15',
           wildcard: '0.0.7.6'
         )
-        port1 = AcePortSpec.new(
+        port_range = AcePortSpec.new(
           operator: 'range',
-          port1: AceTcpProtoSpec.new(
+          begin_port: AceTcpProtoSpec.new(
             number: 80
           ),
-          port2: AceTcpProtoSpec.new(
+          end_port: AceTcpProtoSpec.new(
             number: 1023
           )
         )
         @sds1 = AceSrcDstSpec.new(
           ip_spec: ip_any,
-          port_spec: port1
+          port_spec: port_range
         )
         @sds2 = AceSrcDstSpec.new(
           ip_spec: ip1,

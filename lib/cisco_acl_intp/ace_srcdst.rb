@@ -29,11 +29,14 @@ module CiscoAclIntp
     #   (dotted/bit-flipped notation)
     # @option opts [AcePortSpec] :port_spec Port/Operator object
     # @option opts [String] :operator Port operator
-    # @option opts [Integer] :port1 port number (single/lower)
-    # @option opts [Integer] :port2 port number (higher)
+    # @option opts [AceProtoSpecBase] :port port number (single/lower)
+    #   (same as :begin_port, alias for unary operator)
+    # @option opts [AceProtoSpecBase] :begin_port port number (single/lower)
+    # @option opts [AceProtoSpecBase] :end_port port number (higher)
     # @raise [AclArgumentError]
     # @return [AceSrcDstSpec]
-    # @note If not specified port (:port_spec or :operator, :port1, :port2)
+    # @note When it does not specified port in opts,
+    #   (:port_spec or :operator, :begin_port, :end_port)
     #   it assumed with ANY port.
     def initialize(opts)
       @ip_spec = define_ipspec(opts)
@@ -68,6 +71,7 @@ module CiscoAclIntp
     # @param [Hash] opts Options of constructor
     # @raise [AclArgumentError]
     # @return [AceIpSpec] IP address/Mask object
+    # @see #initialize
     def define_ipspec(opts)
       if opts.key?(:ip_spec)
         opts[:ip_spec]
@@ -84,13 +88,15 @@ module CiscoAclIntp
     # Set instance variables
     # @param [Hash] opts Options of constructor
     # @return [AcePortSpec] Port/Operator object
+    # @see #initialize
     def define_portspec(opts)
       if opts.key?(:port_spec)
         opts[:port_spec]
       elsif opts.key?(:operator)
         AcePortSpec.new(
           operator: opts[:operator],
-          port1: opts[:port1], port2: opts[:port2]
+          begin_port: opts[:port] || opts[:begin_port],
+          end_port: opts[:end_port]
         )
       else
         # in standard acl, not used port_spec

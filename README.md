@@ -83,11 +83,11 @@ corresponding error messages. Please try to run using sample ACL file,
 `acl_examples/err-acl.txt`, that contains some kind of errors.
 
 You can get short usage with `-h` option. If it runs without `-f`
-(`--file`) option, it reads ACLs from Standard I/O.
+(`--file`) option, it reads ACLs from standard input.
 
 #### Codes
 
-```ruby:check_acl.rb
+```ruby
 require 'optparse'
 require 'cisco_acl_intp'
 
@@ -111,7 +111,7 @@ end
 ```
 
 In the script, generate `CiscoAclIntp::Parser` instance and it reads
-ACLs from a file (or `STDIN`). The `parser` instance generate ACL
+ACLs from a file (or `$stdin`). The `parser` instance generate ACL
 objects (as Hash table of ACL name and ACL objects). An element of the
 table is "ACL object". "ACL object" is build by ACL components. For
 example, source/destination address obj, action obj, tcp/udp protocol
