@@ -148,7 +148,7 @@ module CiscoAclIntp
       super
 
       @action = define_action(opts)
-      if opts[:src]
+      if opts.key?(:src)
         @src_spec = define_src_spec(opts)
       else
         fail AclArgumentError, 'Not specified src spec'
@@ -370,7 +370,7 @@ module CiscoAclIntp
     # Validate options
     # @param [Hash] opts Options of constructor
     def validate_protocol(opts)
-      if opts[:protocol]
+      if opts.key?(:protocol)
         @protocol = define_protocol(opts)
       else
         fail AclArgumentError, 'Not specified IP protocol'
@@ -380,7 +380,7 @@ module CiscoAclIntp
     # Validate options
     # @param [Hash] opts Options of constructor
     def validate_dst_spec(opts)
-      if opts[:dst]
+      if opts.key?(:dst)
         @dst_spec = define_dst_spec(opts)
       else
         fail AclArgumentError, 'Not specified dst spec'

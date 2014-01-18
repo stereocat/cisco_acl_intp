@@ -25,7 +25,7 @@ rule
                  {
                    dputs "## numd std acl: #{val[0]}/#{val[1]}"
                    @curr_acl_name = val[0]
-                   if not @acl_table[@curr_acl_name]
+                   unless @acl_table[@curr_acl_name]
                      @acl_table[@curr_acl_name] = NumberedStdAcl.new(@curr_acl_name)
                      @line_number = 0
                    end
@@ -36,7 +36,7 @@ rule
                  {
                    dputs "## numd ext acl: #{val[0]}/#{val[1]}"
                    @curr_acl_name = val[0]
-                   if not @acl_table[@curr_acl_name]
+                   unless @acl_table[@curr_acl_name]
                      @acl_table[@curr_acl_name] = NumberedExtAcl.new(@curr_acl_name)
                      @line_number = 0
                    end
@@ -1240,11 +1240,14 @@ module CiscoAclIntp
   #   (default: false)
   # @option [Boolean] :color Enable Term ANSI Color.
   #   (default: false)
+  # @option [Boolean] :silent Enable all parser syntax error
+  #   (default: false)
   # @return [CiscoACLParser]
   def initialize opts
-    @yydebug = opts[:yydebug] or false
-    @debug_print = opts[:debug] or false
-    @color_mode = opts[:color] or false
+    @yydebug = opts[:yydebug] || false
+    @debug_print = opts[:debug] || false
+    @color_mode = opts[:color] || false
+    @silent_mode = @debug_print || opts[:silent] || false
 
     if @color_mode
       AclContainerBase.enable_color
@@ -1274,7 +1277,7 @@ module CiscoAclIntp
 
       if file
         scanner = Scanner.new
-        @q = scanner.scan_file(file)
+        @queue = scanner.scan_file(file)
         @error_count = 0 # reset error count
         do_parse
       else
@@ -1282,30 +1285,30 @@ module CiscoAclIntp
         fail AclError, "File: #{filename} not found."
       end
     rescue Racc::ParseError => err
-      puts c_err(
+      eputs(
         ["Parse aborted. Found syntax error:",
           "  #{err.message}"
         ].join("\n")
-      )
+        )
     rescue AclArgumentError => err
-      puts c_err(
+      eputs(
         ["Parse aborted. Found acl argment error:",
           "  #{err.message}",
           "  #{err_pos_str}"
         ].join("\n")
-      )
+        )
     rescue AclError => err
-      puts c_err(
+      eputs(
         ["Parse aborted. Found acl error:",
           "  #{err.message}"
         ].join("\n")
-      )
+        )
     rescue => err
-      puts c_err(
+      eputs(
         [ "Parse aborted. Found unknown error:",
           "  #{err.message}"
         ].join("\n")
-      )
+        )
     end
     @acl_table
   end
@@ -1320,7 +1323,7 @@ module CiscoAclIntp
     ].join(', ')
 
     # raise Racc::ParseError, errstr
-    puts c_err(errstr)
+    eputs errstr
   end
 
   # Parsed data contains error or not?
@@ -1331,6 +1334,7 @@ module CiscoAclIntp
 
   private
 
+  # count syntax error
   def count_error
     @error_count = @error_count + 1
   end
@@ -1338,9 +1342,15 @@ module CiscoAclIntp
   # print error message and enter error recovery mode
   # @param [String] str Error message
   def yyerror_with str
-    count_error
-    puts c_err([err_pos_str, str].join(', '))
+    eputs [err_pos_str, str].join(', ')
     yyerror
+  end
+
+  # normal err print
+  # @param [String] str Message string
+  def eputs str
+    count_error
+    puts c_err(str) unless @silent_mode
   end
 
   # debug print
@@ -1352,14 +1362,13 @@ module CiscoAclIntp
   # Get next token
   # @return [Array] Next token array
   def next_token
-    @q.shift
+    @queue.shift
   end
 
   # Coloring error string
   # @param [String] str Message string
   # @return [String] Colored message string
   def c_err str
-    count_error
     if @color_mode
       c = Term::ANSIColor
       str = [c.red, c.bold, str, c.clear].join

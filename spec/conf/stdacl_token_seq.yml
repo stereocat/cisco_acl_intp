@@ -1,4 +1,4 @@
-- :testname: 10-stdacl
+- :testname: stdacl_spec
   :casedata: tokens1.yml
   :fieldseq:
     - acl

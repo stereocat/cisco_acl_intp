@@ -93,7 +93,7 @@ end
 code_data = DATA.read
 puts '## generate spec code'
 each_test do |each|
-  spec_file_base = each[:testname] + '_spec.rb'
+  spec_file_base = each[:testname] + '.rb'
   puts "Spec code Data: #{spec_file_base}"
   File.open(_spec_data_dir(spec_file_base), 'w') do |file|
     code_erb = ERB.new(code_data, nil, '-')
@@ -109,7 +109,7 @@ require 'stringio'
 describe 'Parser' do
   describe '#parse_file' do
     before do
-      @parser = CiscoAclIntp::Parser.new(color: false)
+      @parser = CiscoAclIntp::Parser.new(color: false, silent: true)
     end
 
 <%-

@@ -39,7 +39,7 @@ module CiscoAclIntp
     # @raise [AclArgumentError]
     # @return [AceIpSpec]
     def initialize(opts)
-      if opts[:ipaddr]
+      if opts.key?(:ipaddr)
         define_addrinfo(opts)
       else
         fail AclArgumentError, 'Not specified IP address'
