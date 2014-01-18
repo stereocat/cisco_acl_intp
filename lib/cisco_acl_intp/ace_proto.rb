@@ -5,6 +5,8 @@ require 'cisco_acl_intp/acl_base'
 module CiscoAclIntp
   # IP/TCP/UDP port number and protocol name container base
   class AceProtoSpecBase < AclContainerBase
+    include Comparable
+
     # @param [String] value Protocol name,
     #   it is literal used in Cisco IOS access-list
     # @return [String]
@@ -52,6 +54,7 @@ module CiscoAclIntp
     # @param [Integer] port IP/TCP/UDP port/protocol number
     # @return [Boolean]
     def valid_range?(port)
+      port.integer?
     end
 
     # Generate string for Cisco IOS access list
@@ -75,26 +78,11 @@ module CiscoAclIntp
       @number
     end
 
-    # @return [Boolean] Compare with protocol/port number
-    def <(other)
-      @number < other.to_i
-    end
-
-    # @return [Boolean] Compare with protocol/port number
-    def >(other)
-      @number > other.to_i
-    end
-
-    # @return [Boolean] Compare with protocol/port number
-    def <=(other)
-      @number <= other.to_i
-    end
-
-    # @return [Boolean] Compare with protocol/port number
-    def >=(other)
-      @number >= other.to_i
-    end
-
+    # Compare by port number
+    # @note Using "Comparable" module, '==' operator is defined by
+    #   '<=>' operator. But '==' is overriden to compare instance
+    #   equivalence instead of port number comparison.
+    # @param [AceProtoSpecBase] other Compared instance
     # @return [Fixnum] Compare with protocol/port number
     def <=>(other)
       @number <=> other.to_i

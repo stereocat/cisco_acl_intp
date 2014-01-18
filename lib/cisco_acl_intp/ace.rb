@@ -29,10 +29,10 @@ module CiscoAclIntp
     end
 
     # Compare by sequence number
-    #   Note: Using Comparable module, '==' operator defined by '<=>'.
-    #   But ACE object will be compared by its value (comparison by
-    #   the equivalence), instead of sequence number. The '=='
-    #   operator will be overriden in child class.
+    # @note Using "Comparable" module, '==' operator is defined by
+    #   '<=>' operator.  But ACE object will be compared by its value
+    #   (comparison by the equivalence), instead of sequence
+    #   number. The '==' operator will be overriden in child class.
     # @param [AceBase] other RHS object
     # @return [Integer] Compare with protocol/port number
     def <=>(other)
@@ -40,10 +40,9 @@ module CiscoAclIntp
     end
 
     # Search matched ACE
-    # @param [Hash] opts Options (target packet info)
     # @return [Boolean] Matched or not
     # @abstract
-    def matches?(opts)
+    def matches?
       false
     end
   end
@@ -62,6 +61,7 @@ module CiscoAclIntp
       @seq_number = NO_SEQ_NUMBER # remark does not takes line number
     end
 
+    # Check equality
     # @return [Boolean] Compare with comment string
     def ==(other)
       @comment == other.comment
@@ -91,12 +91,20 @@ module CiscoAclIntp
     # @param [Hash] opts Options
     # @option opts [Integer] :number Sequence number
     # @option opts [String] :recursive_name Recursive entry name
-    # @raise [AclArgumentError]
     # @return [EvaluateAce]
+    # @raise [AclArgumentError]
     def initialize(opts)
       super
-      if opts.key?(:recursive_name)
-        @recursive_name = opts[:recursive_name]
+      @options = opts
+      @recursive_name = define_recursive_name
+    end
+
+    # Set instance variables
+    # return [String] Recursive entry name
+    # raise [AclArgumentError]
+    def define_recursive_name
+      if @options.key?(:recursive_name)
+        @options[:recursive_name]
       else
         fail AclArgumentError, 'name not specified'
       end
@@ -117,6 +125,7 @@ module CiscoAclIntp
     # @param [Hash] opts Options
     # return [Boolean] false, Recursive does not implemented yet
     def matches?(opts = nil)
+      ## TODO
       false
     end
   end
@@ -142,18 +151,14 @@ module CiscoAclIntp
     # @option opts [AceSrcDstSpec] :src Source spec object
     # @option opts [Hash] :src Source spec parmeters
     # @option opts [AceLogSpec] :log Log spec object
-    # @raise [AclArgumentError]
     # @return [StandardAce]
+    # @raise [AclArgumentError]
     def initialize(opts)
       super
-
-      @action = define_action(opts)
-      if opts.key?(:src)
-        @src_spec = define_src_spec(opts)
-      else
-        fail AclArgumentError, 'Not specified src spec'
-      end
-      @log_spec = define_log_spec(opts)
+      @options = opts
+      @action = define_action
+      @src_spec = define_src_spec
+      @log_spec = define_log_spec
     end
 
     # @return [Boolean]
@@ -188,39 +193,40 @@ module CiscoAclIntp
     private
 
     # Set instance variables
-    # @param [Hash] opts Options of constructor
-    # @raise [AclArgumentError]
     # @return [String] Action string
-    def define_action(opts)
-      if opts.key?(:action)
-        opts[:action]
+    # @raise [AclArgumentError]
+    def define_action
+      if @options.key?(:action)
+        @options[:action]
       else
         fail AclArgumentError, 'Not specified action'
       end
     end
 
     # Set instance variables
-    # @param [Hash] opts Options of constructor
-    # @raise [AclArgumentError]
     # @return [AceSrcDstSpec] Source spec object
-    def define_src_spec(opts)
-      src = opts[:src]
-      case src
-      when Hash
-        AceSrcDstSpec.new(src)
-      when AceSrcDstSpec
-        src
+    # @raise [AclArgumentError]
+    def define_src_spec
+      if @options.key?(:src)
+        src = @options[:src]
+        case src
+        when Hash
+          AceSrcDstSpec.new(src)
+        when AceSrcDstSpec
+          src
+        else
+          fail AclArgumentError, 'src spec: unknown class'
+        end
       else
-        fail AclArgumentError, 'src spec: unknown class'
+        fail AclArgumentError, 'Not specified src spec'
       end
     end
 
     # Set instance variables
-    # @param [Hash] opts Options of constructor
-    # @raise [AclArgumentError]
     # @return [String] Log spec object
-    def define_log_spec(opts)
-      opts[:log] || nil
+    # @raise [AclArgumentError]
+    def define_log_spec
+      @options[:log] || nil
     end
   end
 
@@ -282,9 +288,10 @@ module CiscoAclIntp
     #
     def initialize(opts)
       super
-      validate_protocol(opts)
-      validate_dst_spec(opts)
-      @tcp_flags = define_tcp_flags(opts)
+      @options = opts
+      @protocol = define_protocol
+      @dst_spec = define_dst_spec
+      @tcp_flags = define_tcp_flags
       @tcp_other_qualifiers = nil # not yet.
     end
 
@@ -367,63 +374,50 @@ module CiscoAclIntp
       end
     end
 
-    # Validate options
-    # @param [Hash] opts Options of constructor
-    def validate_protocol(opts)
-      if opts.key?(:protocol)
-        @protocol = define_protocol(opts)
+    # Set instance variables
+    # return [AceIpProtoSpec] IP protocol object
+    # raise [AclArgumentError]
+    def define_protocol
+      if @options.key?(:protocol)
+        protocol = @options[:protocol]
+        case protocol
+        when AceIpProtoSpec
+          protocol
+        else
+          AceIpProtoSpec.new(
+            name: protocol,
+            number: @options[:protocol_num]
+          )
+        end
       else
         fail AclArgumentError, 'Not specified IP protocol'
       end
     end
 
-    # Validate options
-    # @param [Hash] opts Options of constructor
-    def validate_dst_spec(opts)
-      if opts.key?(:dst)
-        @dst_spec = define_dst_spec(opts)
+    # Set instance variables
+    # @return [AceSrcDstSpec] Destination spec object
+    # @raise [AclArgumentError]
+    def define_dst_spec
+      if @options.key?(:dst)
+        dst = @options[:dst]
+        case dst
+        when Hash
+          AceSrcDstSpec.new(dst)
+        when AceSrcDstSpec
+          dst
+        else
+          fail AclArgumentError, 'Dst spec: unknown class'
+        end
       else
         fail AclArgumentError, 'Not specified dst spec'
       end
     end
 
     # Set instance variables
-    # @param [Hash] opts Options of constructor
-    # @return [AceIpProtoSpec] IP protocol object
-    def define_protocol(opts)
-      protocol = opts[:protocol]
-      case protocol
-      when AceIpProtoSpec
-        protocol
-      else
-        AceIpProtoSpec.new(
-          name: protocol,
-          number: opts[:protocol_num]
-        )
-      end
-    end
-
-    # Set instance variables
-    # @param [Hash] opts Options of constructor
-    # @raise [AclArgumentError]
-    # @return [AceSrcDstSpec] Destination spec object
-    def define_dst_spec(opts)
-      dst = opts[:dst]
-      case dst
-      when Hash
-        AceSrcDstSpec.new(dst)
-      when AceSrcDstSpec
-        dst
-      else
-        fail AclArgumentError, 'Dst spec: unknown class'
-      end
-    end
-
-    # Set instance variables
-    # @param [Hash] opts Options of constructor
-    def define_tcp_flags(opts)
-      if @protocol.name == 'tcp' && opts.key?(:tcp_flags_qualifier)
-        opts[:tcp_flags_qualifier]
+    # @return [AceOtherQualifierList]
+    def define_tcp_flags
+      if @protocol.name == 'tcp' && @options.key?(:tcp_flags_qualifier)
+        @options[:tcp_flags_qualifier]
       else
         nil
       end

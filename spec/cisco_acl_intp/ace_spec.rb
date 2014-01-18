@@ -582,7 +582,9 @@ describe EvaluateAce do
     end
   end
   describe '#matches?' do
-    it 'should be always false (Now, not implemented yet)' do
+    it 'should be always false' do
+      pending('not implemented yet')
+
       evl = EvaluateAce.new(
         recursive_name: 'asdf_0-98'
       )
