@@ -34,7 +34,7 @@ end
 
 directory SPEC_DATA_DIR
 file PARSER_RUBY => [PARSER_RACC] do
-  sh "racc -v -t -E #{PARSER_RACC} -o #{PARSER_RUBY}"
+  sh "racc -v -t #{PARSER_RACC} -o #{PARSER_RUBY}"
 end
 
 RSpec::Core::RakeTask.new(:spec) do |spec|
