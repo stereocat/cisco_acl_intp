@@ -1,6 +1,9 @@
 require 'bundler/gem_tasks'
 require 'rspec/core/rake_task'
 require 'rake/clean'
+require 'yard'
+require 'yard/rake/yardoc_task'
+require 'reek/rake/task'
 
 LIB_DIR = './lib'
 PACKAGE_NAME = 'cisco_acl_intp'
@@ -47,12 +50,9 @@ RSpec::Core::RakeTask.new(fullspec: [:fullfill]) do |spec|
   spec.rspec_opts = '--format documentation --color'
 end
 
-# documentation by yard
-require 'yard'
-require 'yard/rake/yardoc_task'
 YARD::Rake::YardocTask.new do |task|
   # yardoc options in .yardopts
-  task.files = ["#{LIB_DIR}/**/*.rb"]
+  task.files = FileList["#{LIB_DIR}/**/*.rb"]
 end
 
 task :docgraph do
@@ -61,7 +61,16 @@ task :docgraph do
   sh "dot -Tpng #{CLASS_GRAPH_DOT} -o #{CLASS_GRAPH_PNG}"
 end
 
-# rubocop settings
+Reek::Rake::Task.new do |t|
+  t.fail_on_error = false
+  t.verbose = false
+  t.ruby_opts = ['-rubygems']
+  t.reek_opts = '--quiet'
+  t.source_files = FileList["#{LIB_DIR}/**/*.rb"].delete_if do |f|
+    f =~ /parser.rb/
+  end
+end
+
 if RUBY_VERSION >= '1.9.0'
   task quality: :rubocop
   require 'rubocop/rake_task'

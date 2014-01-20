@@ -9,9 +9,9 @@ Gem::Specification.new do |spec|
   spec.version       = CiscoAclIntp::VERSION
   spec.authors       = ['stereocat']
   spec.email         = ['stereocat@gmail.com']
-  spec.description   = %q{Cisco Access List Interpreter}
-  spec.summary       = %q{Cisco Access List Interpreter}
-  spec.homepage      = ''
+  spec.description   = %q{Cisco ACL Interpreter}
+  spec.summary       = %q{Cisco IOS Access Control List Interpreter}
+  spec.homepage      = 'https://github.com/stereocat/cisco_acl_intp'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files`.split("\n")
