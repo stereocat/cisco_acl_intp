@@ -61,7 +61,7 @@ module CiscoAclIntp
       if @operator == 'any'
         ''
       else
-        c_pp(sprintf('%s %s %s', @operator, @begin_port, @end_port))
+        tag_port(sprintf('%s %s %s', @operator, @begin_port, @end_port))
       end
     end
 

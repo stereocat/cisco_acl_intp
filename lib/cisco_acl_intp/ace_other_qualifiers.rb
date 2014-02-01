@@ -23,7 +23,7 @@ module CiscoAclIntp
     # Generate string for Cisco IOS access list
     # @return [String]
     def to_s
-      c_pp(@list.map { | each | each.to_s }.join(' '))
+      tag_other_qualifier(@list.map { | each | each.to_s }.join(' '))
     end
 
     # @param [AceOtherQualifierList] other RHS Object
@@ -90,7 +90,7 @@ module CiscoAclIntp
     # Generate string for Cisco IOS access list
     # @return [String]
     def to_s
-      sprintf 'reflect %s', c_name(@recursive_name)
+      sprintf 'reflect %s', tag_name(@recursive_name)
     end
   end
 end # module

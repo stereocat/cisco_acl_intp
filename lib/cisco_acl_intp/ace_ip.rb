@@ -59,13 +59,13 @@ module CiscoAclIntp
     def to_s
       if to_wmasked_ip_s == '0.0.0.0'
         # ip = '0.0.0.0' or wildcard = '255.255.255.255'
-        c_ip('any')
+        tag_ip('any')
       else
         if @wildcard == '0.0.0.0'
           # /32 mask
-          sprintf('%s %s', c_mask('host'), c_ip(@ipaddr.ip))
+          sprintf('%s %s', tag_mask('host'), tag_ip(@ipaddr.ip))
         else
-          sprintf('%s %s', c_ip(to_wmasked_ip_s), c_mask(@wildcard))
+          sprintf('%s %s', tag_ip(to_wmasked_ip_s), tag_mask(@wildcard))
         end
       end
     end

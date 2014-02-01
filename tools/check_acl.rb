@@ -8,8 +8,8 @@ require 'cisco_acl_intp'
 opts = {}
 OptionParser.new do | each |
   each.banner = "ruby #{$PROGRAM_NAME} [options] [args]"
-  each.on('-c', '--color', 'enable coloring') do |x|
-    opts[:color] = x
+  each.on('-c MODE', '--color', 'enable coloring (MODE=[term, html]') do |x|
+    opts[:color] = x.intern
   end
   each.on('-d', '--debug', 'enable debug print') do |x|
     opts[:debug] = x
@@ -29,7 +29,7 @@ OptionParser.new do | each |
 end
 
 popts = {}
-popts[:color] = opts[:color] || false
+popts[:color] = opts[:color] || :none
 popts[:debug] = opts[:debug] || false
 popts[:yydebug] = opts[:yydebug] || false
 

@@ -548,7 +548,7 @@ describe RemarkAce do
   describe '#to_s' do
     it 'should be remark string' do
       rmk = RemarkAce.new('  foo-bar _ baz @@ COMMENT')
-      rmk.to_s.should eq ' remark foo-bar _ baz @@ COMMENT'
+      rmk.to_s.should eq 'remark foo-bar _ baz @@ COMMENT'
     end
   end
   describe '#matches?' do

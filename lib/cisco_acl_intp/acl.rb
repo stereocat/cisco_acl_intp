@@ -92,6 +92,13 @@ module CiscoAclIntp
     def search_ace(opts)
       @list.find { |each| each.matches?(opts) }
     end
+
+    # acl string clean-up
+    # @param [String] str ACL string.
+    # @return [String]
+    def clean_acl_string(str)
+      str =~ /remark/ ? str : str.gsub(/\s+/, ' ')
+    end
   end
 
   ############################################################
@@ -133,15 +140,16 @@ module CiscoAclIntp
     # Generate string for Cisco IOS access list
     # @return [String]
     def to_s
-      strings = [
-        sprintf(
-          '%s %s %s',
-          c_hdr('ip access-list'),
-          c_type(@acl_type),
-          c_name(@name)
-       )
-      ]
-      @list.each { | entry | strings.push entry.to_s }
+      str = sprintf(
+        '%s %s %s',
+        tag_header('ip access-list'),
+        tag_type(@acl_type),
+        tag_name(@name)
+      )
+      strings = @list.each_with_object([str]) do |entry, array|
+        # add indent
+        array.push([' ', clean_acl_string(entry.to_s)].join)
+      end
       strings.join("\n")
     end
   end
@@ -177,12 +185,13 @@ module CiscoAclIntp
     def to_s
       strings = []
       @list.each do | entry |
-        strings.push sprintf(
+        str = sprintf(
           '%s %s %s',
-          c_hdr('access-list'),
-          c_name(@name),
+          tag_header('access-list'),
+          tag_name(@name),
           entry
-       )
+        )
+        strings.push clean_acl_string(str)
       end
       strings.join("\n")
     end

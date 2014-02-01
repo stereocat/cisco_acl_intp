@@ -70,7 +70,7 @@ module CiscoAclIntp
     # Generate string for Cisco IOS access list
     # @return [String] Comment string
     def to_s
-      sprintf ' remark %s', c_rmk(@comment.to_s)
+      sprintf 'remark %s', tag_remark(@comment.to_s)
     end
 
     # Search matched ACE
@@ -118,7 +118,7 @@ module CiscoAclIntp
     # Generate string for Cisco IOS access list
     # @return [String]
     def to_s
-      sprintf 'evaluate %s', c_name(@recursive_name)
+      sprintf 'evaluate %s', tag_name(@recursive_name)
     end
 
     # Search matched ACE
@@ -170,10 +170,10 @@ module CiscoAclIntp
     # @return [String]
     def to_s
       sprintf(
-        ' %s %s %s',
-        c_act(@action.to_s),
+        '%s %s %s',
+        tag_action(@action.to_s),
         @src_spec,
-        @log_spec ? @log_spec : ''
+        tag_other_qualifier(@log_spec ? @log_spec : '')
      )
     end
 
@@ -310,13 +310,13 @@ module CiscoAclIntp
     # @return [String]
     def to_s
       sprintf(
-        ' %s %s %s %s %s %s',
-        c_act(@action.to_s),
-        c_pp(@protocol.to_s),
+        '%s %s %s %s %s %s',
+        tag_action(@action.to_s),
+        tag_protocol(@protocol.to_s),
         @src_spec,
         @dst_spec,
-        @tcp_flags ? @tcp_flags : '',
-        @tcp_other_qualifiers ? @tcp_other_qualifiers : ''
+        @tcp_flags.nil? ? '' : @tcp_flags,
+        @tcp_other_qualifiers.nil? ? '' : @tcp_other_qualifiers
      )
     end
 

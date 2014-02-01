@@ -34,14 +34,10 @@ module_eval(<<'...end parser.ry/module_eval...', 'parser.ry', 1231)
   def initialize opts
     @yydebug = opts[:yydebug] || false
     @debug_print = opts[:debug] || false
-    @color_mode = opts[:color] || false
     @silent_mode = @debug_print || opts[:silent] || false
 
-    if @color_mode
-      AclContainerBase.enable_color
-    else
-      AclContainerBase.disable_color
-    end
+    @color_mode = opts[:color] || :none
+    AclContainerBase.color_mode = @color_mode
 
     @acl_table = {}
     @curr_acl_name = ''
@@ -157,7 +153,7 @@ module_eval(<<'...end parser.ry/module_eval...', 'parser.ry', 1231)
   # @param [String] str Message string
   # @return [String] Colored message string
   def c_err str
-    if @color_mode
+    if @color_mode == :term
       c = Term::ANSIColor
       str = [c.red, c.bold, str, c.clear].join
     end

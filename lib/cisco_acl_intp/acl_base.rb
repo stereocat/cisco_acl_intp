@@ -11,19 +11,14 @@ module CiscoAclIntp
 
   # Acl container common utility and status management
   class AclContainerBase
-    include Term::ANSIColor
-
-    # color mode
-    @color = false ## as class-instance variable
-
-    # Enables coloring
-    def self.enable_color
-      @color = true
+    class << self
+      # Color mode: defined as a class instance variable
+      attr_accessor :color_mode
     end
 
     # Disables coloring
     def self.disable_color
-      @color = false
+      @color_mode = :none
     end
 
     # Generate string for Cisco IOS access list
@@ -35,73 +30,69 @@ module CiscoAclIntp
 
     private
 
-    # Generate string using colors
-    # @param [String] str String
-    # @param [Array<String>] pre_c Color attribute(s) (put before 'str')
-    # @return [String] Colored string (if enabled [@@color])
-    def self.c_str(str, *pre_c)
-      if pre_c && @color
-        pre_c.concat [str, Term::ANSIColor.clear]
-        pre_c.join
+    # Table of ACL Tag color codes for terminal
+    TERM_COLOR_TABLE = {
+      header: Term::ANSIColor.on_blue,
+      type: Term::ANSIColor.underline,
+      action: Term::ANSIColor.intense_magenta,
+      name: Term::ANSIColor.bold,
+      remark: Term::ANSIColor.blink,
+      ip: [Term::ANSIColor.green, Term::ANSIColor.underline].join,
+      mask: Term::ANSIColor.yellow,
+      protocol: Term::ANSIColor.cyan,
+      port: Term::ANSIColor.cyan,
+      other_qualifier: Term::ANSIColor.green
+    }
+
+    # Generate header of ACL tag
+    # @param [Symbol] tag Tag symbol.
+    # @return [String] Ttagged string.
+    def generate_tag_header(tag)
+      case AclContainerBase.color_mode
+      when :term
+        TERM_COLOR_TABLE[tag]
+      when :html
+        %Q{<span class="acltag_#{tag.to_s}">}
       else
-        str
+        ''
       end
     end
 
-    # Access list header
-    # @param [String] str String
-    # @return [String] Colored string
-    def c_hdr(str)
-      AclContainerBase.c_str str, on_blue
+    # Generate footer of ACL tag
+    # @param [Symbol] tag Tag symbol.
+    # @return [String] Tagged string.
+    def generate_tag_footer(tag)
+      case AclContainerBase.color_mode
+      when :term
+        Term::ANSIColor.clear
+      when :html
+        '</span>'
+      else
+        ''
+      end
     end
 
-    # Named access list type
-    # @param [String] str String
-    # @return [String] Colored string
-    def c_type(str)
-      AclContainerBase.c_str str, underline
+    # Generate tagged ACL string.
+    # @param [Symbol] tag Tag symbol.
+    # @param [Array] args Array of argments.
+    # @return [String] Tagged string.
+    def generate_tagged_str(tag, *args)
+      tag_head = generate_tag_header(tag)
+      tag_body = args.join
+      tag_foot = generate_tag_footer(tag)
+      [tag_head, tag_body, tag_foot].join
     end
 
-    # Action
-    # @param [String] str String
-    # @return [String] Colored string
-    def c_act(str)
-      AclContainerBase.c_str str, intense_magenta
-    end
-
-    # User defined name/number
-    # @param [String] str String
-    # @return [String] Colored string
-    def c_name(str)
-      AclContainerBase.c_str str, bold
-    end
-
-    # Remark
-    # @param [String] str String
-    # @return [String] Colored string
-    def c_rmk(str)
-      AclContainerBase.c_str str, blink
-    end
-
-    # IP address
-    # @param [String] str String
-    # @return [String] Colored string
-    def c_ip(str)
-      AclContainerBase.c_str str, green, underline
-    end
-
-    # Wildcard mask
-    # @param [String] str String
-    # @return [String] Colored string
-    def c_mask(str)
-      AclContainerBase.c_str str, yellow
-    end
-
-    # Protocol and port
-    # @param [String] str String
-    # @return [String] Colored string
-    def c_pp(str)
-      AclContainerBase.c_str str, cyan
+    # Generate tagging method dynamically.
+    # @raise [NoMethodError]
+    def method_missing(name, *args)
+      case name.to_s
+      when /^tag_(.+)$/
+        tag = Regexp.last_match(1).intern
+        generate_tagged_str(tag, *args)
+      else
+        super
+      end
     end
   end
 end
