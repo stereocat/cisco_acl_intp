@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 require 'rubygems'
 require 'cisco_acl_intp/acl'
 require 'cisco_acl_intp/parser'
@@ -7,3 +9,9 @@ require 'cisco_acl_intp/version'
 # define scanner functions and ACL container classes
 module CiscoAclIntp
 end
+
+### Local variables:
+### mode: Ruby
+### coding: utf-8-unix
+### indent-tabs-mode: nil
+### End:

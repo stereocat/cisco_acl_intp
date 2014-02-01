@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 
 require 'optparse'
@@ -46,3 +48,9 @@ aclt.each do |name, acl|
   puts "acl name : #{name}"
   puts acl.to_s
 end
+
+### Local variables:
+### mode: Ruby
+### coding: utf-8-unix
+### indent-tabs-mode: nil
+### End:

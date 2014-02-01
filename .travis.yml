@@ -1,3 +1,6 @@
 language: ruby
+script: 'rake rubocop'
 rvm:
+  - 1.9.3
   - 2.0.0
+
