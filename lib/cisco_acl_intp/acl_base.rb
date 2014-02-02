@@ -41,7 +41,8 @@ module CiscoAclIntp
       mask: Term::ANSIColor.yellow,
       protocol: Term::ANSIColor.cyan,
       port: Term::ANSIColor.cyan,
-      other_qualifier: Term::ANSIColor.green
+      other_qualifier: Term::ANSIColor.green,
+      error: [Term::ANSIColor.red, Term::ANSIColor.bold].join,
     }
 
     # Generate header of ACL tag
@@ -81,6 +82,13 @@ module CiscoAclIntp
       tag_body = args.join
       tag_foot = generate_tag_footer(tag)
       [tag_head, tag_body, tag_foot].join
+    end
+
+    # acl string clean-up
+    # @param [String] str ACL string.
+    # @return [String]
+    def clean_acl_string(str)
+      str.strip.gsub(/\s+/, ' ')
     end
 
     # Generate tagging method dynamically.

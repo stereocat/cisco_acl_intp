@@ -47,6 +47,20 @@ module CiscoAclIntp
     end
   end
 
+  # Error entry container
+  class ErrorAce < AceBase
+    attr_accessor :line
+
+    def initialize(line)
+      super({})
+      @line = line
+    end
+
+    def to_s
+      tag_error(sprintf('!! error !! %s', @line))
+    end
+  end
+
   # Remark entry container
   class RemarkAce < AceBase
     # @param [String] value Comment string

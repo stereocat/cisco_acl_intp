@@ -47,7 +47,7 @@ module CiscoAclIntp
     # Generate string for Cisco IOS access list
     # @return [String]
     def to_s
-      tag_port(@list.map { | each | each.to_s }.join(' '))
+      tag_port(@list.map { |each| each.to_s }.join(' '))
     end
 
     # @param [AceTcpFlagList] other RHS Object

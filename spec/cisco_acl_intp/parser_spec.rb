@@ -40,9 +40,7 @@ describe 'Parser' do
           end
         end
       end
-
     end
-
   end # parse_file
 end # Parser
 

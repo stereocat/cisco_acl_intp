@@ -93,11 +93,11 @@ module CiscoAclIntp
       @list.find { |each| each.matches?(opts) }
     end
 
-    # acl string clean-up
+    # acl string clean-up (override)
     # @param [String] str ACL string.
     # @return [String]
     def clean_acl_string(str)
-      str =~ /remark/ ? str : str.gsub(/\s+/, ' ')
+      str =~ /remark/ ? str : super
     end
   end
 
@@ -148,7 +148,7 @@ module CiscoAclIntp
       )
       strings = @list.each_with_object([str]) do |entry, array|
         # add indent
-        array.push([' ', clean_acl_string(entry.to_s)].join)
+        array.push [' ', clean_acl_string(entry.to_s)].join
       end
       strings.join("\n")
     end
@@ -184,7 +184,7 @@ module CiscoAclIntp
     # @return [String]
     def to_s
       strings = []
-      @list.each do | entry |
+      @list.each do |entry|
         str = sprintf(
           '%s %s %s',
           tag_header('access-list'),

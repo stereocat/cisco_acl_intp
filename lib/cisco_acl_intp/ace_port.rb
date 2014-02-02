@@ -61,7 +61,11 @@ module CiscoAclIntp
       if @operator == 'any'
         ''
       else
-        tag_port(sprintf('%s %s %s', @operator, @begin_port, @end_port))
+        tag_port(
+          clean_acl_string(
+            sprintf('%s %s %s', @operator, @begin_port, @end_port)
+          )
+        )
       end
     end
 

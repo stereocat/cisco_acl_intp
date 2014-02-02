@@ -42,9 +42,19 @@ else
   parser.parse_file $stdin
 end
 
+# print error message in acl
+error_list = parser.error_list
+unless error_list.empty?
+  puts '--------------------'
+  error_list.each do |each|
+    puts each.to_s
+  end
+  puts '--------------------'
+end
+
 # print acl data
-aclt = parser.acl_table
-aclt.each do |name, acl|
+acl_table = parser.acl_table
+acl_table.each do |name, acl|
   puts "acl name : #{name}"
   puts acl.to_s
 end
