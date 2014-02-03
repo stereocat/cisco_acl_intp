@@ -107,7 +107,7 @@ require 'spec_helper'
 require 'stringio'
 
 describe 'Parser' do
-  describe '#parse_file' do
+  describe '#parse_string' do
     before do
       @parser = CiscoAclIntp::Parser.new(color: false, silent: true)
     end
@@ -124,8 +124,8 @@ describe 'Parser' do
     if t[:valid]
 -%>
     it 'should be parsed acl [<%= now %>]: <%= t[:data] %>' do
-      datastr = StringIO.new('<%= t[:data] %>', 'r')
-      @parser.parse_file(datastr)
+      datastr = '<%= t[:data] %>'
+      @parser.parse_string(datastr)
       @parser.contains_error?.should be_false
     end
 <%-

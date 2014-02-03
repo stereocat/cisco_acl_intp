@@ -15,7 +15,7 @@ module CiscoAclIntp
     end
 
     # Scan ACL from file to parse
-    # @param [File] file File name
+    # @param [File] file File IO object
     # @return [Array] Scanned tokens array (Queue)
     def scan_file(file)
       queue = []
