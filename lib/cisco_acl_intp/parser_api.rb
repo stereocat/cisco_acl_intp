@@ -100,8 +100,8 @@ module CiscoAclIntp
     #   (default: false)
     # @option [Boolean] :debug Enable debug print.
     #   (default: false)
-    # @option [Boolean] :color Enable Term ANSI Color.
-    #   (default: false)
+    # @option [Symbol] :color Mode of token coloring
+    #   (default: `:none`)
     # @option [Boolean] :silent Enable all parser syntax error
     #   (default: false)
     # @return [CiscoACLParser]
@@ -242,7 +242,7 @@ module CiscoAclIntp
 end
 
 ### Local variables:
-### mode: Racc
+### mode: Ruby
 ### coding: utf-8-unix
 ### indent-tabs-mode: nil
 ### End:

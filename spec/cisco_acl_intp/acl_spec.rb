@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 require 'spec_helper'
 
 describe NamedExtAcl do
@@ -516,6 +517,7 @@ EOL
     end
   end
 end
+
 ### Local variables:
 ### mode: Ruby
 ### coding: utf-8-unix

@@ -94,9 +94,8 @@ module CiscoAclIntp
     # Generate tagging method dynamically.
     # @raise [NoMethodError]
     def method_missing(name, *args)
-      case name.to_s
-      when /^tag_(.+)$/
-        tag = Regexp.last_match(1).intern
+      name.to_s =~ /^tag_(.+)$/ && tag = Regexp.last_match(1).intern
+      if TERM_COLOR_TABLE.key?(tag)
         generate_tagged_str(tag, *args)
       else
         super
