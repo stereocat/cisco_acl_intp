@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 require 'spec_helper'
+require 'stringio'
 require 'yaml'
 
 describe 'Parser' do
@@ -15,32 +16,17 @@ ip access-list extended FA8-OUT
  deny   udp any any eq bootpc
  deny   udp any any eq bootps
  permit tcp host 192.168.3.4 173.30.240.0 0.0.0.255 range 32768 65535
- deny udp 192.168.3.0 0.0.240.255 lt 1024 any eq 80
- remark network access-list remark!!
- permit tcp any any established
- deny tcp any any syn rst
- deny udp any any log-input hoge
- permit ip any any log
 !
 EOL
       @parser.parse_string(datastr)
+      @parser.contains_error?.should be_false
+      @parser.parse_string(StringIO.new(datastr))
       @parser.contains_error?.should be_false
     end
 
     it 'should not be parsed acl' do
       datastr = <<EOL
 ip access-list extended FA8-OUT
- deny   udp any any eq bootpc
- deny   udp any any eq bootps
- remark !argment error! 65536
- permit tcp host 192.168.3.4 173.30.240.0 0.0.0.255 range 32768 65536
- remark !------cleared------!
- remark !argment error! 255 => 256
- deny udp 192.168.3.0 0.0.240.256 lt 1024 any eq 80
- remark !------cleared------!
- remark network access-list remark!!
- permit tcp any any established
- deny tcp any any syn rst
  remark !syntax error! tcp -> tp (typo)
  deny up any any log-input hoge
  remark !------cleared------!
@@ -49,6 +35,51 @@ ip access-list extended FA8-OUT
 EOL
       @parser.parse_string(datastr)
       @parser.contains_error?.should be_true
+      @parser.parse_string(StringIO.new(datastr))
+      @parser.contains_error?.should be_true
+    end
+
+    it 'should be error by NON-IO object' do
+      @parser.parse_string(123_456_789)
+      @parser.contains_error?.should be_true
+      @parser.error_list.shift.should match(/acl error/)
+    end
+  end
+
+  describe '#parse_file with string' do
+    before do
+      @parser = CiscoAclIntp::Parser.new(color: false)
+    end
+
+    it 'should be parsed acl' do
+      datastr = <<EOL
+ip access-list extended FA8-OUT
+ deny   udp any any eq bootpc
+ deny   udp any any eq bootps
+ permit tcp host 192.168.3.4 173.30.240.0 0.0.0.255 range 32768 65535
+!
+EOL
+      @parser.parse_file(StringIO.new(datastr))
+      @parser.contains_error?.should be_false
+    end
+
+    it 'should not be parsed acl' do
+      datastr = <<EOL
+ip access-list extended FA8-OUT
+ remark !syntax error! tcp -> tp (typo)
+ deny up any any log-input hoge
+ remark !------cleared------!
+ permit ip any any log
+!
+EOL
+      @parser.parse_file(StringIO.new(datastr))
+      @parser.contains_error?.should be_true
+    end
+
+    it 'should be error by NON-IO object' do
+      @parser.parse_file(123_456_789)
+      @parser.contains_error?.should be_true
+      @parser.error_list.shift.should match(/Parse aborted/)
     end
   end
 

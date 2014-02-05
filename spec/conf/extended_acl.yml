@@ -1,6 +1,6 @@
 # Transit Access Control Lists: Filtering at Your Edge [IP Addressing Services] - Cisco Systems http://www.cisco.com/en/US/tech/tk648/tk361/technologies_white_paper09186a00801afc76.shtml
 - :name: "Anti-spoofing entries."
-  :symbol: extacl-deny-antispoof
+  :symbol: extacl_deny_antispoof
   :description: "Deny special-use address sources. Refer to RFC 3330 for additional special use addresses."
   :acl: |
     access-list 110 deny ip 127.0.0.0 0.255.255.255 any
@@ -9,13 +9,13 @@
     access-list 110 deny ip host 255.255.255.255 any
   :correct: true
 - :name: "DHCP relays"
-  :symbol: extacl-permit-dhcprelay
+  :symbol: extacl_permit_dhcprelay
   :description: "The deny statement should not be configured on Dynamic Host Configuration Protocol (DHCP) relays."
   :acl: |
     access-list 110 deny ip host 0.0.0.0 any
   :correct: true
 - :name: "Filter RFC 1918 space."
-  :symbol: extacl-deny-rfc1918
+  :symbol: extacl_deny_rfc1918
   :description: ""
   :acl: |
     access-list 110 deny ip 10.0.0.0 0.255.255.255 any
@@ -23,20 +23,20 @@
     access-list 110 deny ip 192.168.0.0 0.0.255.255 any
   :correct: true
 - :name: "Permit Border Gateway Protocol (BGP) to the edge router."
-  :symbol: extacl-permit-bgp
+  :symbol: extacl_permit_bgp
   :description: ""
   :acl: |
     access-list 110 permit tcp host 10.1.1.1 gt 1023 host 10.1.1.2 eq bgp
     access-list 110 permit tcp host 10.1.1.1 eq bgp host 10.1.1.2 gt 1023
   :correct: true
 - :name: "Deny your space as source (as noted in RFC 2827)."
-  :symbol: extacl-permit-local
+  :symbol: extacl_permit_local
   :description: ""
   :acl: |
     access-list 110 deny   ip 192.168.201.0 0.0.0.255 any
   :correct: true
 - :name: "Explicitly permit return traffic."
-  :symbol: extacl-permit-icmp
+  :symbol: extacl_permit_icmp
   :description: "Allow specific ICMP types."
   :acl: |
     access-list 110 permit icmp any any echo-reply
@@ -45,7 +45,7 @@
     access-list 110 deny   icmp any any
   :correct: true
 - :name: "DNS queries"
-  :symbol: extacl-permit-dnsquery
+  :symbol: extacl_permit_dnsquery
   :description: ""
   :acl: |
     access-list 110 remark !--- These are outgoing DNS queries.
@@ -54,14 +54,14 @@
     access-list 110 permit udp any eq domain host 192.168.201.104 eq domain
   :correct: true
 - :name: "Permit legitimate business traffic."
-  :symbol: extacl-permit-business-traffic
+  :symbol: extacl_permit_business_traffic
   :description: ""
   :acl: |
     access-list 110 permit tcp any 192.168.201.0 0.0.0.255 established
     access-list 110 permit udp any range 1 1023 192.168.201.0 0.0.0.255 gt 1023
   :correct: true
 - :name: "Allow ftp data and multimedia connections."
-  :symbol: extacl-permit-ftpclient
+  :symbol: extacl_permit_ftpclient
   :description: ""
   :acl: |
     access-list 110 remark !--- Allow FTP data connections.
@@ -70,7 +70,7 @@
     access-list 110 permit udp any gt 1023 192.168.201.0 0.0.0.255 gt 1023
   :correct: true
 - :name: "Explicitly permit externally sourced traffic. (DNS)"
-  :symbol: extacl-permit-dns-server
+  :symbol: extacl_permit_dns_server
   :description: ""
   :acl: |
     access-list 110 remark !--- These are incoming DNS queries.
@@ -84,7 +84,7 @@
     access-list 110 deny   tcp any any eq domain
   :correct: true
 - :name: "Explicitly permit externally sourced traffic. (VPN)"
-  :symbol: extacl-permit-vpn-server
+  :symbol: extacl_permit_vpn_server
   :description: "Allow IPSec VPN traffic."
   :acl: |
     access-list 110 permit udp any host 192.168.201.100 eq isakmp
@@ -94,7 +94,7 @@
     access-list 110 deny   ip any host 192.168.201.100
   :correct: true
 - :name: "Explicitly permit externally sourced traffic. (Others)"
-  :symbol: extacl-permit-web-server
+  :symbol: extacl_permit_web_server
   :description: "These are Internet-sourced connections to publicly accessible servers."
   :acl: |
     access-list 110 permit tcp any host 192.168.201.101 eq www
@@ -102,14 +102,14 @@
     access-list 110 permit tcp any host 192.168.201.102 eq ftp
   :correct: true
 - :name: "Explicitly permit externally sourced traffic. (FTP)"
-  :symbol: extacl-permit-ftp-server
+  :symbol: extacl_permit_ftp_server
   :description: "Data connections to the FTP server are allowed by the permit established ACE. Allow PASV data connections to the FTP server."
   :acl: |
     access-list 110 permit tcp any gt 1023 host 192.168.201.102 gt 1023
     access-list 110 permit tcp any host 192.168.201.103 eq smtp
   :correct: true
 - :name: "Explicitly deny all other traffic."
-  :symbol: extacl-deny-any
+  :symbol: extacl_deny_any
   :description: ""
   :acl: |
     access-list 101 deny ip any any
@@ -119,7 +119,7 @@
 # Configuring IP Access Lists - Cisco Systems http://www.cisco.com/en/US/products/sw/secursw/ps1018/products_tech_note09186a00800a5b9a.shtml
 #
 - :name: "Reflexive ACLs"
-  :symbol: extacl-reflexive
+  :symbol: extacl_reflexive
   :description: ""
   :acl: |
     ip access-list extended inboundfilters
@@ -132,7 +132,7 @@
     !
   :correct: true
 - :name: "Time-Based ACLs Using Time Ranges"
-  :symbol: extacl-time-based
+  :symbol: extacl_time_based
   :description: ""
   :acl: |
     access-list 101 permit tcp 10.1.1.0 0.0.0.255 172.16.1.0 0.0.0.255 eq telnet time-range EVERYOTHERDAY
@@ -141,7 +141,7 @@
 # used at home router
 #
 - :name: "My Home (1)"
-  :symbol: extacl-self-example1
+  :symbol: extacl_self_example1
   :description: "outbound filter"
   :acl: |
     ip access-list extended GI0-OUT
@@ -178,7 +178,7 @@
     !
   :correct: true
 - :name: "My Home (2)"
-  :symbol: extacl-self-example2
+  :symbol: extacl_self_example2
   :description: "inbound filter"
   :acl: |
     ip access-list extended GI0-IN
