@@ -329,8 +329,8 @@ module CiscoAclIntp
         tag_protocol(@protocol.to_s),
         @src_spec,
         @dst_spec,
-        @tcp_flags.nil? ? '' : @tcp_flags,
-        @tcp_other_qualifiers.nil? ? '' : @tcp_other_qualifiers
+        @tcp_flags,
+        @tcp_other_qualifiers
      )
     end
 

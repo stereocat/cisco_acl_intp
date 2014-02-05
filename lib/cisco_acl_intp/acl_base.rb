@@ -47,7 +47,7 @@ module CiscoAclIntp
 
     # Generate header of ACL tag
     # @param [Symbol] tag Tag symbol.
-    # @return [String] Ttagged string.
+    # @return [String] Tagged string.
     def generate_tag_header(tag)
       case AclContainerBase.color_mode
       when :term
@@ -60,9 +60,8 @@ module CiscoAclIntp
     end
 
     # Generate footer of ACL tag
-    # @param [Symbol] tag Tag symbol.
     # @return [String] Tagged string.
-    def generate_tag_footer(tag)
+    def generate_tag_footer
       case AclContainerBase.color_mode
       when :term
         Term::ANSIColor.clear
@@ -80,7 +79,7 @@ module CiscoAclIntp
     def generate_tagged_str(tag, *args)
       tag_head = generate_tag_header(tag)
       tag_body = args.join
-      tag_foot = generate_tag_footer(tag)
+      tag_foot = generate_tag_footer
       [tag_head, tag_body, tag_foot].join
     end
 
