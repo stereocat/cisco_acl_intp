@@ -15,7 +15,7 @@ module CiscoAclIntp
     # Some Enumerable included methods returns Array of ACE objects
     # (e.g. sort),the returned Array was used as ACE object by
     # overwrite accessor 'list'.
-    # @return [Array] list ACE object Array
+    # @return [Array <AceBase>] list ACE object Array
     attr_accessor :list
     # @return [String, Symbol] acl_type ACL type
     attr_reader :acl_type
@@ -137,18 +137,41 @@ module CiscoAclIntp
 
   # Named ACL container base
   class NamedAcl < SingleAclBase
-    # Generate string for Cisco IOS access list
-    # @return [String]
-    def to_s
-      str = sprintf(
+    # check acl type,Named ACL or not?
+    # @return [Boolean]
+    def named_acl?
+      true
+    end
+
+    # check acl type, Numbered ACL or not?
+    # @return [Boolean]
+    def numbered_acl?
+      false
+    end
+
+    # Generate ACL header string
+    # @return [String] ACL header string
+    def header_string
+      sprintf(
         '%s %s %s',
         tag_header('ip access-list'),
         tag_type(@acl_type),
         tag_name(@name)
       )
-      strings = @list.each_with_object([str]) do |entry, array|
-        # add indent
-        array.push [' ', clean_acl_string(entry.to_s)].join
+    end
+
+    # Generate ACL line string
+    # @param [AceBase] entry ACE object
+    def line_string(entry)
+      # add indent
+      sprintf(' %s', clean_acl_string(entry.to_s))
+    end
+
+    # Generate string for Cisco IOS access list
+    # @return [String]
+    def to_s
+      strings = @list.each_with_object([header_string]) do |entry, strlist|
+        strlist.push line_string(entry)
       end
       strings.join("\n")
     end
@@ -158,6 +181,18 @@ module CiscoAclIntp
   class NumberedAcl < SingleAclBase
     # @return [Integer] Access list number
     attr_reader :number
+
+    # check acl type,Named ACL or not?
+    # @return [Boolean]
+    def named_acl?
+      false
+    end
+
+    # check acl type, Numbered ACL or not?
+    # @return [Boolean]
+    def numbered_acl?
+      true
+    end
 
     # Constructor
     # @param [String, Integer] name ACL number
@@ -180,18 +215,27 @@ module CiscoAclIntp
       end
     end
 
+    # Generate ACL header string
+    # @return [String] ACL header string
+    def header_string
+      sprintf(
+        '%s %s',
+        tag_header('access-list'),
+        tag_name(@name)
+      )
+    end
+
+    # Generate ACL line string
+    # @param [AceBase] entry ACE object
+    def line_string(entry)
+      clean_acl_string(sprintf('%s %s', header_string, entry))
+    end
+
     # Generate string for Cisco IOS access list
     # @return [String]
     def to_s
-      strings = []
-      @list.each do |entry|
-        str = sprintf(
-          '%s %s %s',
-          tag_header('access-list'),
-          tag_name(@name),
-          entry
-        )
-        strings.push clean_acl_string(str)
+      strings = @list.each_with_object([]) do |entry, strlist|
+        strlist.push line_string(entry)
       end
       strings.join("\n")
     end

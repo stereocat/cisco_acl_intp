@@ -365,7 +365,7 @@ module CiscoAclIntp
     def match_protocol?(protocol)
       protocol_str = @protocol.to_s
       if protocol_str == 'ip'
-        true # allow tcp/udp
+        true # allow any of icmp/tcp/udp
       else
         ## TBD
         ## what to do when NO name and only protocol number is specified?
