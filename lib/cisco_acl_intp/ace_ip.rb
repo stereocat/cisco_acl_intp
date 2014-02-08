@@ -24,10 +24,10 @@ module CiscoAclIntp
     attr_accessor :wildcard
 
     def_delegator :@ipaddr, :ip, :ipaddr
-    # `contained_ip?' method is cidr(ipaddr/nn) operation
-    def_delegator :@ipaddr, :is_contained?, :contained_ip?
+
+    # `is_contained?' method is cidr(ipaddr/nn) operation
     # `matches?' method is wildcard mask operation
-    def_delegators :@ipaddr, :matches?
+    def_delegators :@ipaddr, :matches?, :is_contained?
 
     # Constructor
     # @param [Hash] opts Options

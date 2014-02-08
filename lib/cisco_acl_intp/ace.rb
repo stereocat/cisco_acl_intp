@@ -380,7 +380,7 @@ module CiscoAclIntp
     # @option port [Integer] port number to compare
     # @return [Boolean] Matched or not
     # @raise [AclArgumentError]
-    def match_addr_port?(srcdst_spec, ip, port)
+    def match_addr_port?(srcdst_spec, ip, port = nil)
       if ip
         srcdst_spec.matches?(ip, port)
       else

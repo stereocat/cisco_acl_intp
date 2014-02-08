@@ -56,16 +56,42 @@ module CiscoAclIntp
       sprintf('%s %s', @ip_spec, @port_spec)
     end
 
-    # Check address and port number matche this object.
+    # Check address and port number matches this object or not.
     # @param [String] address IP address (dotted notation)
     # @param [Integer] port Port No.
     # @return [Boolean]
     def matches?(address, port = nil)
-      ip_spec_match = @ip_spec.matches?(address)
-      ip_spec_match && @port_spec.matches?(port) if port
+      matches_address?(address) && matches_port?(port)
     end
 
     private
+
+    # Check port match
+    # @param [Integer] port Port No.
+    # @return [Boolean]
+    def matches_port?(port)
+      case port
+      when nil, 'any'
+        true
+      else
+        @port_spec.matches?(port)
+      end
+    end
+
+    # Check address match
+    # @param [String] address IP address (dotted notation)
+    # @param [Boolean]
+    def matches_address?(address)
+      case address
+      when /(.+)\/(.+)/
+        # addr/mask or addr/mask-length notation
+        @ip_spec.is_contained?(address)
+      when '0.0.0.0', '0.0.0.0/0', 'any'
+        true
+      else
+        @ip_spec.matches?(address)
+      end
+    end
 
     # Set instance variables
     # @param [Hash] opts Options of constructor

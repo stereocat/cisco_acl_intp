@@ -274,8 +274,8 @@ describe ExtendedAce do
         # run test
         it "should be #{each[:res]}, \
 when #{each[:opts][:protocol]};\
-#{each[:opts][:src_ip]}/#{each[:opts][:src_port]} > \
-#{each[:opts][:dst_ip]}/#{each[:opts][:dst_port]}" do
+#{each[:opts][:src_ip]}:#{each[:opts][:src_port]} > \
+#{each[:opts][:dst_ip]}:#{each[:opts][:dst_port]}" do
           if each[:res]
             @ea.matches?(each[:opts]).should be_true
           else
