@@ -42,7 +42,7 @@ module CiscoAclIntp
       protocol: Term::ANSIColor.cyan,
       port: Term::ANSIColor.cyan,
       other_qualifier: Term::ANSIColor.green,
-      error: [Term::ANSIColor.red, Term::ANSIColor.bold].join,
+      error: [Term::ANSIColor.red, Term::ANSIColor.bold].join
     }
 
     # Generate header of ACL tag

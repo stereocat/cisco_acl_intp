@@ -12,22 +12,21 @@ module CiscoAclIntp
     # @param [NetAddr::CIDR] value IP address
     #   (dotted decimal notation)
     # @return [NetAddr::CIDR]
-    attr_accessor :ipaddr
+    attr_reader :ipaddr
 
     # @param [Integer] value Netmask length
     # @return [Integer]
-    attr_accessor :netmask
+    attr_reader :netmask
 
     # @param [String] value Wildcard mask
     #   (dotted decimal and bit flapped notation)
     # @return [String]
-    attr_accessor :wildcard
+    attr_reader :wildcard
 
     def_delegator :@ipaddr, :ip, :ipaddr
 
-    # `is_contained?' method is cidr(ipaddr/nn) operation
     # `matches?' method is wildcard mask operation
-    def_delegators :@ipaddr, :matches?, :is_contained?
+    def_delegators :@ipaddr, :matches?
 
     # Constructor
     # @param [Hash] opts Options
@@ -40,7 +39,8 @@ module CiscoAclIntp
     # @return [AceIpSpec]
     def initialize(opts)
       if opts.key?(:ipaddr)
-        define_addrinfo(opts)
+        @opts = opts
+        define_addrinfo
       else
         fail AclArgumentError, 'Not specified IP address'
       end
@@ -79,50 +79,92 @@ module CiscoAclIntp
       NetAddr.i_to_ip(ami)
     end
 
+    # Check subnet contained this object or not.
+    # @param [String] address Subnet address string
+    #   e.g. 192.168.0.0/24, 192.168.0.0/255.255.255.0
+    # @return [Boolean]
+    # @raise [NetAddr::ValidationError]
+    def contains?(address)
+      NetAddr::CIDR.create(address).is_contained?(@ipaddr)
+    end
+
     private
 
+    # Convert table of IPv4 bit-flapped wildcard octet to bit length
+    OCTET_BIT_LENGTH = {
+      '255' => 0, '127' => 1, '63' => 2,
+      '31' => 3, '15' => 4, '7' => 5,
+      '3' => 6, '1' => 7, '0' => 8
+    }
+
+    # Covnet IPv4 bit-flapped wildcard to netmask length
+    # @return [Fixnum] netmask length
+    #   or `nil` when discontinuous-bits-wildcard-mask
+    def wildcard_bitlength
+      @wildcard.split(/\./).reduce(0) do |len, octet|
+        if !len.nil? && OCTET_BIT_LENGTH.key?(octet)
+          len + OCTET_BIT_LENGTH[octet]
+        else
+          nil
+        end
+      end
+    end
+
     # Set instance variables
-    # @param [Hash] opts Options of constructor
-    def define_addrinfo(opts)
-      case
-      when opts[:wildcard]
-        define_addrinfo_with_wildcard(opts)
-      when opts[:netmask]
-        define_addrinfo_with_netmask(opts)
+    def define_addrinfo
+      if @opts.key?(:wildcard)
+        define_addrinfo_prefer_wildcard
       else
-        define_addrinfo_with_default_netmask(opts)
+        define_addrinfo_by_netmask_or_default
+      end
+    end
+
+    # Set instance variables. assume that wildcard is primary option.
+    def define_addrinfo_prefer_wildcard
+      @wildcard = @opts[:wildcard]
+      @netmask = wildcard_bitlength
+      if @netmask
+        @opts[:netmask] = @netmask
+        define_addrinfo_with_netmask
+      else
+        define_addrinfo_with_wildcard
+      end
+    end
+
+    # Set instance variables. Secondary prioritize option is netmask,
+    #   and third(last) one is default-mask
+    def define_addrinfo_by_netmask_or_default
+      if @opts.key?(:netmask)
+        define_addrinfo_with_netmask
+      else
+        define_addrinfo_with_default_netmask
       end
     end
 
     # Set instance variables with ip/wildcard
-    # @param [Hash] opts Options of constructor
-    def define_addrinfo_with_wildcard(opts)
-      @wildcard = opts[:wildcard]
+    def define_addrinfo_with_wildcard
       @ipaddr = NetAddr::CIDR.create(
-        opts[:ipaddr],
+        @opts[:ipaddr],
         WildcardMask: [@wildcard, true]
       )
-      ## TBD : is it OK? must convert if possible?
       @netmask = nil
     end
 
     # Set instance variables with ip/netmask
-    # @param [Hash] opts Options of constructor
-    def define_addrinfo_with_netmask(opts)
-      @netmask = opts[:netmask]
+    def define_addrinfo_with_netmask
+      @netmask = @opts[:netmask]
       @ipaddr = NetAddr::CIDR.create(
-        [opts[:ipaddr], @netmask].join('/')
+        [@opts[:ipaddr], @netmask].join('/')
       )
       @wildcard = @ipaddr.wildcard_mask(true)
     end
 
     # Set instance variables with ip/default-netmask
-    # @param [Hash] opts Options of constructor
-    def define_addrinfo_with_default_netmask(opts)
+    def define_addrinfo_with_default_netmask
       # default mask
       @netmask = '255.255.255.255'
       @ipaddr = NetAddr::CIDR.create(
-        [opts[:ipaddr], @netmask].join(' ')
+        [@opts[:ipaddr], @netmask].join(' ')
       )
       @wildcard = @ipaddr.wildcard_mask(true)
     end

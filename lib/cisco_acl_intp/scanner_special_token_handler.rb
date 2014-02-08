@@ -23,7 +23,7 @@ module CiscoAclIntp
       ['object-group', 'network', :word],
       ['object-group', 'service', :word],
       ['object-group', :word], # longest match
-      ['group-object', :word],
+      ['group-object', :word]
     ]
 
     # Conversion table of string-tokens

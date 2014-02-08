@@ -56,12 +56,25 @@ module CiscoAclIntp
       sprintf('%s %s', @ip_spec, @port_spec)
     end
 
+    def match_addr_port?(ip, port = nil)
+      if ip
+        matches?(ip, port)
+      else
+        fail AclArgumentError, 'Not specified match target IP Addr'
+      end
+    end
+
     # Check address and port number matches this object or not.
     # @param [String] address IP address (dotted notation)
     # @param [Integer] port Port No.
     # @return [Boolean]
+    # @raise [AclArgumentError]
     def matches?(address, port = nil)
-      matches_address?(address) && matches_port?(port)
+      if address
+        matches_address?(address) && matches_port?(port)
+      else
+        fail AclArgumentError, 'Not specified match target IP Addr'
+      end
     end
 
     private
@@ -85,7 +98,7 @@ module CiscoAclIntp
       case address
       when /(.+)\/(.+)/
         # addr/mask or addr/mask-length notation
-        @ip_spec.is_contained?(address)
+        @ip_spec.contains?(address)
       when '0.0.0.0', '0.0.0.0/0', 'any'
         true
       else

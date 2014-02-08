@@ -2,6 +2,26 @@
 require 'spec_helper'
 
 describe AceIpSpec do
+  describe '#netmask, #wildcard' do
+    it 'should be converted wildcard/netmask' do
+      ip = AceIpSpec.new(
+        ipaddr: '192.168.15.15',
+        wildcard: '0.0.31.255'
+      )
+      ip.netmask.should eq 19
+      ip.wildcard.should eq '0.0.31.255'
+    end
+
+    it 'should not be converted wildcard/netmask' do
+      ip = AceIpSpec.new(
+        ipaddr: '192.168.15.15',
+        wildcard: '0.3.5.0'
+      )
+      ip.netmask.should be_nil
+      ip.wildcard.should eq '0.3.5.0'
+    end
+  end
+
   describe '#to_s' do
     it 'should be "192.168.15.15 0.0.7.6"' do
       ip = AceIpSpec.new(

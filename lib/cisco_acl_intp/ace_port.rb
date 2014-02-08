@@ -88,7 +88,7 @@ module CiscoAclIntp
       end,
       'range' => proc do |begin_port, end_port, port|
         (begin_port .. end_port).include?(port)
-      end,
+      end
     }
 
     # Check the port number matches this?
@@ -97,7 +97,7 @@ module CiscoAclIntp
     # @return [Boolean]
     def matches?(port)
       unless valid_range?(port)
-        fail AclArgumentError, "Port out of range: #{ port }"
+        fail AclArgumentError, "Port out of range: #{port}"
       end
       # @operator was validated in constructor
       PORT_OPERATE[@operator].call(@begin_port.to_i, @end_port.to_i, port)

@@ -15,7 +15,7 @@ module CiscoAclIntp
     # Some Enumerable included methods returns Array of ACE objects
     # (e.g. sort),the returned Array was used as ACE object by
     # overwrite accessor 'list'.
-    # @return [Array <AceBase>] list ACE object Array
+    # @return [Array<AceBase>] list ACE object Array
     attr_accessor :list
     # @return [String, Symbol] acl_type ACL type
     attr_reader :acl_type

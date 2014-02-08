@@ -198,7 +198,7 @@ module CiscoAclIntp
     # @raise [AclArgumentError] Invalid src_ip
     def matches?(opts)
       if opts.key?(:src_ip)
-        @src_spec.ip_spec.matches?(opts[:src_ip])
+        @src_spec.matches?(opts[:src_ip])
       else
         fail AclArgumentError, 'Invalid match target src IP address'
       end
@@ -347,8 +347,8 @@ module CiscoAclIntp
     def matches?(opts)
       if opts.key?(:protocol)
         match_proto = match_protocol?(opts[:protocol])
-        match_src = match_addr_port?(@src_spec, opts[:src_ip], opts[:src_port])
-        match_dst = match_addr_port?(@dst_spec, opts[:dst_ip], opts[:dst_port])
+        match_src = @src_spec.matches?(opts[:src_ip], opts[:src_port])
+        match_dst = @dst_spec.matches?(opts[:dst_ip], opts[:dst_port])
       else
         fail AclArgumentError, 'Invalid match target protocol'
       end
@@ -371,20 +371,6 @@ module CiscoAclIntp
         ## what to do when NO name and only protocol number is specified?
         # In principle, it must be compared by object.
         protocol == protocol_str
-      end
-    end
-
-    # check src/dst address
-    # @option srcdst_spec [AceSrcDstSpec] src/dst address/port
-    # @option ip [String] ip addr to compare
-    # @option port [Integer] port number to compare
-    # @return [Boolean] Matched or not
-    # @raise [AclArgumentError]
-    def match_addr_port?(srcdst_spec, ip, port = nil)
-      if ip
-        srcdst_spec.matches?(ip, port)
-      else
-        fail AclArgumentError, 'Not specified match target IP Addr'
       end
     end
 
