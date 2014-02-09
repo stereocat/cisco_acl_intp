@@ -100,7 +100,7 @@ module CiscoAclIntp
         fail AclArgumentError, "Port out of range: #{port}"
       end
       # @operator was validated in constructor
-      PORT_OPERATE[@operator].call(@begin_port.to_i, @end_port.to_i, port)
+      PORT_OPERATE[@operator].call(@begin_port.to_i, @end_port.to_i, port.to_i)
     end
 
     private

@@ -346,14 +346,12 @@ module CiscoAclIntp
     # @raise [AclArgumentError]
     def matches?(opts)
       if opts.key?(:protocol)
-        match_proto = match_protocol?(opts[:protocol])
-        match_src = @src_spec.matches?(opts[:src_ip], opts[:src_port])
-        match_dst = @dst_spec.matches?(opts[:dst_ip], opts[:dst_port])
+        match_protocol?(opts[:protocol]) &&
+          @src_spec.matches?(opts[:src_ip], opts[:src_port]) &&
+          @dst_spec.matches?(opts[:dst_ip], opts[:dst_port])
       else
         fail AclArgumentError, 'Invalid match target protocol'
       end
-
-      (match_proto && match_src && match_dst)
     end
 
     private
