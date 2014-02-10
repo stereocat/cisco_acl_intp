@@ -137,9 +137,9 @@ module CiscoAclIntp
 
     # Search matched ACE
     # @param [Hash] opts Options
-    # return [Boolean] false, Recursive does not implemented yet
+    # return [Boolean]
+    # @todo for Recursive name matching is not implemented yet
     def matches?(opts = nil)
-      ## TODO
       false
     end
   end
@@ -365,9 +365,8 @@ module CiscoAclIntp
       if protocol_str == 'ip'
         true # allow any of icmp/tcp/udp
       else
-        ## TBD
-        ## what to do when NO name and only protocol number is specified?
-        # In principle, it must be compared by object.
+        # @todo what to do when NO name and only protocol number is
+        #   specified?  In principle, it must be compared by object.
         protocol == protocol_str
       end
     end

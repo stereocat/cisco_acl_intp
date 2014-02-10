@@ -104,11 +104,9 @@ module CiscoAclIntp
   ############################################################
 
   # Features for Extended ACL
+  # @todo Does it have to raise error if add_entry called with
+  #   StandardAce?
   module ExtAcl
-    ## TBD
-    ## does it have to raise error
-    ## if add_entry called with StandardAce?
-
     # Generate a Extended ACE by parameters
     #   and Add it to ACL
     # @param [Hash] opts Options to create {ExtendedAce}
@@ -119,11 +117,9 @@ module CiscoAclIntp
   end
 
   # Features for Standard ACL
+  # @todo Does it have to raise error if add_entry called with
+  #   ExtendedAce?
   module StdAcl
-    ## TBD
-    ## does it have to raise error
-    ## if add_entry called with ExtendedAce?
-
     # Generate a Standard ACE by parameters
     #   and Add it to ACL
     # @param [Hash] opts Options to create {StandardAce}
@@ -198,13 +194,10 @@ module CiscoAclIntp
     # @param [String, Integer] name ACL number
     # @raise [AclArgumentError]
     # @return [NumberedAcl]
+    # @todo It ought to do something about assignment operator...
+    #   (attr_reader)
     def initialize(name)
       super
-
-      ## TBD
-      ## it ought to do something about assignment operator...
-      ## (attr_reader)
-
       case name
       when Fixnum
         set_name_and_number(name.to_s, name)

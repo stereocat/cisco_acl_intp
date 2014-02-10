@@ -52,7 +52,6 @@ module CiscoAclIntp
     def gen_arg_token_lists
       STRING_ARG_TOKENS.map do |each|
         re_str_list = convert_tokens_to_regexpstr(each)
-        # puts "### #{re_str_list}"
         [re_str_list.join('\s+'), each.length]
       end
     end

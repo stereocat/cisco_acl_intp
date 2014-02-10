@@ -104,7 +104,7 @@ std_acl_log_spec:
                      :protocol => val[1],
                      :src => AceSrcDstSpec.new(:ip_spec => val[2]),
                      :dst => AceSrcDstSpec.new(:ip_spec => val[3])
-                     ## TBD: icmp_qualifier: val[4]
+                     # @todo icmp_qualifier: val[4]
                      )
                  }
              | action tcp_proto tcp_srcdst_spec tcp_srcdst_spec tcp_flags_qualifier
@@ -128,7 +128,7 @@ std_acl_log_spec:
                  }
              | action objgrp_service_spec objgrp_srcdst_spec objgrp_srcdst_spec
                  {
-                   ## TBD: object group
+                   # @todo implementing object group
                  }
 
                  # protocols
@@ -389,9 +389,8 @@ ext_named_acl_entry: seq_number ext_acl eos
 
                  # object-group
 
-                 ## TBD
-                 # object group syntax was not implemented
-                 # 'eos' termination
+                 # @todo Object group syntax was not implemented 'eos'
+                 #   termination
 
        objgrp: objgrp_service
              | objgrp_network
@@ -1193,7 +1192,7 @@ time_range_spec: 'time-range' STRING
 
 recursive_qualifier: 'reflect' STRING timeout_spec
                  {
-                   ## TBD: timeout_spec not implemented yet.
+                   # @todo timeout_spec is not implemented yet.
                    result = AceRecursiveQualifier.new(val[1])
                  }
 

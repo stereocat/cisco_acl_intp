@@ -35,13 +35,11 @@ module CiscoAclIntp
     #   with port number and protocol name.
     #   it need the number when operate/compare protocol number,
     #   and need the name when stringize the object.
+    # @todo in ACL, can "eq/neq" receive port list? IOS15 later?
     def initialize(opts)
-      ## TBD
-      ## in ACL, can "eq/neq" receive port list?
-      ## IOS15 later?
-
       if opts.key?(:operator)
-        validate_operators(opts)
+        @options = opts
+        validate_operators
       else
         fail AclArgumentError, 'Not specified port operator'
       end
@@ -106,18 +104,16 @@ module CiscoAclIntp
     private
 
     # Set instance variables
-    # @param [Hash] opts Options of constructor
-    def define_operator_and_ports(opts)
-      @operator = opts[:operator] || 'any'
-      @begin_port = opts[:port] || opts[:begin_port] || nil
-      @end_port = opts[:end_port] || nil
+    def define_operator_and_ports
+      @operator = @options[:operator] || 'any'
+      @begin_port = @options[:port] || @options[:begin_port] || nil
+      @end_port = @options[:end_port] || nil
     end
 
     # Varidate options
-    # @param [Hash] opts Options of constructor
     # @raise [AclArgumentError]
-    def validate_operators(opts)
-      define_operator_and_ports(opts)
+    def validate_operators
+      define_operator_and_ports
 
       if !PORT_OPERATE.key?(@operator)
         fail AclArgumentError, "Unknown operator: #{@operator}"

@@ -30,7 +30,8 @@ module CiscoAclIntp
     #   should be assigned in inherited class constructor,
     #   at first. (before call super class constructor)
     def initialize(opts)
-      define_values(opts)
+      @options = opts
+      define_values
 
       # arguments     |
       # :name :number | @name         @number
@@ -98,11 +99,10 @@ module CiscoAclIntp
     private
 
     # Set instance variables with ip/default-netmask
-    # @param [Hash] opts Options of constructor
-    def define_values(opts)
+    def define_values
       @protocol = nil unless @protocol
-      @name = opts[:name] || nil
-      @number = opts[:number] || nil
+      @name = @options[:name] || nil
+      @number = @options[:number] || nil
     end
 
     # Validate protocol number
@@ -166,7 +166,7 @@ module CiscoAclIntp
     }
 
     # Constructor
-    # @param [Hash] opts Options of {AceProtoSpecBase}
+    # @param [Hash] opts Options of <AceProtoSpecBase>
     # @return [AceIpProtoSpec]
     def initialize(opts)
       @protocol = :ip
@@ -245,7 +245,7 @@ module CiscoAclIntp
     }
 
     # Constructor
-    # @param [Hash] opts Options of {AceProtoSpecBase}
+    # @param [Hash] opts Options of <AceProtoSpecBase>
     # @return [AceTcpProtoSpec]
     def initialize(opts)
       @protocol = :tcp
@@ -296,7 +296,7 @@ module CiscoAclIntp
     }
 
     # Constructor
-    # @param [Hash] opts Options of {AceProtoSpecBase}
+    # @param [Hash] opts Options of <AceProtoSpecBase>
     # @return [AceUdpProtoSpec]
     def initialize(opts)
       @protocol = :udp

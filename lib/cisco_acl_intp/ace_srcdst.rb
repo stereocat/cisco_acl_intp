@@ -8,11 +8,9 @@ require 'cisco_acl_intp/ace_tcp_flags'
 
 module CiscoAclIntp
   # IP Address and TCP/UDP Port Info
+  # @todo Src/Dst takes Network Object Group or IP/wildcard.
+  #    object group is not implemented yet.
   class AceSrcDstSpec < AclContainerBase
-    ## TBD
-    ## Src/Dst takes Network Object Group or IP/wildcard.
-    ## object group is not implemented yet.
-
     # @param [AceIpSpec] value IP address and Wildcard-mask
     # @return [AceIpSpec]
     attr_accessor :ip_spec
@@ -39,8 +37,9 @@ module CiscoAclIntp
     #   (:port_spec or :operator, :begin_port, :end_port)
     #   it assumed with ANY port.
     def initialize(opts)
-      @ip_spec = define_ipspec(opts)
-      @port_spec = define_portspec(opts)
+      @options = opts
+      @ip_spec = define_ipspec
+      @port_spec = define_portspec
     end
 
     # @param [AceSrcDstSpec] other RHS Object
@@ -107,17 +106,16 @@ module CiscoAclIntp
     end
 
     # Set instance variables
-    # @param [Hash] opts Options of constructor
     # @raise [AclArgumentError]
     # @return [AceIpSpec] IP address/Mask object
     # @see #initialize
-    def define_ipspec(opts)
-      if opts.key?(:ip_spec)
-        opts[:ip_spec]
-      elsif opts.key?(:ipaddr)
+    def define_ipspec
+      if @options.key?(:ip_spec)
+        @options[:ip_spec]
+      elsif @options.key?(:ipaddr)
         AceIpSpec.new(
-          ipaddr: opts[:ipaddr],
-          wildcard: opts[:wildcard]
+          ipaddr: @options[:ipaddr],
+          wildcard: @options[:wildcard]
         )
       else
         fail AclArgumentError, 'Not specified: ip spec'
@@ -125,17 +123,16 @@ module CiscoAclIntp
     end
 
     # Set instance variables
-    # @param [Hash] opts Options of constructor
     # @return [AcePortSpec] Port/Operator object
     # @see #initialize
-    def define_portspec(opts)
-      if opts.key?(:port_spec)
-        opts[:port_spec]
-      elsif opts.key?(:operator)
+    def define_portspec
+      if @options.key?(:port_spec)
+        @options[:port_spec]
+      elsif @options.key?(:operator)
         AcePortSpec.new(
-          operator: opts[:operator],
-          begin_port: opts[:port] || opts[:begin_port],
-          end_port: opts[:end_port]
+          operator: @options[:operator],
+          begin_port: @options[:port] || @options[:begin_port],
+          end_port: @options[:end_port]
         )
       else
         # in standard acl, not used port_spec

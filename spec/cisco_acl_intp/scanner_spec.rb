@@ -31,7 +31,6 @@ EOL
         %w[any any],
         %w[any any],
         [:EOS, nil],
-        [:EOS, nil], # last, empty line
         [false, 'EOF']
      ]
     end
