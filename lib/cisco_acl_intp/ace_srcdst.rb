@@ -55,14 +55,6 @@ module CiscoAclIntp
       sprintf('%s %s', @ip_spec, @port_spec)
     end
 
-    def match_addr_port?(ip, port = nil)
-      if ip
-        matches?(ip, port)
-      else
-        fail AclArgumentError, 'Not specified match target IP Addr'
-      end
-    end
-
     # Check address and port number matches this object or not.
     # @param [String] address IP address (dotted notation)
     # @param [Integer] port Port No.

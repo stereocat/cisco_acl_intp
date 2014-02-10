@@ -22,6 +22,27 @@ describe AceIpSpec do
     end
   end
 
+  describe '#contains?' do
+    before do
+      @ip = AceIpSpec.new(
+        ipaddr: '192.168.15.15',
+        netmask: 24
+      )
+    end
+
+    it 'should be true when subnet is contained' do
+      @ip.contains?('192.168.15.3/25').should be_true
+    end
+
+    it 'should be true when same subnet' do
+      @ip.contains?('192.168.15.3/24').should be_true
+    end
+
+    it 'should be false when larger subnet' do
+      @ip.contains?('192.168.15.3/23').should be_false
+    end
+  end
+
   describe '#to_s' do
     it 'should be "192.168.15.15 0.0.7.6"' do
       ip = AceIpSpec.new(

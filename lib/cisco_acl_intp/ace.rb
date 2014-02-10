@@ -362,7 +362,7 @@ module CiscoAclIntp
     # @raise [AclArgumentError]
     def match_protocol?(protocol)
       protocol_str = @protocol.to_s
-      if protocol_str == 'ip'
+      if [protocol_str, protocol].include?('ip')
         true # allow any of icmp/tcp/udp
       else
         # @todo what to do when NO name and only protocol number is

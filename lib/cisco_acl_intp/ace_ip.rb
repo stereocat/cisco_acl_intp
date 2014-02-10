@@ -85,7 +85,7 @@ module CiscoAclIntp
     # @return [Boolean]
     # @raise [NetAddr::ValidationError]
     def contains?(address)
-      NetAddr::CIDR.create(address).is_contained?(@ipaddr)
+      @ipaddr.cmp(address) >= 0
     end
 
     private
