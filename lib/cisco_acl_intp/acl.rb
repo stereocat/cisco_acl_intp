@@ -41,8 +41,8 @@ module CiscoAclIntp
       @name_type = nil # :named or :numbered
     end
 
-    # duplicate with list
-    # @param [Array<SingleAclBase>]
+    # duplicate ACE list
+    # @param [Array<AceBase>] list List of ACE
     # @return [SingleAclBase]
     def dup_with_list(list)
       acl = dup

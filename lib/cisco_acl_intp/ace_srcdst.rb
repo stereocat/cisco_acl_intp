@@ -84,7 +84,7 @@ module CiscoAclIntp
 
     # Check address match
     # @param [String] address IP address (dotted notation)
-    # @param [Boolean]
+    # @return [Boolean]
     def matches_address?(address)
       case address
       when /(.+)\/(.+)/

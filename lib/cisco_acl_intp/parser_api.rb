@@ -122,7 +122,7 @@ module CiscoAclIntp
     end
 
     # Scan/Parse ACL from file
-    # @param [String] file File name
+    # @param [String] filename File name
     # @raise [AclError]
     # @return [IO] IO object (Raw AcL)
     def parse_file(filename)

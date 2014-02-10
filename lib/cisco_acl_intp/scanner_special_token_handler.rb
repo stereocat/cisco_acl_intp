@@ -34,9 +34,8 @@ module CiscoAclIntp
 
     # Convert STRING_ARG_TOKENS to Regexp string
     # @param [Array] set Special tokens set
-    # @returns [String] Regexp string
+    # @return [String] Regexp string
     def convert_tokens_to_regexpstr(set)
-      # puts "## set #{set}"
       set.map do |each|
         case each
         when String

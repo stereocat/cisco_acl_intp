@@ -32,21 +32,9 @@ module CiscoAclIntp
     def initialize(opts)
       @options = opts
       define_values
-
-      # arguments     |
-      # :name :number | @name         @number
-      # --------------+----------------------------
-      # set   set     | use arg       use arg (*1)
-      #       none    | use arg       nil     (*2)
-      # none  set     | nil           use arg (*3)
-      #       none    | [    raise error    ] (*4)
-      #
-      # (*1) args are set in parser (assume correct args)
-      #    check if :name and number_to_name(:number) are same.
-      # (*2) args are set in parser (assume correct args)
-      # (*3)
-
+      # (*1),(*3): check when @number exists
       validate_protocol_number
+      # (*1)-(*4)
       validate_protocol_name_and_number
     end
 
@@ -64,6 +52,12 @@ module CiscoAclIntp
       @name || number_to_name(@number)
     end
 
+    # Return protocol/port number
+    # @return [Integer] Protocol/Port number
+    def to_i
+      @number
+    end
+
     # Convert protocol/port number to string (its name)
     # @abstract
     # @param [Integer] number Protocol/Port number
@@ -74,9 +68,12 @@ module CiscoAclIntp
       number.to_s
     end
 
-    # @return [Integer] Protocol/Port number
-    def to_i
-      @number
+    # Convert protocol/port name to number
+    # @abstract
+    # @param [String] name Protocol/Port name
+    # @raise [AclArgumentError]
+    def name_to_number(name)
+      fail AclArgumentError, 'abstract method: name_to_number called'
     end
 
     # Compare by port number
@@ -98,6 +95,43 @@ module CiscoAclIntp
 
     private
 
+    # arguments     |
+    # :name :number | @name         @number
+    # --------------+----------------------------
+    # set   set     | use arg       use arg (*1)
+    #       none    | use arg       nil     (*2)
+    # none  set     | nil           use arg (*3)
+    #       none    | [    raise error    ] (*4)
+    #
+    # (*1) args are set in parser (assume correct args)
+    #    check if :name and number_to_name(:number) are same.
+    # (*2) args are set in parser (assume correct args)
+    # (*3)
+
+    # argment check: case (*1)
+    # @return [Boolean]
+    def arg_case_1
+      @name && @number
+    end
+
+    # argment check: case (*2)
+    # @return [Boolean]
+    def arg_case_2
+      @name && (!@number)
+    end
+
+    # argment check: case (*3)
+    # @return [Boolean]
+    def arg_case_3
+      (!@name) && @number
+    end
+
+    # argment check: case (*4)
+    # @return [Boolean]
+    def arg_case_4
+      (!@name) && (!@number)
+    end
+
     # Set instance variables with ip/default-netmask
     def define_values
       @protocol = nil unless @protocol
@@ -117,25 +151,21 @@ module CiscoAclIntp
     # Validate protocol name and number (combination)
     # @raise [AclArgumentError]
     def validate_protocol_name_and_number
-      if @name && @number
+      case
+      when arg_case_1
         # Case (*1): check parameter match
-        # Do not overwrite name by number converted name,
-        # because args are configured in parser,
-        # that name mismatch looks like a bug.
         if @name != number_to_name(@number)
           fail AclArgumentError, 'Specified protocol name and number not match'
         end
-      elsif (!@name) && (!@number)
-        # Case (*4):
+      when arg_case_2
+        # Case (*2): try to convert from name to number
+        @number = name_to_number(@name)
+      when arg_case_3
+        # Case (*3): try to convert from number to name
+        @name = number_to_name(@number)
+      when arg_case_4
+        # Case (*4): raise error
         fail AclArgumentError, 'Not specified protocol name and number'
-      else
-        ## condition: @name && (!@number)
-        # Case (*2): no-op
-        # Usually, args are configured in parser.
-        # If not specified the number, it is empty explicitly
-        ## condition: (!@name) && @number
-        # Case (*3): no-op
-        # @name is used to stringify, convert @number to name in to_s
       end
     end
   end
@@ -148,6 +178,9 @@ module CiscoAclIntp
     MAX_PORT = 255
 
     # convert table of tcp port/name
+    # @note protol='ip' means ANY ip protocol in Cisco IOS ACL.
+    #  not defined 'ip' in IANA,
+    #  http://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml
     IP_PROTO_NAME_TABLE = {
       51 => 'ahp',
       88 => 'eigrp',
@@ -162,7 +195,8 @@ module CiscoAclIntp
       103 => 'pim',
       1 => 'icmp',
       6 => 'tcp',
-      17 => 'udp'
+      17 => 'udp',
+      -1 => 'ip' # dummy number
     }
 
     # Constructor
@@ -185,6 +219,18 @@ module CiscoAclIntp
     # @return [String] Name of protocol/port number.
     def number_to_name(number)
       IP_PROTO_NAME_TABLE[number] || number.to_s
+    end
+
+    # Convert protocol/port name to number
+    # @param [String] name Protocol/Port name
+    # @return [String] Number of protocol/port name
+    # @raise [AclArgumentError]
+    def name_to_number(name)
+      if IP_PROTO_NAME_TABLE.value?(name)
+        IP_PROTO_NAME_TABLE.invert[name]
+      else
+        fail AclArgumentError, "Unknown ip protocol name: #{name}"
+      end
     end
   end
 
@@ -258,6 +304,18 @@ module CiscoAclIntp
     def number_to_name(number)
       TCP_PORT_NAME_TABLE[number] || number.to_s
     end
+
+    # Convert protocol/port name to number
+    # @param [String] name Protocol/Port name
+    # @return [String] Number of protocol/port name
+    # @raise [AclArgumentError]
+    def name_to_number(name)
+      if TCP_PORT_NAME_TABLE.value?(name)
+        TCP_PORT_NAME_TABLE.invert[name]
+      else
+        fail AclArgumentError, "Unknown tcp port name: #{name}"
+      end
+    end
   end
 
   # UDP protocol number/name container
@@ -308,6 +366,18 @@ module CiscoAclIntp
     # @return [String] Name of protocol/port number.
     def number_to_name(number)
       UDP_PORT_NAME_TABLE[number] || number.to_s
+    end
+
+    # Convert protocol/port name to number
+    # @param [String] name Protocol/Port name
+    # @return [String] Number of protocol/port name
+    # @raise [AclArgumentError]
+    def name_to_number(name)
+      if UDP_PORT_NAME_TABLE.value?(name)
+        UDP_PORT_NAME_TABLE.invert[name]
+      else
+        fail AclArgumentError, "Unknown udp port name: #{name}"
+      end
     end
   end
 end # module

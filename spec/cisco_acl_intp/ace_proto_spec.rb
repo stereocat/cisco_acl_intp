@@ -27,6 +27,19 @@ def number_data_to_codes(data, classname)
 end
 
 describe AceUdpProtoSpec do
+  describe '#name_to_numer' do
+    it 'should be "111" by converting proto name "sunrpc"' do
+      aups = AceUdpProtoSpec.new(name: 'sunrpc')
+      aups.number.should eq 111
+    end
+
+    it 'should be raise error by converting unknown proto name "hoge"' do
+      lambda do
+        AceUdpProtoSpec.new(name: 'hoge')
+      end.should raise_error(AclArgumentError)
+    end
+  end
+
   describe '#to_s' do
     udp_port_data = <<'EOL'
 biff           Biff (mail notification, comsat, 512)
@@ -87,6 +100,19 @@ EOL
 end
 
 describe AceTcpProtoSpec do
+  describe '#name_to_numer' do
+    it 'should be "49" by converting proto name "tacacs"' do
+      atps = AceTcpProtoSpec.new(name: 'tacacs')
+      atps.number.should eq 49
+    end
+
+    it 'should be raise error by converting unknown proto name "fuga"' do
+      lambda do
+        AceTcpProtoSpec.new(name: 'fuga')
+      end.should raise_error(AclArgumentError)
+    end
+  end
+
   describe '#to_s' do
     tcp_port_data = <<'EOL'
 bgp          Border Gateway Protocol (179)
@@ -153,6 +179,19 @@ EOL
 end
 
 describe AceIpProtoSpec do
+  describe '#name_to_numer' do
+    it 'should be "88" by converting proto name "eigrp"' do
+      aips = AceIpProtoSpec.new(name: 'eigrp')
+      aips.number.should eq 88
+    end
+
+    it 'should be raise error by converting unknown proto name "foo"' do
+      lambda do
+        AceIpProtoSpec.new(name: 'foo')
+      end.should raise_error(AclArgumentError)
+    end
+  end
+
   describe '#to_s' do
     ip_port_data = <<'EOL'
 ahp           Authentication Header Protocol (51)
