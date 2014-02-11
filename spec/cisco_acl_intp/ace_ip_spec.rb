@@ -41,6 +41,10 @@ describe AceIpSpec do
     it 'should be false when larger subnet' do
       @ip.contains?('192.168.15.3/23').should be_false
     end
+
+    it 'should be false with not related block' do
+      @ip.contains?('192.168.16.3/24').should be_false
+    end
   end
 
   describe '#to_s' do

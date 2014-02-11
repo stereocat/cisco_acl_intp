@@ -75,8 +75,7 @@ module CiscoAclIntp
     def to_wmasked_ip_s
       ai = NetAddr.ip_to_i(@ipaddr.ip)
       mi = NetAddr.ip_to_i(@ipaddr.wildcard_mask)
-      ami = ai & mi
-      NetAddr.i_to_ip(ami)
+      NetAddr.i_to_ip(ai & mi)
     end
 
     # Check subnet contained this object or not.
@@ -85,16 +84,17 @@ module CiscoAclIntp
     # @return [Boolean]
     # @raise [NetAddr::ValidationError]
     def contains?(address)
-      @ipaddr.cmp(address) >= 0
+      # `@ipaddr` contains(1), is same block(0),
+      # is `contained(-1), is not related(nil)
+      [0, 1].include?(@ipaddr.cmp(address))
     end
 
     private
 
     # Convert table of IPv4 bit-flapped wildcard octet to bit length
     OCTET_BIT_LENGTH = {
-      '255' => 0, '127' => 1, '63' => 2,
-      '31' => 3, '15' => 4, '7' => 5,
-      '3' => 6, '1' => 7, '0' => 8
+      '255' => 0, '127' => 1, '63' => 2, '31' => 3,
+      '15' => 4, '7' => 5, '3' => 6, '1' => 7, '0' => 8
     }
 
     # Covnet IPv4 bit-flapped wildcard to netmask length
