@@ -55,28 +55,70 @@ CiscoAclIntp parser and output parser results.
 In directory `acl_examples`, there are some Cisco IOS ACL sample
 files. Run `check_acl.rb` with ACL sample files, like below.
 
-    $ ~/cisco_acl_intp$ ruby tools/check_acl.rb -c -f acl_examples/numd-acl.txt
-    acl name : 1
-    access-list 1  permit 192.168.0.0 0.0.255.255
-    access-list 1  deny any  log
-    acl name : 100
-    access-list 100  remark General Internet Access
-    access-list 100  permit icmp any  any
-    access-list 100  permit ip 192.168.0.0 0.0.255.255  any
-    access-list 100  remark NTP
-    access-list 100  permit tcp any  host 210.197.74.200
-    access-list 100  permit udp any eq ntp  any eq ntp
-    access-list 100  remark 6to4
-    access-list 100  permit 41 any  host 192.88.99.1
-    access-list 100  permit ip any  host 192.88.99.1
-    access-list 100  remark others
-    access-list 100  permit tcp any eq 0  any eq 0
-    access-list 100  permit udp any eq 0  any eq 0
-    access-list 100  deny ip any  any   log
-    acl name : 110
-    access-list 110  remark SPLIT_VPN
-    access-list 110  permit ip 192.168.0.0 0.0.255.255  any
-    $ ~/cisco_acl_intp$
+```
+$ ruby tools/check_acl.rb -c term -f acl_examples/err-acl.txt
+--------------------
+in acl: 100, line: 6, near value: udp, (token: "udp")
+in acl: 100, line: 8, near value: 100, (token: NUMBER)
+in acl: 100, line: 11, Wrong protocol number: 256
+in acl: 100, line: 14, near value: hoge, (token: error)
+in acl: FA8-OUT, line: 4, Wrong protocol number: 65536
+in acl: FA8-OUT, line: 7, Provided wildcard mask failed validation: 0.0.240.256 is invalid (IPv4 octets should be between 0 and 255).
+in acl: FA8-OUT, line: 13, near value: up, (token: error)
+--------------------
+acl name : 1
+access-list 1 permit 192.168.0.0 0.0.255.255
+access-list 1 deny any log
+acl name : 100
+access-list 100 remark General Internet Access
+access-list 100 permit icmp any any
+access-list 100 permit ip 192.168.0.0 0.0.255.255 any
+access-list 100 permit tcp any host 210.197.74.200
+access-list 100 remark !wrong acl number!
+access-list 100 remark !------cleared------!
+access-list 100 remark !wrong header! caccess-list
+access-list 100 remark !------cleared------!
+access-list 100 permit 41 any host 192.88.99.1
+access-list 100 remark !wrong ip proto number!
+access-list 100 !! error !! 192.88.99.1
+access-list 100 remark !------cleared------!
+access-list 100 remark !wrong ip proto!
+access-list 100 !! error !! 192.88.99.1
+access-list 100 remark !------cleared------!
+access-list 100 permit ip any host 192.88.99.1
+access-list 100 remark others
+access-list 100 permit tcp any eq 0 any eq 0
+access-list 100 permit udp any eq 0 any eq 0
+access-list 100 deny ip any any log
+acl name : 10
+access-list 10 !! error !! ntp
+acl name : 110
+access-list 110 remark SPLIT_VPN
+access-list 110 permit ip 192.168.0.0 0.0.255.255 any
+acl name : FA8-OUT
+ip access-list extended FA8-OUT
+ deny udp any any eq bootpc
+ deny udp any any eq bootps
+ remark !argment error! 65536
+ !! error !! 65536
+ remark !------cleared------!
+ remark !argment error! 255 => 256
+ !! error !! 80
+ remark !------cleared------!
+ remark network access-list remark!!
+ permit tcp any any established
+ deny tcp any any syn rst
+ remark !syntax error! tcp -> tp (typo)
+ !! error !! hoge
+ remark !------cleared------!
+ permit ip any any log
+acl name : remote-ipv4
+ip access-list standard remote-ipv4
+ permit 192.168.0.0 0.0.255.255
+ remark standard access-list last deny!?
+ deny any log
+$
+```
 
 By putting `-c` (`--color`) option, `check_acl.rb` outputs
 **color-coded ACL** according to type of each word. It can parse
@@ -119,6 +161,12 @@ objects (as Hash table of ACL name and ACL objects). An element of the
 table is "ACL object". "ACL object" is build by ACL components. For
 example, source/destination address obj, action obj, tcp/udp protocol
 obj,... See more detail in documents (see also, Documents section)
+
+### ACL Varidator Web Frontend
+
+Front-end of ACL Varidator is at
+[github](https://github.com/stereocat/cisco_acl_web). It not only can
+parse (with CLI tool, it can only parse), but also search for ACL(ACE).
 
 ## Documents
 

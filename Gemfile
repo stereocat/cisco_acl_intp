@@ -6,6 +6,7 @@ source 'https://rubygems.org'
 gemspec
 
 group :development, :test do
+  gem 'coveralls', require: false
   gem 'racc', '~> 1.4.11'
   gem 'rake', '~> 10.1.1'
   gem 'reek', '~> 1.3.6'
