@@ -2,7 +2,7 @@
 [![Gem Version](https://badge.fury.io/rb/cisco_acl_intp.png)](http://badge.fury.io/rb/cisco_acl_intp)
 [![Build Status](https://travis-ci.org/stereocat/cisco_acl_intp.png?branch=master)](https://travis-ci.org/stereocat/cisco_acl_intp)
 [![Dependency Status](https://gemnasium.com/stereocat/cisco_acl_intp.png)](https://gemnasium.com/stereocat/cisco_acl_intp)
-[![Coverage Status](https://coveralls.io/repos/stereocat/cisco_acl_intp/badge.png)](https://coveralls.io/r/stereocat/cisco_acl_intp)
+[![Coverage Status](https://coveralls.io/repos/stereocat/cisco_acl_intp/badge.png?branch=master)](https://coveralls.io/r/stereocat/cisco_acl_intp?branch=master)
 
 CiscoAclIntp is a interpreter of Cisco IOS access control list (ACL).
 
