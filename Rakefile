@@ -28,7 +28,8 @@ CLOBBER.include(
   CLASS_GRAPH_PNG
 )
 
-task default: [:parser, :spec]
+task default: :travis
+task travis: [:parser, :spec, :rubocop]
 task parser: [PARSER_RUBY]
 task spec: [SPEC_DATA_DIR]
 
