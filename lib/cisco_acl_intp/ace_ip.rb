@@ -102,7 +102,7 @@ module CiscoAclIntp
     #   or `nil` when discontinuous-bits-wildcard-mask
     def wildcard_bitlength
       @wildcard.split(/\./).reduce(0) do |len, octet|
-        if !len.nil? && OCTET_BIT_LENGTH.key?(octet)
+        if len && OCTET_BIT_LENGTH.key?(octet)
           len + OCTET_BIT_LENGTH[octet]
         else
           nil

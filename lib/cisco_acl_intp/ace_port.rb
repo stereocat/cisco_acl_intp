@@ -5,8 +5,6 @@ require 'cisco_acl_intp/ace_proto'
 module CiscoAclIntp
   # IP(TCP/UDP) port number and operator container
   class AcePortSpec < AclContainerBase
-    include AceTcpUdpPortValidation
-
     # @param [String] value Operator of port (eq/neq/gt/lt/range)
     # @return [String]
     attr_reader :operator
@@ -41,7 +39,7 @@ module CiscoAclIntp
     #   and need the name when stringize the object.
     # @todo in ACL, can "eq/neq" receive port list? IOS15 later?
     def initialize(opts)
-      @protocol = :ip
+      @protocol = :tcp_udp
       if opts.key?(:operator)
         @options = opts
         validate_operators
@@ -103,31 +101,36 @@ module CiscoAclIntp
       port = case port
              when String
                if port =~ /\d+/
-                 port.to_i
+                 convert_proto_spec_by_number(port.to_i)
                else
                  convert_proto_spec_by_name(port)
                end
              else
-               port
+               convert_proto_spec_by_number(port)
              end
-      unless valid_range?(port.to_i)
-        fail AclArgumentError, "Port out of range: #{port}"
-      end
       # @operator was validated in constructor
       PORT_OPERATE[@operator].call(@begin_port.to_i, @end_port.to_i, port.to_i)
     end
 
     private
 
-    # Convert from port name to AceProtoSpecBase object
+    # Convert from port name string to AceProtoSpecBase object
     # @param [String] name TCP/UDP Port Name
     # @raise [AclArgumentError]
     # @return [AceProtoSpecBase]
     def convert_proto_spec_by_name(name)
       fail AclArgumentError, sprintf(
         'Cannot judge port name: %s, w/protocol: %s',
-        @name, @protocol
+        name, @protocol
       )
+    end
+
+    # Convert from port number integer to AceTcpUdpProtoSpec object
+    # @param [Integer] number TCP Port Number
+    # @raise [AclArgumentError]
+    # @return [AceProtoSpecBase]
+    def convert_proto_spec_by_number(number)
+      AceTcpUdpProtoSpec.new(number: number)
     end
 
     # Set instance variables
@@ -176,12 +179,20 @@ module CiscoAclIntp
 
     private
 
-    # Convert from port name to AceTcpProtoSpecBase object
+    # Convert from port name string to AceTcpProtoSpecBase object
     # @param [String] name TCP Port Name
     # @raise [AclArgumentError]
     # @return [AceTcpProtoSpec]
     def convert_proto_spec_by_name(name)
       AceTcpProtoSpec.new(name: name)
+    end
+
+    # Convert from port number integer to AceTcpProtoSpecBase object
+    # @param [Integer] number TCP Port Number
+    # @raise [AclArgumentError]
+    # @return [AceTcpProtoSpec]
+    def convert_proto_spec_by_number(number)
+      AceTcpProtoSpec.new(number: number)
     end
   end # class AceTcpPortSpec
 
@@ -196,12 +207,20 @@ module CiscoAclIntp
 
     private
 
-    # Convert from port name to AceUdpProtoSpecBase object
+    # Convert from port name stringto AceUdpProtoSpecBase object
     # @param [String] name UDP Port Name
     # @raise [AclArgumentError]
     # @return [AceUdpProtoSpec]
     def convert_proto_spec_by_name(name)
       AceUdpProtoSpec.new(name: name)
+    end
+
+    # Convert from port number integer to AceUdpProtoSpecBase object
+    # @param [Integer] number UDP Port Number
+    # @raise [AclArgumentError]
+    # @return [AceUdpProtoSpec]
+    def convert_proto_spec_by_number(number)
+      AceUdpProtoSpec.new(number: number)
     end
   end # class AceUdpPortSpec
 end # module

@@ -40,24 +40,15 @@ module CiscoAclIntp
 
     # Check the port number in valid range of port number
     # @abstract
-    # @param [Integer] port IP/TCP/UDP port/protocol number
     # @return [Boolean]
-    def valid_range?(port)
-      port.integer?
+    def valid_range?
+      @number.integer?
     end
-
-    # # Check the port name is known or not.
-    # # @abstract
-    # # @param [String] name IP/TCP/UDP port/protocol name
-    # # @return [Boolean]
-    # def valid_name?(name)
-    #   fail AclArgumentError, 'abstract method: valid_range? called'
-    # end
 
     # Generate string for Cisco IOS access list
     # @return [String]
     def to_s
-      @name || number_to_name(@number)
+      @name || number_to_name
     end
 
     # Return protocol/port number
@@ -68,19 +59,17 @@ module CiscoAclIntp
 
     # Convert protocol/port number to string (its name)
     # @abstract
-    # @param [Integer] number Protocol/Port number
     # @return [String] Name of protocol/port number.
     #   If does not match the number in IOS proto/port literal,
     #   return number.to_s string
-    def number_to_name(number)
-      number.to_s
+    def number_to_name
+      @number.to_s
     end
 
     # Convert protocol/port name to number
     # @abstract
-    # @param [String] name Protocol/Port name
     # @raise [AclArgumentError]
-    def name_to_number(name)
+    def name_to_number
       fail AclArgumentError, 'abstract method: name_to_number called'
     end
 
@@ -112,31 +101,31 @@ module CiscoAclIntp
     #       none    | [    raise error    ] (*4)
     #
     # (*1) args are set in parser (assume correct args)
-    #    check if :name and number_to_name(:number) are same.
+    #    check if :name and number_to_name are same.
     # (*2) args are set in parser (assume correct args)
     # (*3)
 
     # argment check: case (*1)
     # @return [Boolean]
-    def arg_case_1
+    def arg_name_and_number_exists
       @name && @number
     end
 
     # argment check: case (*2)
     # @return [Boolean]
-    def arg_case_2
+    def arg_name_exists
       @name && (!@number)
     end
 
     # argment check: case (*3)
     # @return [Boolean]
-    def arg_case_3
+    def arg_number_exists
       (!@name) && @number
     end
 
     # argment check: case (*4)
     # @return [Boolean]
-    def arg_case_4
+    def arg_name_and_number_lost
       (!@name) && (!@number)
     end
 
@@ -152,7 +141,7 @@ module CiscoAclIntp
     def validate_protocol_number
       if @number
         @number = (@number.instance_of?(String) ? @number.to_i : @number)
-        unless valid_range?(@number)
+        unless valid_range?
           # Pattern (*1)(*3)
           fail AclArgumentError, "Wrong protocol number: #{@number}"
         end
@@ -163,18 +152,18 @@ module CiscoAclIntp
     # @raise [AclArgumentError]
     def validate_protocol_name_and_number
       case
-      when arg_case_1
+      when arg_name_and_number_exists
         # Case (*1): check parameter match
-        if @name != number_to_name(@number)
+        if @name != number_to_name
           fail AclArgumentError, 'Specified protocol name and number not match'
         end
-      when arg_case_2
+      when arg_name_exists
         # Case (*2): try to convert from name to number
-        @number = name_to_number(@name)
-      when arg_case_3
+        @number = name_to_number
+      when arg_number_exists
         # Case (*3): try to convert from number to name
-        @name = number_to_name(@number)
-      when arg_case_4
+        @name = number_to_name
+      when arg_name_and_number_lost
         # Case (*4): raise error
         fail AclArgumentError, 'Not specified protocol name and number'
       end
@@ -219,10 +208,9 @@ module CiscoAclIntp
     end
 
     # Check the port number in valid range of port number
-    # @param [Integer] port IP/TCP/UDP port/protocol number
     # @return [Boolean]
-    def valid_range?(port)
-      (MIN_PORT .. MAX_PORT).include?(port.to_i)
+    def valid_range?
+      (MIN_PORT .. MAX_PORT).include?(@number)
     end
 
     # Check the port name is known or not.
@@ -233,44 +221,47 @@ module CiscoAclIntp
     end
 
     # Convert protocol/port number to string (its name)
-    # @param [Integer] number Protocol/Port number
     # @return [String] Name of protocol/port number.
-    def number_to_name(number)
-      IP_PROTO_NAME_TABLE[number] || number.to_s
+    def number_to_name
+      IP_PROTO_NAME_TABLE[@number] || @number.to_s
     end
 
     # Convert protocol/port name to number
-    # @param [String] name Protocol/Port name
     # @return [String] Number of protocol/port name
     # @raise [AclArgumentError]
-    def name_to_number(name)
-      if IP_PROTO_NAME_TABLE.value?(name)
-        IP_PROTO_NAME_TABLE.invert[name]
+    def name_to_number
+      if IP_PROTO_NAME_TABLE.value?(@name)
+        IP_PROTO_NAME_TABLE.invert[@name]
       else
-        fail AclArgumentError, "Unknown ip protocol name: #{name}"
+        fail AclArgumentError, "Unknown ip protocol name: #{@name}"
       end
     end
   end
 
   # TCP/UDP port range validation feature
-  module AceTcpUdpPortValidation
+  class AceTcpUdpProtoSpec < AceProtoSpecBase
     # Minimum port/protocol number
     MIN_PORT = 0
     # Maximum port/protocol number
     MAX_PORT = 65_535
 
+    # Constructor
+    # @param [Hash] opts Options of <AceProtoSpecBase>
+    # @return [AceTcpProtoSpec]
+    def initialize(opts)
+      @protocol = :tcp_udp
+      super
+    end
+
     # Check the port number in valid range of port number
-    # @param [Integer] port TCP/UDP port/protocol number
     # @return [Boolean]
-    def valid_range?(port)
-      (MIN_PORT .. MAX_PORT).include?(port.to_i)
+    def valid_range?
+      (MIN_PORT .. MAX_PORT).include?(@number)
     end
   end
 
   # TCP protocol number/name container
-  class AceTcpProtoSpec < AceProtoSpecBase
-    include AceTcpUdpPortValidation
-
+  class AceTcpProtoSpec < AceTcpUdpProtoSpec
     # convert table of tcp port/name
     TCP_PORT_NAME_TABLE = {
       179 => 'bgp',
@@ -320,34 +311,29 @@ module CiscoAclIntp
     # @param [String] name IP/TCP/UDP port/protocol name
     # @return [Boolean]
     def self.valid_name?(name)
-      puts "# tcp valid_name? #{name}>#{TCP_PORT_NAME_TABLE.value?(name)}"
       TCP_PORT_NAME_TABLE.value?(name)
     end
 
     # Convert protocol to port number by string (its name)
-    # @param [Integer] number Protocol/Port number
     # @return [String] Name of protocol/port number.
-    def number_to_name(number)
-      TCP_PORT_NAME_TABLE[number] || number.to_s
+    def number_to_name
+      TCP_PORT_NAME_TABLE[@number] || @number.to_s
     end
 
     # Convert protocol/port name to number
-    # @param [String] name Protocol/Port name
     # @return [String] Number of protocol/port name
     # @raise [AclArgumentError]
-    def name_to_number(name)
-      if TCP_PORT_NAME_TABLE.value?(name)
-        TCP_PORT_NAME_TABLE.invert[name]
+    def name_to_number
+      if TCP_PORT_NAME_TABLE.value?(@name)
+        TCP_PORT_NAME_TABLE.invert[@name]
       else
-        fail AclArgumentError, "Unknown tcp port name: #{name}"
+        fail AclArgumentError, "Unknown tcp port name: #{@name}"
       end
     end
   end
 
   # UDP protocol number/name container
-  class AceUdpProtoSpec < AceProtoSpecBase
-    include AceTcpUdpPortValidation
-
+  class AceUdpProtoSpec < AceTcpUdpProtoSpec
     # convert table of UDP port/name
     UDP_PORT_NAME_TABLE = {
       512 => 'biff',
@@ -391,26 +377,23 @@ module CiscoAclIntp
     # @param [String] name IP/TCP/UDP port/protocol name
     # @return [Boolean]
     def self.valid_name?(name)
-      puts "# udp valid_name? #{name}>#{UDP_PORT_NAME_TABLE.value?(name)}"
       UDP_PORT_NAME_TABLE.value?(name)
     end
 
     # Convert protocol/port number to string (its name)
-    # @param [Integer] number Protocol/Port number
     # @return [String] Name of protocol/port number.
-    def number_to_name(number)
-      UDP_PORT_NAME_TABLE[number] || number.to_s
+    def number_to_name
+      UDP_PORT_NAME_TABLE[@number] || @number.to_s
     end
 
     # Convert protocol/port name to number
-    # @param [String] name Protocol/Port name
     # @return [String] Number of protocol/port name
     # @raise [AclArgumentError]
-    def name_to_number(name)
-      if UDP_PORT_NAME_TABLE.value?(name)
-        UDP_PORT_NAME_TABLE.invert[name]
+    def name_to_number
+      if UDP_PORT_NAME_TABLE.value?(@name)
+        UDP_PORT_NAME_TABLE.invert[@name]
       else
-        fail AclArgumentError, "Unknown udp port name: #{name}"
+        fail AclArgumentError, "Unknown udp port name: #{@name}"
       end
     end
   end
