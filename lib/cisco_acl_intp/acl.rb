@@ -84,9 +84,9 @@ module CiscoAclIntp
     # @option [String, Symbol] protocol L3/L4 protocol name
     #   (allows :tcp, :udp and :icmp)
     # @option [String] src_ip Source IP Address
-    # @option [String] src_port Source Port
+    # @option [Integer,String] src_port Source Port No./Name
     # @option [String] dst_ip Destination IP Address
-    # @option [String] dst_port Destination Port
+    # @option [Integer,String] dst_port Destination Port No./Name
     # @return [AceBase] Matched ACE object or nil(not found)
     # @raise [AclArgumentError]
     def search_ace(opts)

@@ -116,7 +116,7 @@ describe AceTcpProtoSpec do
   describe '#to_s' do
     tcp_port_data = <<'EOL'
 bgp          Border Gateway Protocol (179)
-chargen      Character generator (19
+chargen      Character generator (19)
 cmd          Remote commands (rcmd, 514)
 daytime      Daytime (13)
 discard      Discard (9)

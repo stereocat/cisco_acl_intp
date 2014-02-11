@@ -339,9 +339,9 @@ module CiscoAclIntp
     # @option opts [String] :protocol L3/L4 protocol name
     #   (allows "tcp", "udp" and "icmp")
     # @option opts [String] :src_ip Source IP Address
-    # @option opts [Integer] :src_port Source Port No.
+    # @option opts [Integer,String] :src_port Source Port No./Name
     # @option opts [String] :dst_ip Destination IP Address
-    # @option opts [Integer] :dst_port Destination Port No.
+    # @option opts [Integer,String] :dst_port Destination Port No./Name
     # @return [Boolean] Matched or not
     # @raise [AclArgumentError]
     def matches?(opts)

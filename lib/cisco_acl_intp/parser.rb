@@ -2323,7 +2323,7 @@ module_eval(<<'.,.,', 'parser.ry', 594)
   def _reduce_169(val, _values, result)
                        # tcp any
                    dputs 'tcp port any'
-                   result = AcePortSpec.new(:operator => 'any')
+                   result = AceTcpPortSpec.new(:operator => 'any')
                  
     result
   end
@@ -2332,7 +2332,7 @@ module_eval(<<'.,.,', 'parser.ry', 594)
 module_eval(<<'.,.,', 'parser.ry', 600)
   def _reduce_170(val, _values, result)
                        dputs "tcp port spec: #{val[0]}/#{val[1]}"
-                   result = AcePortSpec.new(
+                   result = AceTcpPortSpec.new(
                      :operator => val[0],
                      :port => val[1]
                      )
@@ -2344,7 +2344,7 @@ module_eval(<<'.,.,', 'parser.ry', 600)
 module_eval(<<'.,.,', 'parser.ry', 608)
   def _reduce_171(val, _values, result)
                        dputs "tcp port spec: #{val[0]}/#{val[1]}/#{val[2]}"
-                   result = AcePortSpec.new(
+                   result = AceTcpPortSpec.new(
                      :operator => val[0],
                      :begin_port => val[1],
                      :end_port => val[2]
@@ -2358,7 +2358,7 @@ module_eval(<<'.,.,', 'parser.ry', 618)
   def _reduce_172(val, _values, result)
                        # udp any
                    dputs 'udp port: any'
-                   result = AcePortSpec.new(:operator => 'any')
+                   result = AceUdpPortSpec.new(:operator => 'any')
                  
     result
   end
@@ -2367,7 +2367,7 @@ module_eval(<<'.,.,', 'parser.ry', 618)
 module_eval(<<'.,.,', 'parser.ry', 624)
   def _reduce_173(val, _values, result)
                        dputs "udp port spec: #{val[0]}/#{val[1]}"
-                   result = AcePortSpec.new(
+                   result = AceUdpPortSpec.new(
                      :operator => val[0],
                      :port => val[1]
                      )
@@ -2379,7 +2379,7 @@ module_eval(<<'.,.,', 'parser.ry', 624)
 module_eval(<<'.,.,', 'parser.ry', 632)
   def _reduce_174(val, _values, result)
                        dputs "udp port spec: #{val[0]}/#{val[1]}/#{val[2]}"
-                   result = AcePortSpec.new(
+                   result = AceUdpPortSpec.new(
                      :operator => val[0],
                      :begin_port => val[1],
                      :end_port => val[2]

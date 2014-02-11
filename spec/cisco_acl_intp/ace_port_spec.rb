@@ -209,6 +209,125 @@ describe AcePortSpec do
         @range.matches?(65_536)
       end.should raise_error(AclArgumentError)
     end
+  end
+end
 
+describe AceTcpPortSpec do
+  describe '#matches? by class variation' do
+    before do
+      @p1 = AceTcpProtoSpec.new(name: 'bgp')
+      @eq1 = AceTcpPortSpec.new(
+        operator: 'eq', port: @p1
+      )
+      @p2 = AceTcpProtoSpec.new(number: 19)
+      @eq2 = AceTcpPortSpec.new(
+        operator: 'eq', port: @p2
+      )
+      @any = AceTcpPortSpec.new(
+        operator: 'any'
+      )
+    end
+
+    it 'should be true by correct String arg' do
+      @eq1.matches?(179).should be_true
+      @eq1.matches?('179').should be_true
+      @eq1.matches?('bgp').should be_true
+
+      @eq2.matches?(19).should be_true
+      @eq2.matches?('19').should be_true
+      @eq2.matches?('chargen').should be_true
+
+      @any.matches?(3).should be_true
+      @any.matches?('55').should be_true
+      @any.matches?('www').should be_true
+    end
+
+    it 'should be false by wrong String arg' do
+      @eq1.matches?(178).should be_false
+      @eq1.matches?('178').should be_false
+
+      @eq2.matches?(18).should be_false
+      @eq2.matches?('18').should be_false
+    end
+
+    it 'should be raise error by unknown arg' do
+      lambda do
+        @eq1.matches?('bgo').should be_false
+      end.should raise_error(AclArgumentError)
+
+      lambda do
+        @eq2.matches?('chargem').should be_false
+      end.should raise_error(AclArgumentError)
+
+      lambda do
+        @any.matches?('hogehoge')
+      end.should raise_error(AclArgumentError)
+    end
+
+    it 'should be raise error by udp protocol name' do
+      lambda do
+        @any.matches?('biff')
+      end.should raise_error(AclArgumentError)
+    end
+  end
+end
+
+describe AceUdpPortSpec do
+  describe '#matches? by class variation' do
+    before do
+      @p1 = AceUdpProtoSpec.new(name: 'biff')
+      @eq1 = AceUdpPortSpec.new(
+        operator: 'eq', port: @p1
+      )
+      @p2 = AceUdpProtoSpec.new(number: 9)
+      @eq2 = AceUdpPortSpec.new(
+        operator: 'eq', port: @p2
+      )
+      @any = AceUdpPortSpec.new(
+        operator: 'any'
+      )
+    end
+
+    it 'should be true by correct String arg' do
+      @eq1.matches?(512).should be_true
+      @eq1.matches?('512').should be_true
+      @eq1.matches?('biff').should be_true
+
+      @eq2.matches?(9).should be_true
+      @eq2.matches?('9').should be_true
+      @eq2.matches?('discard').should be_true
+
+      @any.matches?(3).should be_true
+      @any.matches?('55').should be_true
+      @any.matches?('snmp').should be_true
+    end
+
+    it 'should be false by wrong String arg' do
+      @eq1.matches?(513).should be_false
+      @eq1.matches?('513').should be_false
+
+      @eq2.matches?(10).should be_false
+      @eq2.matches?('8').should be_false
+    end
+
+    it 'should be raise error by unknown arg' do
+      lambda do
+        @eq1.matches?('bifff').should be_false
+      end.should raise_error(AclArgumentError)
+
+      lambda do
+        @eq2.matches?('dixcard').should be_false
+      end.should raise_error(AclArgumentError)
+
+      lambda do
+        @any.matches?('hogehoge')
+      end.should raise_error(AclArgumentError)
+    end
+
+    it 'should be raise error by udp protocol name' do
+      lambda do
+        @any.matches?('www')
+      end.should raise_error(AclArgumentError)
+    end
   end
 end

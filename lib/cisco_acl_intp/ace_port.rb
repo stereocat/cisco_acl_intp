@@ -3,24 +3,28 @@
 require 'cisco_acl_intp/ace_proto'
 
 module CiscoAclIntp
-  # TCP/UDP port number and operator container
+  # IP(TCP/UDP) port number and operator container
   class AcePortSpec < AclContainerBase
     include AceTcpUdpPortValidation
 
     # @param [String] value Operator of port (eq/neq/gt/lt/range)
     # @return [String]
-    attr_accessor :operator
+    attr_reader :operator
+
+    # @param [Symbol] value Protocol name [:tcp, :udp]
+    # @return [String]
+    attr_reader :protocol
 
     # @param [AceProtoSpecBase] value Port No. (single/lower)
     # @return [AceProtoSpecBase]
-    attr_accessor :begin_port
+    attr_reader :begin_port
 
     # alias for unary operator
     alias_method :port, :begin_port
 
     # @param [AceProtoSpecBase] value Port No. (higher)
     # @return [AceProtoSpecBase]
-    attr_accessor :end_port
+    attr_reader :end_port
 
     # Constructor
     # @param [Hash] opts Options
@@ -37,6 +41,7 @@ module CiscoAclIntp
     #   and need the name when stringize the object.
     # @todo in ACL, can "eq/neq" receive port list? IOS15 later?
     def initialize(opts)
+      @protocol = :ip
       if opts.key?(:operator)
         @options = opts
         validate_operators
@@ -48,7 +53,8 @@ module CiscoAclIntp
     # @param [AcePortSpec] other RHS Object
     # @return [Boolean]
     def ==(other)
-      @operator == other.operator &&
+      @protocol == other.protocol &&
+        @operator == other.operator &&
         @begin_port == other.begin_port &&
         @end_port == other.end_port
     end
@@ -90,11 +96,21 @@ module CiscoAclIntp
     }
 
     # Check the port number matches this?
-    # @param [Integer] port TCP/UDP Port number
+    # @param [Integer,String] port TCP/UDP Port No./Name
     # @raise [AclArgumentError]
     # @return [Boolean]
     def matches?(port)
-      unless valid_range?(port)
+      port = case port
+             when String
+               if port =~ /\d+/
+                 port.to_i
+               else
+                 convert_proto_spec_by_name(port)
+               end
+             else
+               port
+             end
+      unless valid_range?(port.to_i)
         fail AclArgumentError, "Port out of range: #{port}"
       end
       # @operator was validated in constructor
@@ -102,6 +118,17 @@ module CiscoAclIntp
     end
 
     private
+
+    # Convert from port name to AceProtoSpecBase object
+    # @param [String] name TCP/UDP Port Name
+    # @raise [AclArgumentError]
+    # @return [AceProtoSpecBase]
+    def convert_proto_spec_by_name(name)
+      fail AclArgumentError, sprintf(
+        'Cannot judge port name: %s, w/protocol: %s',
+        @name, @protocol
+      )
+    end
 
     # Set instance variables
     def define_operator_and_ports
@@ -136,7 +163,47 @@ module CiscoAclIntp
         @begin_port
       end
     end
-  end
+  end # class AcePortSpec
+
+  # TCP port number and operator container
+  class AceTcpPortSpec < AcePortSpec
+    # Constructor
+    # @see AcePortSpec#initialize
+    def initialize(opts)
+      super
+      @protocol = :tcp
+    end
+
+    private
+
+    # Convert from port name to AceTcpProtoSpecBase object
+    # @param [String] name TCP Port Name
+    # @raise [AclArgumentError]
+    # @return [AceTcpProtoSpec]
+    def convert_proto_spec_by_name(name)
+      AceTcpProtoSpec.new(name: name)
+    end
+  end # class AceTcpPortSpec
+
+  # UDP port number and operator container
+  class AceUdpPortSpec < AcePortSpec
+    # Constructor
+    # @see AcePortSpec#initialize
+    def initialize(opts)
+      super
+      @protocol = :udp
+    end
+
+    private
+
+    # Convert from port name to AceUdpProtoSpecBase object
+    # @param [String] name UDP Port Name
+    # @raise [AclArgumentError]
+    # @return [AceUdpProtoSpec]
+    def convert_proto_spec_by_name(name)
+      AceUdpProtoSpec.new(name: name)
+    end
+  end # class AceUdpPortSpec
 end # module
 
 ### Local variables:

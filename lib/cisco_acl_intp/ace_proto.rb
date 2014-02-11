@@ -46,6 +46,14 @@ module CiscoAclIntp
       port.integer?
     end
 
+    # # Check the port name is known or not.
+    # # @abstract
+    # # @param [String] name IP/TCP/UDP port/protocol name
+    # # @return [Boolean]
+    # def valid_name?(name)
+    #   fail AclArgumentError, 'abstract method: valid_range? called'
+    # end
+
     # Generate string for Cisco IOS access list
     # @return [String]
     def to_s
@@ -55,7 +63,7 @@ module CiscoAclIntp
     # Return protocol/port number
     # @return [Integer] Protocol/Port number
     def to_i
-      @number
+      @number.to_i
     end
 
     # Convert protocol/port number to string (its name)
@@ -142,9 +150,12 @@ module CiscoAclIntp
     # Validate protocol number
     # @raise [AclArgumentError]
     def validate_protocol_number
-      if @number && (!valid_range?(@number))
-        # Pattern (*1)(*3)
-        fail AclArgumentError, "Wrong protocol number: #{ @number }"
+      if @number
+        @number = (@number.instance_of?(String) ? @number.to_i : @number)
+        unless valid_range?(@number)
+          # Pattern (*1)(*3)
+          fail AclArgumentError, "Wrong protocol number: #{@number}"
+        end
       end
     end
 
@@ -212,6 +223,13 @@ module CiscoAclIntp
     # @return [Boolean]
     def valid_range?(port)
       (MIN_PORT .. MAX_PORT).include?(port.to_i)
+    end
+
+    # Check the port name is known or not.
+    # @param [String] name IP/TCP/UDP port/protocol name
+    # @return [Boolean]
+    def self.valid_name?(name)
+      IP_PROTO_NAME_TABLE.value?(name)
     end
 
     # Convert protocol/port number to string (its name)
@@ -298,6 +316,14 @@ module CiscoAclIntp
       super
     end
 
+    # Check the port name is known or not.
+    # @param [String] name IP/TCP/UDP port/protocol name
+    # @return [Boolean]
+    def self.valid_name?(name)
+      puts "# tcp valid_name? #{name}>#{TCP_PORT_NAME_TABLE.value?(name)}"
+      TCP_PORT_NAME_TABLE.value?(name)
+    end
+
     # Convert protocol to port number by string (its name)
     # @param [Integer] number Protocol/Port number
     # @return [String] Name of protocol/port number.
@@ -359,6 +385,14 @@ module CiscoAclIntp
     def initialize(opts)
       @protocol = :udp
       super
+    end
+
+    # Check the port name is known or not.
+    # @param [String] name IP/TCP/UDP port/protocol name
+    # @return [Boolean]
+    def self.valid_name?(name)
+      puts "# udp valid_name? #{name}>#{UDP_PORT_NAME_TABLE.value?(name)}"
+      UDP_PORT_NAME_TABLE.value?(name)
     end
 
     # Convert protocol/port number to string (its name)

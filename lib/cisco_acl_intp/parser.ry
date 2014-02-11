@@ -594,12 +594,12 @@ tcp_port_spec:
                  {
                    # tcp any
                    dputs 'tcp port any'
-                   result = AcePortSpec.new(:operator => 'any')
+                   result = AceTcpPortSpec.new(:operator => 'any')
                  }
              | unary_operator tcp_port_qualifier
                  {
                    dputs "tcp port spec: #{val[0]}/#{val[1]}"
-                   result = AcePortSpec.new(
+                   result = AceTcpPortSpec.new(
                      :operator => val[0],
                      :port => val[1]
                      )
@@ -607,7 +607,7 @@ tcp_port_spec:
              | 'range' tcp_port_qualifier tcp_port_qualifier
                  {
                    dputs "tcp port spec: #{val[0]}/#{val[1]}/#{val[2]}"
-                   result = AcePortSpec.new(
+                   result = AceTcpPortSpec.new(
                      :operator => val[0],
                      :begin_port => val[1],
                      :end_port => val[2]
@@ -618,12 +618,12 @@ udp_port_spec:
                  {
                    # udp any
                    dputs 'udp port: any'
-                   result = AcePortSpec.new(:operator => 'any')
+                   result = AceUdpPortSpec.new(:operator => 'any')
                  }
              | unary_operator udp_port_qualifier
                  {
                    dputs "udp port spec: #{val[0]}/#{val[1]}"
-                   result = AcePortSpec.new(
+                   result = AceUdpPortSpec.new(
                      :operator => val[0],
                      :port => val[1]
                      )
@@ -631,7 +631,7 @@ udp_port_spec:
              | 'range' udp_port_qualifier udp_port_qualifier
                  {
                    dputs "udp port spec: #{val[0]}/#{val[1]}/#{val[2]}"
-                   result = AcePortSpec.new(
+                   result = AceUdpPortSpec.new(
                      :operator => val[0],
                      :begin_port => val[1],
                      :end_port => val[2]

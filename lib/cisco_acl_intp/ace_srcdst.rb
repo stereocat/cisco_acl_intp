@@ -57,9 +57,13 @@ module CiscoAclIntp
 
     # Check address and port number matches this object or not.
     # @param [String] address IP address (dotted notation)
-    # @param [Integer] port Port No.
+    # @param [Integer,String] port Port No./Name
     # @return [Boolean]
     # @raise [AclArgumentError]
+    # @example Example of AceSrcDstSpec#matches?
+    #   AceSrcDstSpec#matches?('192.168.3.3') # /32 host and port any
+    #   AceSrcDstSpec#matches?('172.30.240.0/24', '80') # a subnet and port 80
+    #   AceSrcDstSpec#matches?('any', 'www') # any host and port 80
     def matches?(address, port = nil)
       if address
         matches_address?(address) && matches_port?(port)
@@ -71,7 +75,7 @@ module CiscoAclIntp
     private
 
     # Check port match
-    # @param [Integer] port Port No.
+    # @param [Integer,String] port Port No.
     # @return [Boolean]
     def matches_port?(port)
       case port
