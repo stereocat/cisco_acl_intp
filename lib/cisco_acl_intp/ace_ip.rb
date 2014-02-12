@@ -23,10 +23,10 @@ module CiscoAclIntp
     # @return [String]
     attr_reader :wildcard
 
-    def_delegator :@ipaddr, :ip, :ipaddr
-
     # `matches?' method is wildcard mask operation
     def_delegators :@ipaddr, :matches?
+    # ip returns non-masked address
+    def_delegators :@ipaddr, :ip
 
     # Constructor
     # @param [Hash] opts Options
@@ -50,6 +50,7 @@ module CiscoAclIntp
     # @return [Boolean]
     def ==(other)
       @ipaddr == other.ipaddr &&
+        ip == other.ip &&
         @netmask == other.netmask &&
         @wildcard == other.wildcard
     end
@@ -100,6 +101,8 @@ module CiscoAclIntp
     # Covnet IPv4 bit-flapped wildcard to netmask length
     # @return [Fixnum] netmask length
     #   or `nil` when discontinuous-bits-wildcard-mask
+    # @todo Known bug: it cannot handle wrong wildcard,
+    #   e.g. '0.0.0.1.255' #=> 31
     def wildcard_bitlength
       @wildcard.split(/\./).reduce(0) do |len, octet|
         if len && OCTET_BIT_LENGTH.key?(octet)
@@ -154,7 +157,7 @@ module CiscoAclIntp
     def define_addrinfo_with_netmask
       @netmask = @options[:netmask]
       @ipaddr = NetAddr::CIDR.create(
-        [@options[:ipaddr], @netmask].join('/')
+        sprintf('%s/%s', @options[:ipaddr], @netmask)
       )
       @wildcard = @ipaddr.wildcard_mask(true)
     end

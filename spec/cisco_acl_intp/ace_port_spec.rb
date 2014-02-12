@@ -24,7 +24,7 @@ describe AcePortSpec do
   end
 
   describe '#to_s' do
-    before do
+    before(:all) do
       @p1 = AceTcpProtoSpec.new(number: 22)
       @p2 = AceTcpProtoSpec.new(number: 80)
     end
@@ -98,7 +98,7 @@ describe AcePortSpec do
   end
 
   describe '#matches?' do
-    before do
+    before(:all) do
       @p1 = AceTcpProtoSpec.new(number: 22)
       @p2 = AceTcpProtoSpec.new(number: 32_768)
 
@@ -121,6 +121,12 @@ describe AcePortSpec do
         operator: 'range',
         port: @p1, end_port: @p2
       )
+    end
+
+    it 'should be error with protocol name when not specified protocol' do
+      lambda do
+        @gt1.matches?('www')
+      end.should raise_error(AclArgumentError)
     end
 
     it 'match any if valid port range' do
@@ -213,19 +219,39 @@ describe AcePortSpec do
 end
 
 describe AceTcpPortSpec do
+  describe '#==' do
+    before(:all) do
+      @p1a = AceTcpProtoSpec.new(number: 179)
+      @p1b = AceTcpProtoSpec.new(name: 'bgp')
+      @p2  = AceTcpProtoSpec.new(number: 33)
+    end
+
+    it 'should be true when same operator, same protocol' do
+      a = AceTcpPortSpec.new(operator: 'eq', port: @p1a)
+      b = AceTcpPortSpec.new(operator: 'eq', port: @p1b)
+      (a == b).should be_true
+    end
+
+    it 'should be false when different protocol' do
+      a = AceTcpPortSpec.new(operator: 'eq', port: @p1a)
+      b = AceTcpPortSpec.new(operator: 'eq', port: @p2)
+      (a == b).should be_false
+    end
+
+    it 'should be false when different operator' do
+      a = AceTcpPortSpec.new(operator: 'eq', port: @p2)
+      b = AceTcpPortSpec.new(operator: 'lt', port: @p2)
+      (a == b).should be_false
+    end
+  end
+
   describe '#matches? by class variation' do
-    before do
+    before(:all) do
       @p1 = AceTcpProtoSpec.new(name: 'bgp')
-      @eq1 = AceTcpPortSpec.new(
-        operator: 'eq', port: @p1
-      )
       @p2 = AceTcpProtoSpec.new(number: 19)
-      @eq2 = AceTcpPortSpec.new(
-        operator: 'eq', port: @p2
-      )
-      @any = AceTcpPortSpec.new(
-        operator: 'any'
-      )
+      @eq1 = AceTcpPortSpec.new(operator: 'eq', port: @p1)
+      @eq2 = AceTcpPortSpec.new(operator: 'eq', port: @p2)
+      @any = AceTcpPortSpec.new(operator: 'any')
     end
 
     it 'should be true by correct String arg' do
@@ -273,8 +299,47 @@ describe AceTcpPortSpec do
 end
 
 describe AceUdpPortSpec do
+  describe '#==' do
+    before(:all) do
+      @p1a = AceUdpProtoSpec.new(number: 512)
+      @p1b = AceUdpProtoSpec.new(name: 'biff')
+      @p2  = AceUdpProtoSpec.new(number: 688)
+      @p3  = AceUdpProtoSpec.new(number: 1022)
+    end
+
+    it 'should be true when same operator, same protocol' do
+      a = AceUdpPortSpec.new(
+        operator: 'range', begin_port: @p1a, end_port: @p2
+      )
+      b = AceUdpPortSpec.new(
+        operator: 'range', begin_port: @p1b, end_port: @p2
+      )
+      (a == b).should be_true
+    end
+
+    it 'should be false when different protocol' do
+      a = AceUdpPortSpec.new(
+        operator: 'range', begin_port: @p1a, end_port: @p2
+      )
+      b = AceUdpPortSpec.new(
+        operator: 'range', begin_port: @p1b, end_port: @p3
+      )
+      (a == b).should be_false
+    end
+
+    it 'should be false when different operator' do
+      a = AceUdpPortSpec.new(
+        operator: 'range', begin_port: @p1a, end_port: @p2
+      )
+      b = AceUdpPortSpec.new(
+        operator: 'gt', begin_port: @p1b
+      )
+      (a == b).should be_false
+    end
+  end
+
   describe '#matches? by class variation' do
-    before do
+    before(:all) do
       @p1 = AceUdpProtoSpec.new(name: 'biff')
       @eq1 = AceUdpPortSpec.new(
         operator: 'eq', port: @p1

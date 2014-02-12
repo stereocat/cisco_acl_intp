@@ -40,8 +40,11 @@ module CiscoAclIntp
 
     def_delegators :@list, :push, :pop, :shift, :unshift, :size, :length
 
-    def initialize
-      @list = []
+    # Constructor
+    # @param [Array<AceTcpFlag>] args TCP Flag Objects
+    # @todo If the object that are same are included in the list?
+    def initialize(*args)
+      @list = args || []
     end
 
     # Generate string for Cisco IOS access list
@@ -51,9 +54,13 @@ module CiscoAclIntp
     end
 
     # @param [AceTcpFlagList] other RHS Object
+    # @note Checked each entry in randum order.
     # @return [Boolean]
     def ==(other)
-      @list == other.list
+      @list.reduce(true) do |res, each|
+        puts "#{res},#{each}"
+        res && other.list.include?(each)
+      end
     end
   end
 end # module

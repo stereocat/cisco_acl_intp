@@ -2,6 +2,55 @@
 require 'spec_helper'
 
 describe AceIpSpec do
+  describe '#==' do
+    before(:all) do
+      @ip = AceIpSpec.new(
+        ipaddr: '192.168.15.15',
+        wildcard: '0.0.3.255'
+      )
+      @ip1 = AceIpSpec.new(
+        ipaddr: '192.168.15.15',
+        wildcard: '0.0.3.255'
+      )
+      @ip2 = AceIpSpec.new(
+        ipaddr: '192.168.15.15',
+        netmask: 22
+      )
+      @ip3 = AceIpSpec.new(
+        ipaddr: '192.168.15.13',
+        netmask: 22
+      )
+      @ip4 = AceIpSpec.new(
+        ipaddr: '192.168.15.0',
+        wildcard: '0.0.3.255'
+      )
+      @ip5 = AceIpSpec.new(
+        ipaddr: '192.168.15.15',
+        wildcard: '0.0.1.255'
+      )
+    end
+
+    it 'should be true same ip and same wildcard' do
+      (@ip == @ip1).should be_true
+    end
+
+    it 'should be true same ip and same wildcard/netmask' do
+      (@ip1 == @ip2).should be_true
+    end
+
+    it 'should be false different ip and same netmask' do
+      (@ip2 == @ip3).should be_false
+    end
+
+    it 'should be false different ip and same wildcard' do
+      (@ip1 == @ip4).should be_false
+    end
+
+    it 'should be false same ip and different wildcard' do
+      (@ip1 == @ip5).should be_false
+    end
+  end
+
   describe '#netmask, #wildcard' do
     it 'should be converted wildcard/netmask' do
       ip = AceIpSpec.new(
