@@ -165,9 +165,9 @@ obj,... See more detail in documents (see also, Documents section)
 
 ### ACL Varidator Web Frontend
 
-Front-end of ACL Varidator is at
-[github](https://github.com/stereocat/cisco_acl_web). It not only can
-parse (with CLI tool, it can only parse), but also search for ACL(ACE).
+[Front-end of ACL Varidator](https://github.com/stereocat/cisco_acl_web)
+is at github. It not only can parse (with CLI tool, it can only
+parse), but also search for ACL(ACE).
 
 ## Documents
 
