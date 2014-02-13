@@ -25,6 +25,7 @@ module CiscoAclIntp
     # @option opts [String] :ipaddr IP Address (dotted notation)
     # @option opts [String] :wildcard Wildcard mask
     #   (dotted/bit-flipped notation)
+    # @option opts [Integer] :netmask Subnet mask length (e.g. 24)
     # @option opts [AcePortSpec] :port_spec Port/Operator object
     # @option opts [String] :operator Port operator
     # @option opts [AceProtoSpecBase] :port port number (single/lower)
@@ -65,11 +66,7 @@ module CiscoAclIntp
     #   AceSrcDstSpec#matches?('172.30.240.0/24', '80') # a subnet and port 80
     #   AceSrcDstSpec#matches?('any', 'www') # any host and port 80
     def matches?(address, port = nil)
-      if address
-        matches_address?(address) && matches_port?(port)
-      else
-        fail AclArgumentError, 'Not specified match target IP Addr'
-      end
+      matches_address?(address) && matches_port?(port)
     end
 
     private
@@ -109,10 +106,7 @@ module CiscoAclIntp
       if @options.key?(:ip_spec)
         @options[:ip_spec]
       elsif @options.key?(:ipaddr)
-        AceIpSpec.new(
-          ipaddr: @options[:ipaddr],
-          wildcard: @options[:wildcard]
-        )
+        AceIpSpec.new(@options)
       else
         fail AclArgumentError, 'Not specified: ip spec'
       end

@@ -54,9 +54,9 @@ describe AceTcpFlagList do
       @f3 = AceTcpFlag.new('established')
       @f4 = AceTcpFlag.new('fin')
 
-      @list1 = AceTcpFlagList.new(@f1, @f2, @f3)
-      @list2 = AceTcpFlagList.new(@f3, @f1, @f2)
-      @list3 = AceTcpFlagList.new(@f2, @f4, @f1)
+      @list1 = AceTcpFlagList.new([@f1, @f2, @f3])
+      @list2 = AceTcpFlagList.new([@f3, @f1, @f2])
+      @list3 = AceTcpFlagList.new([@f2, @f4, @f1])
     end
 
     it 'should be true when same list' do

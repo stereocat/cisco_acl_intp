@@ -16,8 +16,8 @@ module CiscoAclIntp
 
     # Constructor
     # @return [AceOtherQualifierList]
-    def initialize
-      @list = []
+    def initialize(list = [])
+      @list = list
     end
 
     # Generate string for Cisco IOS access list
@@ -29,7 +29,9 @@ module CiscoAclIntp
     # @param [AceOtherQualifierList] other RHS Object
     # @return [Boolean]
     def ==(other)
-      @list == other.list
+      @list.reduce(true) do |res, each|
+        res && other.list.include?(each)
+      end
     end
   end
 
@@ -45,7 +47,7 @@ module CiscoAclIntp
 
     # Specified log-input logging?
     # @return [Boolean]
-    attr_reader :input
+    attr_accessor :input
 
     # alias as boolean method
     # @return [Boolean]
@@ -69,6 +71,14 @@ module CiscoAclIntp
         @cookie ? @cookie : ''
       )
     end
+
+    # @param [AceLogSpec] other RHS object
+    # @return [Boolean]
+    def ==(other)
+      other.instance_of?(AceLogSpec) &&
+        @input == other.input &&
+        @cookie == other.cookie
+    end
   end
 
   # Recursive qualifier container
@@ -91,6 +101,13 @@ module CiscoAclIntp
     # @return [String]
     def to_s
       sprintf 'reflect %s', tag_name(@recursive_name)
+    end
+
+    # @param [AceRecursiveQualifier] other RHS object
+    # @return [Boolean]
+    def ==(other)
+      other.instance_of?(AceRecursiveQualifier) &&
+        @recursive_name == other.recursive_name
     end
   end
 end # module

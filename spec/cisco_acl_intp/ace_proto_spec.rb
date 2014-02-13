@@ -26,17 +26,44 @@ def number_data_to_codes(data, classname)
   codes.join
 end
 
+describe AceProtoSpecBase do
+  describe '#valid_range? as abstract' do
+    it 'should be true when integer port number' do
+      apsb = AceProtoSpecBase.new(number: 22)
+      apsb.valid_range?.should be_true
+    end
+
+    it 'should be error calling name_to_number' do
+      apsb = AceProtoSpecBase.new(number: 22)
+      lambda do
+        apsb.name_to_number
+      end.should raise_error(AclArgumentError)
+    end
+  end
+end
+
 describe AceUdpProtoSpec do
-  describe '#name_to_numer' do
+  describe '#name_to_numer, #to_i' do
     it 'should be "111" by converting proto name "sunrpc"' do
       aups = AceUdpProtoSpec.new(name: 'sunrpc')
       aups.number.should eq 111
+      aups.to_i.should eq 111
     end
 
-    it 'should be raise error by converting unknown proto name "hoge"' do
+    it 'should be error by converting unknown proto name "hoge"' do
       lambda do
         AceUdpProtoSpec.new(name: 'hoge')
       end.should raise_error(AclArgumentError)
+    end
+  end
+
+  describe 'class#valid_name?' do
+    it 'should be true when valid tcp port name' do
+      AceUdpProtoSpec.valid_name?('snmp').should be_true
+    end
+
+    it 'should be false when invalid tcp port name' do
+      AceUdpProtoSpec.valid_name?('daytime').should be_false
     end
   end
 
@@ -78,7 +105,7 @@ EOL
       aups.to_s.should be_aclstr('3333')
     end
 
-    it 'raise error when out of range port number' do
+    it 'should be error when out of range port number' do
       lambda do
         AceUdpProtoSpec.new(number: 65_536)
       end.should raise_error(AclArgumentError)
@@ -88,7 +115,13 @@ EOL
       end.should raise_error(AclArgumentError)
     end
 
-    it 'raise error when specified name and number literal are not match' do
+    it 'should be error when not specified name and number' do
+      lambda do
+        AceUdpProtoSpec.new(name: '')
+      end.should raise_error(AclArgumentError)
+    end
+
+    it 'should be error when specified name and number are not match' do
       lambda do
         AceUdpProtoSpec.new(
           name: 'time',
@@ -100,16 +133,27 @@ EOL
 end
 
 describe AceTcpProtoSpec do
-  describe '#name_to_numer' do
+  describe '#name_to_numer, #to_i' do
     it 'should be "49" by converting proto name "tacacs"' do
       atps = AceTcpProtoSpec.new(name: 'tacacs')
       atps.number.should eq 49
+      atps.to_i.should eq 49
     end
 
-    it 'should be raise error by converting unknown proto name "fuga"' do
+    it 'should be error by converting unknown proto name "fuga"' do
       lambda do
         AceTcpProtoSpec.new(name: 'fuga')
       end.should raise_error(AclArgumentError)
+    end
+  end
+
+  describe 'class#valid_name?' do
+    it 'should be true when valid tcp port name' do
+      AceTcpProtoSpec.valid_name?('daytime').should be_true
+    end
+
+    it 'should be false when invalid tcp port name' do
+      AceTcpProtoSpec.valid_name?('snmp').should be_false
     end
   end
 
@@ -157,7 +201,13 @@ EOL
       aups.to_s.should be_aclstr('6633')
     end
 
-    it 'raise error when out of range port number' do
+    it 'should be error when not specified name and number' do
+      lambda do
+        AceTcpProtoSpec.new(hoge: 'hoge')
+      end.should raise_error(AclArgumentError)
+    end
+
+    it 'should be error when out of range port number' do
       lambda do
         AceTcpProtoSpec.new(number: 65_536)
       end.should raise_error(AclArgumentError)
@@ -167,7 +217,7 @@ EOL
       end.should raise_error(AclArgumentError)
     end
 
-    it 'raise error when specified name and number literal are not match' do
+    it 'should be error when specified name and number are not match' do
       lambda do
         AceUdpProtoSpec.new(
           name: 'bgp',
@@ -183,12 +233,23 @@ describe AceIpProtoSpec do
     it 'should be "88" by converting proto name "eigrp"' do
       aips = AceIpProtoSpec.new(name: 'eigrp')
       aips.number.should eq 88
+      aips.to_i.should eq 88
     end
 
-    it 'should be raise error by converting unknown proto name "foo"' do
+    it 'should be error by converting unknown proto name "foo"' do
       lambda do
         AceIpProtoSpec.new(name: 'foo')
       end.should raise_error(AclArgumentError)
+    end
+  end
+
+  describe 'class#valid_name?' do
+    it 'should be true when valid tcp port name' do
+      AceIpProtoSpec.valid_name?('ospf').should be_true
+    end
+
+    it 'should be false when invalid tcp port name' do
+      AceIpProtoSpec.valid_name?('daytime').should be_false
     end
   end
 
@@ -216,7 +277,7 @@ EOL
       aups.to_s.should be_aclstr('255')
     end
 
-    it 'raise error when out of range port number' do
+    it 'should be error when out of range port number' do
       lambda do
         AceIpProtoSpec.new(number: 256)
       end.should raise_error(AclArgumentError)
@@ -226,7 +287,13 @@ EOL
       end.should raise_error(AclArgumentError)
     end
 
-    it 'raise error when specified name and number literal are not match' do
+    it 'should be error when not specified name and number' do
+      lambda do
+        AceIpProtoSpec.new({})
+      end.should raise_error(AclArgumentError)
+    end
+
+    it 'should be error when specified name and number are not match' do
       lambda do
         AceTcpProtoSpec.new(
           name: 'ospf',
