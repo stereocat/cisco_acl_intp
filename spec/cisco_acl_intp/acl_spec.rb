@@ -4,12 +4,14 @@ require 'spec_helper'
 
 describe NamedExtAcl do
   describe '#add_entry' do
-    before do
+    before(:all) do
       @acl = NamedExtAcl.new 'test-ext-acl'
     end
 
     it 'should be zero when initialized' do
       @acl.size.should be_zero
+      @acl.named_acl?.should be_true
+      @acl.numbered_acl?.should be_false
     end
 
     it 'should be size 1 and matches aclstr when added a acl entry' do
@@ -36,7 +38,7 @@ EOL
   end
 
   describe '#add_entry_by_params' do
-    before do
+    before(:all) do
       @acl = NamedExtAcl.new 'test-ext-acl2'
       @acl.add_entry_by_params(
         action: 'permit',
@@ -99,7 +101,7 @@ EOL
     # for extended ace, it is same as named/numbered ace.
     # so that, tests only named-extended-ace
     # and omit numbered-extended-acl
-    before do
+    before(:all) do
       @acl = NamedExtAcl.new 'test-ext-acl2'
       @acl.add_entry_by_params(
         action: 'permit',
@@ -179,14 +181,31 @@ EOL
   end
 end
 
+describe NumberedAcl do
+  describe '#initialize' do
+    it 'should be error with acl no-integer-acl-number' do
+      lambda do
+        @acl = NumberedAcl.new('a70')
+      end.should raise_error(AclArgumentError)
+    end
+    it 'should be error with invalid number' do
+      lambda do
+        @acl = NumberedAcl.new(33.3)
+      end.should raise_error(AclArgumentError)
+    end
+  end
+end
+
 describe NumberedExtAcl do
   describe '#add_entry' do
-    before do
+    before(:all) do
       @acl = NumberedExtAcl.new 102
     end
 
     it 'should be zero when initialized' do
       @acl.size.should be_zero
+      @acl.named_acl?.should be_false
+      @acl.numbered_acl?.should be_true
     end
 
     it 'should be size 1 and matches aclstr when added a acl entry' do
@@ -212,7 +231,7 @@ EOL
   end
 
   describe '#add_entry_by_params' do
-    before do
+    before(:all) do
       @acl = NumberedExtAcl.new 104
       @acl.add_entry_by_params(
         action: 'permit',
@@ -271,7 +290,7 @@ end
 
 describe NamedStdAcl do
   describe '#add_entry' do
-    before do
+    before(:all) do
       @acl = NamedStdAcl.new 'test-std-acl'
     end
 
@@ -298,7 +317,7 @@ EOL
   end
 
   describe '#add_entry_by_params' do
-    before do
+    before(:all) do
       @acl = NamedStdAcl.new 'test-std-acl2'
       @acl.add_entry_by_params(
         action: 'permit',
@@ -346,7 +365,7 @@ EOL
     # for standard ace, it is same as named/numbered ace.
     # so that, tests only named-standard-ace
     # and omit numbered-standard-acl
-    before do
+    before(:all) do
       @acl = NamedStdAcl.new 'test-stdacl3'
       @acl.add_entry_by_params(
         action: 'permit',
@@ -401,7 +420,7 @@ end
 
 describe NumberedStdAcl do
   describe '#add_entry' do
-    before do
+    before(:all) do
       @acl = NumberedStdAcl.new 10
     end
 

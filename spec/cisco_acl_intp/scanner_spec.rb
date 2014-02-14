@@ -4,7 +4,7 @@ require 'yaml'
 
 describe 'Scanner' do
   describe '#scan_line' do
-    before do
+    before(:all) do
       @s = Scanner.new
     end
 
@@ -48,6 +48,7 @@ EOL
         ]
       end
     end
+
   end # scan_line
 
   describe '#scan_file' do

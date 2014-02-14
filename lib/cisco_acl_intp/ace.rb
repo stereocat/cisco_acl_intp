@@ -78,7 +78,7 @@ module CiscoAclIntp
     # Check equality
     # @return [Boolean] Compare with comment string
     def ==(other)
-      @comment == other.comment
+      other.instance_of?(RemarkAce) && @comment == other.comment
     end
 
     # Generate string for Cisco IOS access list
@@ -126,7 +126,8 @@ module CiscoAclIntp
 
     # @return [Boolean] Compare with recursive entry name
     def ==(other)
-      @recursive_name == other.recursive_name
+      other.instance_of?(EvaluateAce) &&
+        @recursive_name == other.recursive_name
     end
 
     # Generate string for Cisco IOS access list

@@ -551,6 +551,23 @@ describe RemarkAce do
       rmk.to_s.should eq 'remark foo-bar _ baz @@ COMMENT'
     end
   end
+
+  describe '#==' do
+    before(:all) do
+      @rmk1 = RemarkAce.new('asdfjklj;')
+      @rmk2 = RemarkAce.new('asdfjklj;')
+      @rmk3 = RemarkAce.new('asd f j klj;')
+    end
+
+    it 'should be true when same comment' do
+      (@rmk1 == @rmk2).should be_true
+    end
+
+    it 'should be false when different comment' do
+      (@rmk1 == @rmk3).should be_false
+    end
+  end
+
   describe '#matches?' do
     it 'should be always false' do
       rmk = RemarkAce.new('asdfjklj;')
@@ -581,9 +598,26 @@ describe EvaluateAce do
       end.should raise_error(AclArgumentError)
     end
   end
+
+  describe '#==' do
+    before(:all) do
+      @evl1 = EvaluateAce.new(recursive_name: 'foo_bar')
+      @evl2 = EvaluateAce.new(recursive_name: 'foo_bar')
+      @evl3 = EvaluateAce.new(recursive_name: 'foo_baz')
+    end
+
+    it 'should be true when same evaluate name' do
+      (@evl1 == @evl2).should be_true
+    end
+
+    it 'should be false when different evaluate name' do
+      (@evl1 == @evl3).should be_false
+    end
+  end
+
   describe '#matches?' do
-    it 'should be always false' do
-      pending('not implemented yet')
+    it 'should be false' do
+      pending('match by evaluate is not implemented yet')
 
       evl = EvaluateAce.new(
         recursive_name: 'asdf_0-98'

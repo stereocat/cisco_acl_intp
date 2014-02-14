@@ -1,3 +1,13 @@
+- :test_description: "numbered std acl header"
+  :test_symbol: numbered_std_acl
+  :test_data:
+  - :line: "access-list 13 permit icmp host 192.168.3.3"
+    :tokens:
+      - [ NUMD_STD_ACL, 13 ]
+      - permit
+      - icmp
+      - host
+      - [ IPV4_ADDR, 192.168.3.3 ]
 - :test_description: "named std acl header"
   :test_symbol: named_std_acl
   :test_data:
@@ -22,6 +32,13 @@
 - :test_description: "named ext acl header"
   :test_symbol: named_ext_acl
   :test_data:
+  - :line: "access-list 133 permit tcp any any"
+    :tokens:
+      - [ NUMD_EXT_ACL, 133 ]
+      - permit
+      - tcp
+      - any
+      - any
   - :line: "ip access-list extended GI0-IN"
     :tokens:
       - [ NAMED_ACL, "ip access-list" ] # acl header
@@ -118,3 +135,18 @@
     :tokens:
       - group-object
       - [ STRING, nested-obj-name ]
+- :test_description: "unknown tokens"
+  :test_symbol: unknown_acl
+  :test_data:
+  - :line: "access-list 99999999 permit icmp host 192.168.3.3"
+    :tokens:
+      - [ UNKNOWN, 'access-list 99999999' ]
+      - permit
+      - icmp
+      - host
+      - [ IPV4_ADDR, 192.168.3.3 ]
+  - :line: "access-list 55 _pmit icmp host 192.168.3.3"
+    :tokens:
+      - [ NUMD_STD_ACL, 55 ]
+      - [ UNKNOWN, "_pmit icmp host 192.168.3.3" ]
+
