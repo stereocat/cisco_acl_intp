@@ -1,400 +1,205 @@
 # -*- coding: utf-8 -*-
-
-require 'cisco_acl_intp/acl_base'
+require 'cisco_acl_intp/ace_proto_base'
 
 module CiscoAclIntp
-  # IP/TCP/UDP port number and protocol name container base
-  class AceProtoSpecBase < AclContainerBase
-    include Comparable
-
-    # @param [String] value Protocol name,
-    #   it is literal used in Cisco IOS access-list
-    # @return [String]
-    attr_accessor :name
-
-    # @param [Integer] value Protocol/Port number
-    # @return [Integer]
-    attr_accessor :number
-
-    # @return [String, Symbol] L3/L4 protocol type
-    attr_reader :protocol
-
-    # Constructor
-    # @param [Hash] opts Options
-    # @option opts [String] :name Protocol name
-    # @option opts [Integer] :number Protocol/Port number
-    # @raise [AclArgumentError]
-    # @return [AceProtoSpecBase]
-    # @abstract
-    # @note Variable '@protocol'
-    #   should be assigned in inherited class constructor,
-    #   at first. (before call super class constructor)
-    def initialize(opts)
-      @options = opts
-      define_values
-      # (*1),(*3): check when @number exists
-      validate_protocol_number
-      # (*1)-(*4)
-      validate_protocol_name_and_number
-    end
-
-    # Check the port number in valid range of port number
-    # @abstract
-    # @return [Boolean]
-    def valid_range?
-      @number.integer?
-    end
-
-    # Generate string for Cisco IOS access list
-    # @return [String]
-    def to_s
-      @name || number_to_name
-    end
-
-    # Return protocol/port number
-    # @return [Integer] Protocol/Port number
-    def to_i
-      @number.to_i
-    end
-
-    # Convert protocol/port number to string (its name)
-    # @abstract
-    # @return [String] Name of protocol/port number.
-    #   If does not match the number in IOS proto/port literal,
-    #   return number.to_s string
-    def number_to_name
-      @number.to_s
-    end
-
-    # Convert protocol/port name to number
-    # @abstract
-    # @raise [AclArgumentError]
-    def name_to_number
-      fail AclArgumentError, 'abstract method: name_to_number called'
-    end
-
-    # Compare by port number
-    # @note Using "Comparable" module, '==' operator is defined by
-    #   '<=>' operator. But '==' is overriden to compare instance
-    #   equivalence instead of port number comparison.
-    # @param [AceProtoSpecBase] other Compared instance
-    # @return [Fixnum] Compare with protocol/port number
-    def <=>(other)
-      @number <=> other.to_i
-    end
-
-    # @return [Boolean] Compare with protocol/port number
-    def ==(other)
-      @protocol == other.protocol &&
-        @name == other.name &&
-        @number == other.number
-    end
-
-    private
-
-    # arguments     |
-    # :name :number | @name         @number
-    # --------------+----------------------------
-    # set   set     | use arg       use arg (*1)
-    #       none    | use arg       nil     (*2)
-    # none  set     | nil           use arg (*3)
-    #       none    | [    raise error    ] (*4)
-    #
-    # (*1) args are set in parser (assume correct args)
-    #    check if :name and number_to_name are same.
-    # (*2) args are set in parser (assume correct args)
-    # (*3)
-
-    # argment check: case (*1)
-    # @return [Boolean]
-    def arg_name_and_number_exists
-      @name && @number
-    end
-
-    # argment check: case (*2)
-    # @return [Boolean]
-    def arg_name_exists
-      @name && (!@number)
-    end
-
-    # argment check: case (*3)
-    # @return [Boolean]
-    def arg_number_exists
-      (!@name) && @number
-    end
-
-    # argment check: case (*4)
-    # @return [Boolean]
-    def arg_name_and_number_lost
-      (!@name) && (!@number)
-    end
-
-    # Set instance variables with ip/default-netmask
-    def define_values
-      @protocol = nil unless @protocol
-      @name = @options[:name] || nil
-      @number = @options[:number] || nil
-    end
-
-    # Validate protocol number
-    # @raise [AclArgumentError]
-    def validate_protocol_number
-      if @number
-        @number = (@number.instance_of?(String) ? @number.to_i : @number)
-        unless valid_range?
-          # Pattern (*1)(*3)
-          fail AclArgumentError, "Wrong protocol number: #{@number}"
-        end
-      end
-    end
-
-    # Validate protocol name and number (combination)
-    # @raise [AclArgumentError]
-    def validate_protocol_name_and_number
-      case
-      when arg_name_and_number_exists
-        # Case (*1): check parameter match
-        if @name != number_to_name
-          fail AclArgumentError, 'Specified protocol name and number not match'
-        end
-      when arg_name_exists
-        # Case (*2): try to convert from name to number
-        @number = name_to_number
-      when arg_number_exists
-        # Case (*3): try to convert from number to name
-        @name = number_to_name
-      when arg_name_and_number_lost
-        # Case (*4): raise error
-        fail AclArgumentError, 'Not specified protocol name and number'
-      end
-    end
-  end
-
   # IP protocol number/name container
   class AceIpProtoSpec < AceProtoSpecBase
-    # Minimum port/protocol number
-    MIN_PORT = 0
-    # Maximum port/protocol number
-    MAX_PORT = 255
-
-    # convert table of tcp port/name
+    # Convert table of tcp port/name
     # @note protol='ip' means ANY ip protocol in Cisco IOS ACL.
     #  not defined 'ip' in IANA,
     #  http://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml
-    IP_PROTO_NAME_TABLE = {
-      51 => 'ahp',
-      88 => 'eigrp',
-      50 => 'esp',
-      47 => 'gre',
-      2 => 'igmp',
-      9 => 'igrp',
-      94 => 'ipinip',
-      4 => 'nos',
-      89 => 'ospf',
-      108 => 'pcp',
-      103 => 'pim',
-      1 => 'icmp',
-      6 => 'tcp',
-      17 => 'udp',
-      -1 => 'ip' # dummy number
+    IP_PROTO_TABLE = {
+      'ahp' => 51,
+      'eigrp' => 88,
+      'esp' => 50,
+      'gre' => 47,
+      'igmp' => 2,
+      'igrp' => 9,
+      'ipinip' => 94,
+      'nos' => 4,
+      'ospf' => 89,
+      'pcp' => 108,
+      'pim' => 103,
+      'icmp' => 1,
+      'tcp' => 6,
+      'udp' => 17,
+      'ip' => -1 # dummy
     }
 
     # Constructor
-    # @param [Hash] opts Options of <AceProtoSpecBase>
+    # @param [String, Integer] proto_id L3 Protocol ID (No. or Name)
     # @return [AceIpProtoSpec]
-    def initialize(opts)
+    def initialize(proto_id = nil)
+      super(proto_id, 255)
       @protocol = :ip
-      super
     end
 
-    # Check the port number in valid range of port number
-    # @return [Boolean]
-    def valid_range?
-      (MIN_PORT .. MAX_PORT).include?(@number)
+    # Protocol Table
+    # @return [Hash] Protocol table
+    def proto_table
+      IP_PROTO_TABLE
     end
 
     # Check the port name is known or not.
     # @param [String] name IP/TCP/UDP port/protocol name
     # @return [Boolean]
     def self.valid_name?(name)
-      IP_PROTO_NAME_TABLE.value?(name)
+      IP_PROTO_TABLE.key?(name)
     end
 
-    # Convert protocol/port number to string (its name)
-    # @return [String] Name of protocol/port number.
-    def number_to_name
-      IP_PROTO_NAME_TABLE[@number] || @number.to_s
+    # check protocol is 'ip'?
+    # @return [Boolean]
+    def ip?
+      @name == 'ip'
     end
 
-    # Convert protocol/port name to number
-    # @return [String] Number of protocol/port name
-    # @raise [AclArgumentError]
-    def name_to_number
-      if IP_PROTO_NAME_TABLE.value?(@name)
-        IP_PROTO_NAME_TABLE.invert[@name]
+    # check protocol is 'tcp'?
+    # @return [Boolean]
+    def tcp?
+      @name == 'tcp'
+    end
+
+    # check protocol is 'udp'?
+    # @return [Boolean]
+    def udp?
+      @name == 'udp'
+    end
+
+    # Protocol inclusion relation
+    # @param [AceIpProtoSpec] other Other protocol spec
+    def contains?(other)
+      if ip?
+        other.ip? || other.tcp? || other.udp?
       else
-        fail AclArgumentError, "Unknown ip protocol name: #{@name}"
+        self == other
       end
     end
   end
 
   # TCP/UDP port range validation feature
   class AceTcpUdpProtoSpec < AceProtoSpecBase
-    # Minimum port/protocol number
-    MIN_PORT = 0
-    # Maximum port/protocol number
-    MAX_PORT = 65_535
-
     # Constructor
-    # @param [Hash] opts Options of <AceProtoSpecBase>
+    # @param [String, Integer] proto_id Protocol ID (No. or Name)
     # @return [AceTcpProtoSpec]
-    def initialize(opts)
+    def initialize(proto_id = nil)
+      super(proto_id, 65_535)
       @protocol = :tcp_udp
-      super
-    end
-
-    # Check the port number in valid range of port number
-    # @return [Boolean]
-    def valid_range?
-      (MIN_PORT .. MAX_PORT).include?(@number)
     end
   end
 
   # TCP protocol number/name container
   class AceTcpProtoSpec < AceTcpUdpProtoSpec
     # convert table of tcp port/name
-    TCP_PORT_NAME_TABLE = {
-      179 => 'bgp',
-      19 => 'chargen',
-      514 => 'cmd',
-      13 => 'daytime',
-      9 => 'discard',
-      53 => 'domain',
-      3949 => 'drip',
-      7 => 'echo',
-      512 => 'exec',
-      79 => 'finger',
-      21 => 'ftp',
-      20 => 'ftp-data',
-      70 => 'gopher',
-      101 => 'hostname',
-      113 => 'ident',
-      194 => 'irc',
-      543 => 'klogin',
-      544 => 'kshell',
-      513 => 'login',
-      515 => 'lpd',
-      119 => 'nntp',
-      496 => 'pim-auto-rp',
-      109 => 'pop2',
-      110 => 'pop3',
-      25 => 'smtp',
-      111 => 'sunrpc',
-      49 => 'tacacs',
-      517 => 'talk',
-      23 => 'telnet',
-      37 => 'time',
-      540 => 'uucp',
-      43 => 'whois',
-      80 => 'www'
+    TCP_PROTO_TABLE = {
+      'bgp' => 179,
+      'chargen' => 19,
+      'cmd' => 514,
+      'daytime' => 13,
+      'discard' => 9,
+      'domain' => 53,
+      'drip' => 3949,
+      'echo' => 7,
+      'exec' => 512,
+      'finger' => 79,
+      'ftp' => 21,
+      'ftp-data' => 20,
+      'gopher' => 70,
+      'hostname' => 101,
+      'ident' => 113,
+      'irc' => 194,
+      'klogin' => 543,
+      'kshell' => 544,
+      'login' => 513,
+      'lpd' => 515,
+      'nntp' => 119,
+      'pim-auto-rp' => 496,
+      'pop2' => 109,
+      'pop3' => 110,
+      'smtp' => 25,
+      'sunrpc' => 111,
+      'tacacs' => 49,
+      'talk' => 517,
+      'telnet' => 23,
+      'time' => 37,
+      'uucp' => 540,
+      'whois' => 43,
+      'www' => 80
     }
 
     # Constructor
-    # @param [Hash] opts Options of <AceProtoSpecBase>
+    # @param [String, Integer] proto_id Protocol ID (No. or Name)
     # @return [AceTcpProtoSpec]
-    def initialize(opts)
-      @protocol = :tcp
+    def initialize(proto_id = nil)
       super
+      @protocol = :tcp
+    end
+
+    # Protocol Table
+    # @return [Hash] Protocol table
+    def proto_table
+      TCP_PROTO_TABLE
     end
 
     # Check the port name is known or not.
     # @param [String] name IP/TCP/UDP port/protocol name
     # @return [Boolean]
     def self.valid_name?(name)
-      TCP_PORT_NAME_TABLE.value?(name)
-    end
-
-    # Convert protocol to port number by string (its name)
-    # @return [String] Name of protocol/port number.
-    def number_to_name
-      TCP_PORT_NAME_TABLE[@number] || @number.to_s
-    end
-
-    # Convert protocol/port name to number
-    # @return [String] Number of protocol/port name
-    # @raise [AclArgumentError]
-    def name_to_number
-      if TCP_PORT_NAME_TABLE.value?(@name)
-        TCP_PORT_NAME_TABLE.invert[@name]
-      else
-        fail AclArgumentError, "Unknown tcp port name: #{@name}"
-      end
+      TCP_PROTO_TABLE.key?(name)
     end
   end
 
   # UDP protocol number/name container
   class AceUdpProtoSpec < AceTcpUdpProtoSpec
     # convert table of UDP port/name
-    UDP_PORT_NAME_TABLE = {
-      512 => 'biff',
-      68 => 'bootpc',
-      67 => 'bootps',
-      9 => 'discard',
-      195 => 'dnsix',
-      53 => 'domain',
-      7 => 'echo',
-      500 => 'isakmp',
-      434 => 'mobile-ip',
-      42 => 'nameserver',
-      138 => 'netbios-dgm',
-      137 => 'netbios-ns',
-      139 => 'netbios-ss',
-      4500 => 'non500-isakmp',
-      123 => 'ntp',
-      496 => 'pim-auto-rp',
-      520 => 'rip',
-      161 => 'snmp',
-      162 => 'snmptrap',
-      111 => 'sunrpc',
-      514 => 'syslog',
-      49 => 'tacacs',
-      517 => 'talk',
-      69 => 'tftp',
-      37 => 'time',
-      513 => 'who',
-      177 => 'xdmcp'
+    UDP_PROTO_TABLE = {
+      'biff' => 512,
+      'bootpc' => 68,
+      'bootps' => 67,
+      'discard' => 9,
+      'dnsix' => 195,
+      'domain' => 53,
+      'echo' => 7,
+      'isakmp' => 500,
+      'mobile-ip' => 434,
+      'nameserver' => 42,
+      'netbios-dgm' => 138,
+      'netbios-ns' => 137,
+      'netbios-ss' => 139,
+      'non500-isakmp' => 4500,
+      'ntp' => 123,
+      'pim-auto-rp' => 496,
+      'rip' => 520,
+      'snmp' => 161,
+      'snmptrap' => 162,
+      'sunrpc' => 111,
+      'syslog' => 514,
+      'tacacs' => 49,
+      'talk' => 517,
+      'tftp' => 69,
+      'time' => 37,
+      'who' => 513,
+      'xdmcp' => 177
     }
 
     # Constructor
-    # @param [Hash] opts Options of <AceProtoSpecBase>
+    # @param [String, Integer] proto_id Protocol ID (No. or Name)
     # @return [AceUdpProtoSpec]
-    def initialize(opts)
-      @protocol = :udp
+    def initialize(proto_id = nil)
       super
+      @protocol = :udp
+    end
+
+    # Protocol Table
+    # @return [Hash] Protocol table
+    def proto_table
+      UDP_PROTO_TABLE
     end
 
     # Check the port name is known or not.
     # @param [String] name IP/TCP/UDP port/protocol name
     # @return [Boolean]
     def self.valid_name?(name)
-      UDP_PORT_NAME_TABLE.value?(name)
-    end
-
-    # Convert protocol/port number to string (its name)
-    # @return [String] Name of protocol/port number.
-    def number_to_name
-      UDP_PORT_NAME_TABLE[@number] || @number.to_s
-    end
-
-    # Convert protocol/port name to number
-    # @return [String] Number of protocol/port name
-    # @raise [AclArgumentError]
-    def name_to_number
-      if UDP_PORT_NAME_TABLE.value?(@name)
-        UDP_PORT_NAME_TABLE.invert[@name]
-      else
-        fail AclArgumentError, "Unknown udp port name: #{@name}"
-      end
+      UDP_PROTO_TABLE.key?(name)
     end
   end
 end # module

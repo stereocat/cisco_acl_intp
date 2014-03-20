@@ -13,7 +13,7 @@ require 'cisco_acl_intp/parser_api'
 
 class Parser < Racc::Parser
 
-module_eval(<<'...end parser.ry/module_eval...', 'parser.ry', 1239)
+module_eval(<<'...end parser.ry/module_eval...', 'parser.ry', 1081)
 
 # class methods are separated to another files.
 
@@ -1580,131 +1580,105 @@ module_eval(<<'.,.,', 'parser.ry', 130)
 
 module_eval(<<'.,.,', 'parser.ry', 137)
   def _reduce_24(val, _values, result)
-                       result = AceIpProtoSpec.new(
-                     :name => val[0], :number => 51
-                     )
+                       result = AceIpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 143)
+module_eval(<<'.,.,', 'parser.ry', 141)
   def _reduce_25(val, _values, result)
-                       result = AceIpProtoSpec.new(
-                     :name => val[0], :number => 88
-                     )
+                       result = AceIpProtoSpec.new(val[0])
+                 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'parser.ry', 145)
+  def _reduce_26(val, _values, result)
+                       result = AceIpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'parser.ry', 149)
-  def _reduce_26(val, _values, result)
-                       result = AceIpProtoSpec.new(
-                     :name => val[0], :number => 50
-                     )
+  def _reduce_27(val, _values, result)
+                       result = AceIpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 155)
-  def _reduce_27(val, _values, result)
-                       result = AceIpProtoSpec.new(
-                     :name => val[0], :number => 47
-                     )
+module_eval(<<'.,.,', 'parser.ry', 153)
+  def _reduce_28(val, _values, result)
+                       result = AceIpProtoSpec.new(val[0])
+                 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'parser.ry', 157)
+  def _reduce_29(val, _values, result)
+                       result = AceIpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'parser.ry', 161)
-  def _reduce_28(val, _values, result)
-                       result = AceIpProtoSpec.new(
-                     :name => val[0], :number => 2
-                     )
+  def _reduce_30(val, _values, result)
+                       result = AceIpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 167)
-  def _reduce_29(val, _values, result)
-                       result = AceIpProtoSpec.new(
-                     :name => val[0], :number => 9
-                     )
+module_eval(<<'.,.,', 'parser.ry', 165)
+  def _reduce_31(val, _values, result)
+                       result = AceIpProtoSpec.new(val[0])
+                 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'parser.ry', 169)
+  def _reduce_32(val, _values, result)
+                       result = AceIpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'parser.ry', 173)
-  def _reduce_30(val, _values, result)
-                       result = AceIpProtoSpec.new(
-                     :name => val[0]
-                     )
+  def _reduce_33(val, _values, result)
+                       result = AceIpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 179)
-  def _reduce_31(val, _values, result)
-                       result = AceIpProtoSpec.new(
-                     :name => val[0], :number => 94
-                     )
+module_eval(<<'.,.,', 'parser.ry', 177)
+  def _reduce_34(val, _values, result)
+                       result = AceIpProtoSpec.new(val[0])
+                 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'parser.ry', 181)
+  def _reduce_35(val, _values, result)
+                       result = AceIpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'parser.ry', 185)
-  def _reduce_32(val, _values, result)
-                       result = AceIpProtoSpec.new(
-                     :name => val[0], :number => 4
-                     )
-                 
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'parser.ry', 191)
-  def _reduce_33(val, _values, result)
-                       result = AceIpProtoSpec.new(
-                     :name => val[0], :number => 89
-                     )
-                 
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'parser.ry', 197)
-  def _reduce_34(val, _values, result)
-                       result = AceIpProtoSpec.new(
-                     :name => val[0], :number => 108
-                     )
-                 
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'parser.ry', 203)
-  def _reduce_35(val, _values, result)
-                       result = AceIpProtoSpec.new(
-                     :name => val[0], :number => 103
-                     )
-                 
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'parser.ry', 209)
   def _reduce_36(val, _values, result)
                        begin
                      dputs "ip_proto number: #{val[0]}"
-                     result = AceIpProtoSpec.new(
-                       :number => val[0].to_i
-                       )
+                     result = AceIpProtoSpec.new(val[0].to_i)
                    rescue => err
                      yyerror_with err.message
                    end
@@ -1713,40 +1687,34 @@ module_eval(<<'.,.,', 'parser.ry', 209)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 221)
+module_eval(<<'.,.,', 'parser.ry', 195)
   def _reduce_37(val, _values, result)
                        dputs 'icmp_proto'
-                   result = AceIpProtoSpec.new(
-                     :name => val[0], :number => 1
-                     )
+                   result = AceIpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 229)
+module_eval(<<'.,.,', 'parser.ry', 201)
   def _reduce_38(val, _values, result)
                        dputs 'tcp_proto'
-                   result = AceIpProtoSpec.new(
-                     :name => val[0], :number => 6
-                     )
+                   result = AceIpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 237)
+module_eval(<<'.,.,', 'parser.ry', 207)
   def _reduce_39(val, _values, result)
                        dputs 'udp_proto'
-                   result = AceIpProtoSpec.new(
-                     :name => val[0], :number => 17
-                     )
+                   result = AceIpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 245)
+module_eval(<<'.,.,', 'parser.ry', 213)
   def _reduce_40(val, _values, result)
                        result = AceSrcDstSpec.new(
                      :ip_spec => val[0],
@@ -1757,7 +1725,7 @@ module_eval(<<'.,.,', 'parser.ry', 245)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 253)
+module_eval(<<'.,.,', 'parser.ry', 221)
   def _reduce_41(val, _values, result)
                        result = AceSrcDstSpec.new(
                      :ip_spec => val[0],
@@ -1772,7 +1740,7 @@ module_eval(<<'.,.,', 'parser.ry', 253)
 
 # reduce 43 omitted
 
-module_eval(<<'.,.,', 'parser.ry', 270)
+module_eval(<<'.,.,', 'parser.ry', 238)
   def _reduce_44(val, _values, result)
                        dputs "std named acl: #{val[2]}"
                    @curr_acl_name = val[2]
@@ -1785,7 +1753,7 @@ module_eval(<<'.,.,', 'parser.ry', 270)
 
 # reduce 45 omitted
 
-module_eval(<<'.,.,', 'parser.ry', 279)
+module_eval(<<'.,.,', 'parser.ry', 247)
   def _reduce_46(val, _values, result)
                        @acl_table[@curr_acl_name].add_entry(val[1])
                    @line_number += 1
@@ -1794,7 +1762,7 @@ module_eval(<<'.,.,', 'parser.ry', 279)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 284)
+module_eval(<<'.,.,', 'parser.ry', 252)
   def _reduce_47(val, _values, result)
                        # when a line contains syntax error (error recovery)
                    err = ErrorAce.new(val[1])
@@ -1806,7 +1774,7 @@ module_eval(<<'.,.,', 'parser.ry', 284)
 
 # reduce 48 omitted
 
-module_eval(<<'.,.,', 'parser.ry', 293)
+module_eval(<<'.,.,', 'parser.ry', 261)
   def _reduce_49(val, _values, result)
                        # std_acl returns StandardAce/RemarkAce object
                    val[1].seq_number = val[0].to_i
@@ -1816,7 +1784,7 @@ module_eval(<<'.,.,', 'parser.ry', 293)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 300)
+module_eval(<<'.,.,', 'parser.ry', 268)
   def _reduce_50(val, _values, result)
                        dputs "ext named acl: #{val[2]}"
                    @curr_acl_name = val[2]
@@ -1829,7 +1797,7 @@ module_eval(<<'.,.,', 'parser.ry', 300)
 
 # reduce 51 omitted
 
-module_eval(<<'.,.,', 'parser.ry', 309)
+module_eval(<<'.,.,', 'parser.ry', 277)
   def _reduce_52(val, _values, result)
                        @acl_table[@curr_acl_name].add_entry(val[1])
                    @line_number += 1
@@ -1838,7 +1806,7 @@ module_eval(<<'.,.,', 'parser.ry', 309)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 314)
+module_eval(<<'.,.,', 'parser.ry', 282)
   def _reduce_53(val, _values, result)
                        # when a line contains syntax error (error recovery)
                    err = ErrorAce.new(val[1])
@@ -1850,7 +1818,7 @@ module_eval(<<'.,.,', 'parser.ry', 314)
 
 # reduce 54 omitted
 
-module_eval(<<'.,.,', 'parser.ry', 323)
+module_eval(<<'.,.,', 'parser.ry', 291)
   def _reduce_55(val, _values, result)
                        # ext_acl returns ExtendedAce/RemarkAce object
                    val[1].seq_number = val[0].to_i
@@ -1860,7 +1828,7 @@ module_eval(<<'.,.,', 'parser.ry', 323)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 329)
+module_eval(<<'.,.,', 'parser.ry', 297)
   def _reduce_56(val, _values, result)
                        result = EvaluateAce.new(
                      :number => val[0].to_i,
@@ -1873,7 +1841,7 @@ module_eval(<<'.,.,', 'parser.ry', 329)
 
 # reduce 57 omitted
 
-module_eval(<<'.,.,', 'parser.ry', 338)
+module_eval(<<'.,.,', 'parser.ry', 306)
   def _reduce_58(val, _values, result)
                        result = val[0].to_i
                  
@@ -1881,7 +1849,7 @@ module_eval(<<'.,.,', 'parser.ry', 338)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 345)
+module_eval(<<'.,.,', 'parser.ry', 313)
   def _reduce_59(val, _values, result)
                        result = val[0]
                  
@@ -1889,7 +1857,7 @@ module_eval(<<'.,.,', 'parser.ry', 345)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 349)
+module_eval(<<'.,.,', 'parser.ry', 317)
   def _reduce_60(val, _values, result)
                        result = val[0]
                  
@@ -1897,7 +1865,7 @@ module_eval(<<'.,.,', 'parser.ry', 349)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 355)
+module_eval(<<'.,.,', 'parser.ry', 323)
   def _reduce_61(val, _values, result)
                        begin
                      dputs "ip_spec host: #{val[0]}/#{val[1]}"
@@ -1912,7 +1880,7 @@ module_eval(<<'.,.,', 'parser.ry', 355)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 366)
+module_eval(<<'.,.,', 'parser.ry', 334)
   def _reduce_62(val, _values, result)
                        begin
                      dputs "ip_spec #{val[0]}/#{val[1]}"
@@ -1927,7 +1895,7 @@ module_eval(<<'.,.,', 'parser.ry', 366)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 377)
+module_eval(<<'.,.,', 'parser.ry', 345)
   def _reduce_63(val, _values, result)
                        dputs "ip_spec any: #{val[0]}"
                    result = AceIpSpec.new(
@@ -1950,7 +1918,7 @@ module_eval(<<'.,.,', 'parser.ry', 377)
 
 # reduce 69 omitted
 
-module_eval(<<'.,.,', 'parser.ry', 399)
+module_eval(<<'.,.,', 'parser.ry', 367)
   def _reduce_70(val, _values, result)
                      
     result
@@ -1959,7 +1927,7 @@ module_eval(<<'.,.,', 'parser.ry', 399)
 
 # reduce 71 omitted
 
-module_eval(<<'.,.,', 'parser.ry', 404)
+module_eval(<<'.,.,', 'parser.ry', 372)
   def _reduce_72(val, _values, result)
                        result = val[0]
                  
@@ -1967,7 +1935,7 @@ module_eval(<<'.,.,', 'parser.ry', 404)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 409)
+module_eval(<<'.,.,', 'parser.ry', 377)
   def _reduce_73(val, _values, result)
                      
     result
@@ -1976,7 +1944,7 @@ module_eval(<<'.,.,', 'parser.ry', 409)
 
 # reduce 74 omitted
 
-module_eval(<<'.,.,', 'parser.ry', 415)
+module_eval(<<'.,.,', 'parser.ry', 383)
   def _reduce_75(val, _values, result)
                      
     result
@@ -1985,49 +1953,49 @@ module_eval(<<'.,.,', 'parser.ry', 415)
 
 # reduce 76 omitted
 
-module_eval(<<'.,.,', 'parser.ry', 420)
+module_eval(<<'.,.,', 'parser.ry', 388)
   def _reduce_77(val, _values, result)
                      
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 424)
+module_eval(<<'.,.,', 'parser.ry', 392)
   def _reduce_78(val, _values, result)
                      
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 427)
+module_eval(<<'.,.,', 'parser.ry', 395)
   def _reduce_79(val, _values, result)
                      
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 430)
+module_eval(<<'.,.,', 'parser.ry', 398)
   def _reduce_80(val, _values, result)
                      
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 433)
+module_eval(<<'.,.,', 'parser.ry', 401)
   def _reduce_81(val, _values, result)
                      
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 436)
+module_eval(<<'.,.,', 'parser.ry', 404)
   def _reduce_82(val, _values, result)
                      
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 439)
+module_eval(<<'.,.,', 'parser.ry', 407)
   def _reduce_83(val, _values, result)
                      
     result
@@ -2036,7 +2004,7 @@ module_eval(<<'.,.,', 'parser.ry', 439)
 
 # reduce 84 omitted
 
-module_eval(<<'.,.,', 'parser.ry', 445)
+module_eval(<<'.,.,', 'parser.ry', 413)
   def _reduce_85(val, _values, result)
                      
     result
@@ -2045,7 +2013,7 @@ module_eval(<<'.,.,', 'parser.ry', 445)
 
 # reduce 86 omitted
 
-module_eval(<<'.,.,', 'parser.ry', 450)
+module_eval(<<'.,.,', 'parser.ry', 418)
   def _reduce_87(val, _values, result)
                      
     result
@@ -2054,56 +2022,56 @@ module_eval(<<'.,.,', 'parser.ry', 450)
 
 # reduce 88 omitted
 
-module_eval(<<'.,.,', 'parser.ry', 455)
+module_eval(<<'.,.,', 'parser.ry', 423)
   def _reduce_89(val, _values, result)
                      
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 458)
+module_eval(<<'.,.,', 'parser.ry', 426)
   def _reduce_90(val, _values, result)
                      
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 461)
+module_eval(<<'.,.,', 'parser.ry', 429)
   def _reduce_91(val, _values, result)
                      
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 464)
+module_eval(<<'.,.,', 'parser.ry', 432)
   def _reduce_92(val, _values, result)
                      
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 467)
+module_eval(<<'.,.,', 'parser.ry', 435)
   def _reduce_93(val, _values, result)
                      
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 470)
+module_eval(<<'.,.,', 'parser.ry', 438)
   def _reduce_94(val, _values, result)
                      
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 474)
+module_eval(<<'.,.,', 'parser.ry', 442)
   def _reduce_95(val, _values, result)
                      
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 477)
+module_eval(<<'.,.,', 'parser.ry', 445)
   def _reduce_96(val, _values, result)
                      
     result
@@ -2112,35 +2080,35 @@ module_eval(<<'.,.,', 'parser.ry', 477)
 
 # reduce 97 omitted
 
-module_eval(<<'.,.,', 'parser.ry', 482)
+module_eval(<<'.,.,', 'parser.ry', 450)
   def _reduce_98(val, _values, result)
                      
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 485)
+module_eval(<<'.,.,', 'parser.ry', 453)
   def _reduce_99(val, _values, result)
                      
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 488)
+module_eval(<<'.,.,', 'parser.ry', 456)
   def _reduce_100(val, _values, result)
                      
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 492)
+module_eval(<<'.,.,', 'parser.ry', 460)
   def _reduce_101(val, _values, result)
                      
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 495)
+module_eval(<<'.,.,', 'parser.ry', 463)
   def _reduce_102(val, _values, result)
                      
     result
@@ -2149,35 +2117,35 @@ module_eval(<<'.,.,', 'parser.ry', 495)
 
 # reduce 103 omitted
 
-module_eval(<<'.,.,', 'parser.ry', 500)
+module_eval(<<'.,.,', 'parser.ry', 468)
   def _reduce_104(val, _values, result)
                      
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 503)
+module_eval(<<'.,.,', 'parser.ry', 471)
   def _reduce_105(val, _values, result)
                      
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 506)
+module_eval(<<'.,.,', 'parser.ry', 474)
   def _reduce_106(val, _values, result)
                      
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 510)
+module_eval(<<'.,.,', 'parser.ry', 478)
   def _reduce_107(val, _values, result)
                      
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 513)
+module_eval(<<'.,.,', 'parser.ry', 481)
   def _reduce_108(val, _values, result)
                      
     result
@@ -2186,21 +2154,21 @@ module_eval(<<'.,.,', 'parser.ry', 513)
 
 # reduce 109 omitted
 
-module_eval(<<'.,.,', 'parser.ry', 518)
+module_eval(<<'.,.,', 'parser.ry', 486)
   def _reduce_110(val, _values, result)
                      
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 521)
+module_eval(<<'.,.,', 'parser.ry', 489)
   def _reduce_111(val, _values, result)
                      
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 524)
+module_eval(<<'.,.,', 'parser.ry', 492)
   def _reduce_112(val, _values, result)
                      
     result
@@ -2319,20 +2287,20 @@ module_eval(<<'.,.,', 'parser.ry', 524)
 
 # reduce 168 omitted
 
-module_eval(<<'.,.,', 'parser.ry', 594)
+module_eval(<<'.,.,', 'parser.ry', 562)
   def _reduce_169(val, _values, result)
                        # tcp any
                    dputs 'tcp port any'
-                   result = AceTcpPortSpec.new(:operator => 'any')
+                   result = AcePortSpec.new(:operator => 'any')
                  
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 600)
+module_eval(<<'.,.,', 'parser.ry', 568)
   def _reduce_170(val, _values, result)
                        dputs "tcp port spec: #{val[0]}/#{val[1]}"
-                   result = AceTcpPortSpec.new(
+                   result = AcePortSpec.new(
                      :operator => val[0],
                      :port => val[1]
                      )
@@ -2341,10 +2309,10 @@ module_eval(<<'.,.,', 'parser.ry', 600)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 608)
+module_eval(<<'.,.,', 'parser.ry', 576)
   def _reduce_171(val, _values, result)
                        dputs "tcp port spec: #{val[0]}/#{val[1]}/#{val[2]}"
-                   result = AceTcpPortSpec.new(
+                   result = AcePortSpec.new(
                      :operator => val[0],
                      :begin_port => val[1],
                      :end_port => val[2]
@@ -2354,20 +2322,20 @@ module_eval(<<'.,.,', 'parser.ry', 608)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 618)
+module_eval(<<'.,.,', 'parser.ry', 586)
   def _reduce_172(val, _values, result)
                        # udp any
                    dputs 'udp port: any'
-                   result = AceUdpPortSpec.new(:operator => 'any')
+                   result = AcePortSpec.new(:operator => 'any')
                  
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 624)
+module_eval(<<'.,.,', 'parser.ry', 592)
   def _reduce_173(val, _values, result)
                        dputs "udp port spec: #{val[0]}/#{val[1]}"
-                   result = AceUdpPortSpec.new(
+                   result = AcePortSpec.new(
                      :operator => val[0],
                      :port => val[1]
                      )
@@ -2376,10 +2344,10 @@ module_eval(<<'.,.,', 'parser.ry', 624)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 632)
+module_eval(<<'.,.,', 'parser.ry', 600)
   def _reduce_174(val, _values, result)
                        dputs "udp port spec: #{val[0]}/#{val[1]}/#{val[2]}"
-                   result = AceUdpPortSpec.new(
+                   result = AcePortSpec.new(
                      :operator => val[0],
                      :begin_port => val[1],
                      :end_port => val[2]
@@ -2397,13 +2365,11 @@ module_eval(<<'.,.,', 'parser.ry', 632)
 
 # reduce 178 omitted
 
-module_eval(<<'.,.,', 'parser.ry', 647)
+module_eval(<<'.,.,', 'parser.ry', 615)
   def _reduce_179(val, _values, result)
                        begin
                      # port number (0-65535)
-                     result = AceTcpProtoSpec.new(
-                       :number => val[0]
-                       )
+                     result = AceTcpProtoSpec.new(val[0])
                    rescue => err
                      yyerror_with err.message
                    end
@@ -2412,622 +2378,498 @@ module_eval(<<'.,.,', 'parser.ry', 647)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 658)
+module_eval(<<'.,.,', 'parser.ry', 624)
   def _reduce_180(val, _values, result)
-                       result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 179
-                     )
+                       result = AceTcpProtoSpec.new(val[0])
+                 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'parser.ry', 628)
+  def _reduce_181(val, _values, result)
+                       result = AceTcpProtoSpec.new(val[0])
+                 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'parser.ry', 632)
+  def _reduce_182(val, _values, result)
+                       result = AceTcpProtoSpec.new(val[0])
+                 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'parser.ry', 636)
+  def _reduce_183(val, _values, result)
+                       result = AceTcpProtoSpec.new(val[0])
+                 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'parser.ry', 640)
+  def _reduce_184(val, _values, result)
+                       result = AceTcpProtoSpec.new(val[0])
+                 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'parser.ry', 644)
+  def _reduce_185(val, _values, result)
+                       result = AceTcpProtoSpec.new(val[0])
+                 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'parser.ry', 648)
+  def _reduce_186(val, _values, result)
+                       result = AceTcpProtoSpec.new(val[0])
+                 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'parser.ry', 652)
+  def _reduce_187(val, _values, result)
+                       result = AceTcpProtoSpec.new(val[0])
+                 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'parser.ry', 656)
+  def _reduce_188(val, _values, result)
+                       result = AceTcpProtoSpec.new(val[0])
+                 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'parser.ry', 660)
+  def _reduce_189(val, _values, result)
+                       result = AceTcpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'parser.ry', 664)
-  def _reduce_181(val, _values, result)
-                       result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 19
-                     )
+  def _reduce_190(val, _values, result)
+                       result = AceTcpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 670)
-  def _reduce_182(val, _values, result)
-                       result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 514
-                     )
+module_eval(<<'.,.,', 'parser.ry', 668)
+  def _reduce_191(val, _values, result)
+                       result = AceTcpProtoSpec.new(val[0])
+                 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'parser.ry', 672)
+  def _reduce_192(val, _values, result)
+                       result = AceTcpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'parser.ry', 676)
-  def _reduce_183(val, _values, result)
-                       result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 13
-                     )
+  def _reduce_193(val, _values, result)
+                       result = AceTcpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 682)
-  def _reduce_184(val, _values, result)
-                       result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 9
-                     )
+module_eval(<<'.,.,', 'parser.ry', 680)
+  def _reduce_194(val, _values, result)
+                       result = AceTcpProtoSpec.new(val[0])
+                 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'parser.ry', 684)
+  def _reduce_195(val, _values, result)
+                       result = AceTcpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'parser.ry', 688)
-  def _reduce_185(val, _values, result)
-                       result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 53
-                     )
+  def _reduce_196(val, _values, result)
+                       result = AceTcpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 694)
-  def _reduce_186(val, _values, result)
-                       result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 3949
-                     )
+module_eval(<<'.,.,', 'parser.ry', 692)
+  def _reduce_197(val, _values, result)
+                       result = AceTcpProtoSpec.new(val[0])
+                 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'parser.ry', 696)
+  def _reduce_198(val, _values, result)
+                       result = AceTcpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'parser.ry', 700)
-  def _reduce_187(val, _values, result)
-                       result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 7
-                     )
+  def _reduce_199(val, _values, result)
+                       result = AceTcpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 706)
-  def _reduce_188(val, _values, result)
-                       result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 512
-                     )
+module_eval(<<'.,.,', 'parser.ry', 704)
+  def _reduce_200(val, _values, result)
+                       result = AceTcpProtoSpec.new(val[0])
+                 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'parser.ry', 708)
+  def _reduce_201(val, _values, result)
+                       result = AceTcpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'parser.ry', 712)
-  def _reduce_189(val, _values, result)
-                       result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 79
-                     )
+  def _reduce_202(val, _values, result)
+                       result = AceTcpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 718)
-  def _reduce_190(val, _values, result)
-                       result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 21
-                     )
+module_eval(<<'.,.,', 'parser.ry', 716)
+  def _reduce_203(val, _values, result)
+                       result = AceTcpProtoSpec.new(val[0])
+                 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'parser.ry', 720)
+  def _reduce_204(val, _values, result)
+                       result = AceTcpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'parser.ry', 724)
-  def _reduce_191(val, _values, result)
-                       result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 20
-                     )
+  def _reduce_205(val, _values, result)
+                       result = AceTcpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 730)
-  def _reduce_192(val, _values, result)
-                       result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 70
-                     )
+module_eval(<<'.,.,', 'parser.ry', 728)
+  def _reduce_206(val, _values, result)
+                       result = AceTcpProtoSpec.new(val[0])
+                 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'parser.ry', 732)
+  def _reduce_207(val, _values, result)
+                       result = AceTcpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'parser.ry', 736)
-  def _reduce_193(val, _values, result)
-                       result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 101
-                     )
+  def _reduce_208(val, _values, result)
+                       result = AceTcpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 742)
-  def _reduce_194(val, _values, result)
-                       result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 113
-                     )
+module_eval(<<'.,.,', 'parser.ry', 740)
+  def _reduce_209(val, _values, result)
+                       result = AceTcpProtoSpec.new(val[0])
+                 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'parser.ry', 744)
+  def _reduce_210(val, _values, result)
+                       result = AceTcpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'parser.ry', 748)
-  def _reduce_195(val, _values, result)
-                       result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 194
-                     )
+  def _reduce_211(val, _values, result)
+                       result = AceTcpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 754)
-  def _reduce_196(val, _values, result)
-                       result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 543
-                     )
+module_eval(<<'.,.,', 'parser.ry', 752)
+  def _reduce_212(val, _values, result)
+                       result = AceTcpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 760)
-  def _reduce_197(val, _values, result)
-                       result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 544
-                     )
+module_eval(<<'.,.,', 'parser.ry', 756)
+  def _reduce_213(val, _values, result)
+                       result = AceTcpProtoSpec.new(val[0])
+                 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'parser.ry', 761)
+  def _reduce_214(val, _values, result)
+                       # port number (0-65535)
+                   result = AceUdpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'parser.ry', 766)
-  def _reduce_198(val, _values, result)
-                       result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 513
-                     )
+  def _reduce_215(val, _values, result)
+                       result = AceUdpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 772)
-  def _reduce_199(val, _values, result)
-                       result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 515
-                     )
+module_eval(<<'.,.,', 'parser.ry', 770)
+  def _reduce_216(val, _values, result)
+                       result = AceUdpProtoSpec.new(val[0])
+                 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'parser.ry', 774)
+  def _reduce_217(val, _values, result)
+                       result = AceUdpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'parser.ry', 778)
-  def _reduce_200(val, _values, result)
-                       result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 119
-                     )
+  def _reduce_218(val, _values, result)
+                       result = AceUdpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 784)
-  def _reduce_201(val, _values, result)
-                       result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 496
-                     )
+module_eval(<<'.,.,', 'parser.ry', 782)
+  def _reduce_219(val, _values, result)
+                       result = AceUdpProtoSpec.new(val[0])
+                 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'parser.ry', 786)
+  def _reduce_220(val, _values, result)
+                       result = AceUdpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'parser.ry', 790)
-  def _reduce_202(val, _values, result)
-                       result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 109
-                     )
+  def _reduce_221(val, _values, result)
+                       result = AceUdpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 796)
-  def _reduce_203(val, _values, result)
-                       result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 110
-                     )
+module_eval(<<'.,.,', 'parser.ry', 794)
+  def _reduce_222(val, _values, result)
+                       result = AceUdpProtoSpec.new(val[0])
+                 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'parser.ry', 798)
+  def _reduce_223(val, _values, result)
+                       result = AceUdpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'parser.ry', 802)
-  def _reduce_204(val, _values, result)
-                       result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 25
-                     )
+  def _reduce_224(val, _values, result)
+                       result = AceUdpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 808)
-  def _reduce_205(val, _values, result)
-                       result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 111
-                     )
+module_eval(<<'.,.,', 'parser.ry', 806)
+  def _reduce_225(val, _values, result)
+                       result = AceUdpProtoSpec.new(val[0])
+                 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'parser.ry', 810)
+  def _reduce_226(val, _values, result)
+                       result = AceUdpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'parser.ry', 814)
-  def _reduce_206(val, _values, result)
-                       result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 514
-                     )
+  def _reduce_227(val, _values, result)
+                       result = AceUdpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 820)
-  def _reduce_207(val, _values, result)
-                       result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 49
-                     )
+module_eval(<<'.,.,', 'parser.ry', 818)
+  def _reduce_228(val, _values, result)
+                       result = AceUdpProtoSpec.new(val[0])
+                 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'parser.ry', 822)
+  def _reduce_229(val, _values, result)
+                       result = AceUdpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'parser.ry', 826)
-  def _reduce_208(val, _values, result)
-                       result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 517
-                     )
+  def _reduce_230(val, _values, result)
+                       result = AceUdpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 832)
-  def _reduce_209(val, _values, result)
-                       result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 23
-                     )
+module_eval(<<'.,.,', 'parser.ry', 830)
+  def _reduce_231(val, _values, result)
+                       result = AceUdpProtoSpec.new(val[0])
+                 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'parser.ry', 834)
+  def _reduce_232(val, _values, result)
+                       result = AceUdpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'parser.ry', 838)
-  def _reduce_210(val, _values, result)
-                       result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 37
-                     )
+  def _reduce_233(val, _values, result)
+                       result = AceUdpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 844)
-  def _reduce_211(val, _values, result)
-                       result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 540
-                     )
+module_eval(<<'.,.,', 'parser.ry', 842)
+  def _reduce_234(val, _values, result)
+                       result = AceUdpProtoSpec.new(val[0])
+                 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'parser.ry', 846)
+  def _reduce_235(val, _values, result)
+                       result = AceUdpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'parser.ry', 850)
-  def _reduce_212(val, _values, result)
-                       result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 43
-                     )
+  def _reduce_236(val, _values, result)
+                       result = AceUdpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 856)
-  def _reduce_213(val, _values, result)
-                       result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 80
-                     )
+module_eval(<<'.,.,', 'parser.ry', 854)
+  def _reduce_237(val, _values, result)
+                       result = AceUdpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 863)
-  def _reduce_214(val, _values, result)
-                       # port number (0-65535)
-                   result = AceUdpProtoSpec.new(
-                     :number => val[0]
-                     )
+module_eval(<<'.,.,', 'parser.ry', 858)
+  def _reduce_238(val, _values, result)
+                       result = AceUdpProtoSpec.new(val[0])
+                 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'parser.ry', 862)
+  def _reduce_239(val, _values, result)
+                       result = AceUdpProtoSpec.new(val[0])
+                 
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'parser.ry', 866)
+  def _reduce_240(val, _values, result)
+                       result = AceUdpProtoSpec.new(val[0])
                  
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'parser.ry', 870)
-  def _reduce_215(val, _values, result)
-                       result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 512
-                     )
-                 
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'parser.ry', 876)
-  def _reduce_216(val, _values, result)
-                       result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 68
-                     )
-                 
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'parser.ry', 882)
-  def _reduce_217(val, _values, result)
-                       result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 67
-                     )
-                 
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'parser.ry', 888)
-  def _reduce_218(val, _values, result)
-                       result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 9
-                     )
-                 
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'parser.ry', 894)
-  def _reduce_219(val, _values, result)
-                       result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 195
-                     )
-                 
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'parser.ry', 900)
-  def _reduce_220(val, _values, result)
-                       result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 53
-                     )
-                 
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'parser.ry', 906)
-  def _reduce_221(val, _values, result)
-                       result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 7
-                     )
-                 
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'parser.ry', 912)
-  def _reduce_222(val, _values, result)
-                       result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 500
-                     )
-                 
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'parser.ry', 918)
-  def _reduce_223(val, _values, result)
-                       result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 434
-                     )
-                 
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'parser.ry', 924)
-  def _reduce_224(val, _values, result)
-                       result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 42
-                     )
-                 
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'parser.ry', 930)
-  def _reduce_225(val, _values, result)
-                       result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 138
-                     )
-                 
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'parser.ry', 936)
-  def _reduce_226(val, _values, result)
-                       result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 137
-                     )
-                 
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'parser.ry', 942)
-  def _reduce_227(val, _values, result)
-                       result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 139
-                     )
-                 
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'parser.ry', 948)
-  def _reduce_228(val, _values, result)
-                       result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 4500
-                     )
-                 
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'parser.ry', 954)
-  def _reduce_229(val, _values, result)
-                       result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 123
-                     )
-                 
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'parser.ry', 960)
-  def _reduce_230(val, _values, result)
-                       result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 496
-                     )
-                 
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'parser.ry', 966)
-  def _reduce_231(val, _values, result)
-                       result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 520
-                     )
-                 
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'parser.ry', 972)
-  def _reduce_232(val, _values, result)
-                       result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 161
-                     )
-                 
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'parser.ry', 978)
-  def _reduce_233(val, _values, result)
-                       result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 162
-                     )
-                 
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'parser.ry', 984)
-  def _reduce_234(val, _values, result)
-                       result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 111
-                     )
-                 
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'parser.ry', 990)
-  def _reduce_235(val, _values, result)
-                       result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 514
-                     )
-                 
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'parser.ry', 996)
-  def _reduce_236(val, _values, result)
-                       result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 49
-                     )
-                 
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'parser.ry', 1002)
-  def _reduce_237(val, _values, result)
-                       result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 517
-                     )
-                 
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'parser.ry', 1008)
-  def _reduce_238(val, _values, result)
-                       result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 69
-                     )
-                 
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'parser.ry', 1014)
-  def _reduce_239(val, _values, result)
-                       result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 37
-                     )
-                 
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'parser.ry', 1020)
-  def _reduce_240(val, _values, result)
-                       result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 513
-                     )
-                 
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'parser.ry', 1026)
   def _reduce_241(val, _values, result)
-                       result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 177
-                     )
+                       result = AceUdpProtoSpec.new(val[0])
                  
     result
   end
@@ -3041,7 +2883,7 @@ module_eval(<<'.,.,', 'parser.ry', 1026)
 
 # reduce 245 omitted
 
-module_eval(<<'.,.,', 'parser.ry', 1040)
+module_eval(<<'.,.,', 'parser.ry', 882)
   def _reduce_246(val, _values, result)
                        list = AceTcpFlagList.new
                    list.push(val[0])
@@ -3051,7 +2893,7 @@ module_eval(<<'.,.,', 'parser.ry', 1040)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 1046)
+module_eval(<<'.,.,', 'parser.ry', 888)
   def _reduce_247(val, _values, result)
                        val[0].push(val[1])
                    result = val[0]
@@ -3060,7 +2902,7 @@ module_eval(<<'.,.,', 'parser.ry', 1046)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 1052)
+module_eval(<<'.,.,', 'parser.ry', 894)
   def _reduce_248(val, _values, result)
                        dputs "tcp_flags, established: #{val[0]}"
                    result = AceTcpFlag.new(val[0])
@@ -3069,7 +2911,7 @@ module_eval(<<'.,.,', 'parser.ry', 1052)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 1057)
+module_eval(<<'.,.,', 'parser.ry', 899)
   def _reduce_249(val, _values, result)
                        result = AceTcpFlag.new(val[0])
                  
@@ -3077,7 +2919,7 @@ module_eval(<<'.,.,', 'parser.ry', 1057)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 1061)
+module_eval(<<'.,.,', 'parser.ry', 903)
   def _reduce_250(val, _values, result)
                        result = AceTcpFlag.new(val[0])
                  
@@ -3085,7 +2927,7 @@ module_eval(<<'.,.,', 'parser.ry', 1061)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 1065)
+module_eval(<<'.,.,', 'parser.ry', 907)
   def _reduce_251(val, _values, result)
                        result = AceTcpFlag.new(val[0])
                  
@@ -3093,7 +2935,7 @@ module_eval(<<'.,.,', 'parser.ry', 1065)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 1069)
+module_eval(<<'.,.,', 'parser.ry', 911)
   def _reduce_252(val, _values, result)
                        result = AceTcpFlag.new(val[0])
                  
@@ -3101,7 +2943,7 @@ module_eval(<<'.,.,', 'parser.ry', 1069)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 1073)
+module_eval(<<'.,.,', 'parser.ry', 915)
   def _reduce_253(val, _values, result)
                        result = AceTcpFlag.new(val[0])
                  
@@ -3109,7 +2951,7 @@ module_eval(<<'.,.,', 'parser.ry', 1073)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 1077)
+module_eval(<<'.,.,', 'parser.ry', 919)
   def _reduce_254(val, _values, result)
                        result = AceTcpFlag.new(val[0])
                  
@@ -3147,7 +2989,7 @@ module_eval(<<'.,.,', 'parser.ry', 1077)
 
 # reduce 269 omitted
 
-module_eval(<<'.,.,', 'parser.ry', 1101)
+module_eval(<<'.,.,', 'parser.ry', 943)
   def _reduce_270(val, _values, result)
                        dputs "other qualifier list, #{val[0]}/#{val[1]}"
                    if val[0]
@@ -3166,7 +3008,7 @@ module_eval(<<'.,.,', 'parser.ry', 1101)
 
 # reduce 272 omitted
 
-module_eval(<<'.,.,', 'parser.ry', 1115)
+module_eval(<<'.,.,', 'parser.ry', 957)
   def _reduce_273(val, _values, result)
                        dputs "other qualifier, logging, #{val[0]})"
                    result = val[0]
@@ -3181,7 +3023,7 @@ module_eval(<<'.,.,', 'parser.ry', 1115)
 
 # reduce 276 omitted
 
-module_eval(<<'.,.,', 'parser.ry', 1123)
+module_eval(<<'.,.,', 'parser.ry', 965)
   def _reduce_277(val, _values, result)
                        result = val[0]
                  
@@ -3239,7 +3081,7 @@ module_eval(<<'.,.,', 'parser.ry', 1123)
 
 # reduce 302 omitted
 
-module_eval(<<'.,.,', 'parser.ry', 1156)
+module_eval(<<'.,.,', 'parser.ry', 998)
   def _reduce_303(val, _values, result)
                        result = AceLogSpec.new(val[1], true)
                  
@@ -3247,7 +3089,7 @@ module_eval(<<'.,.,', 'parser.ry', 1156)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.ry', 1160)
+module_eval(<<'.,.,', 'parser.ry', 1002)
   def _reduce_304(val, _values, result)
                        result = AceLogSpec.new(val[1])
                  
@@ -3257,7 +3099,7 @@ module_eval(<<'.,.,', 'parser.ry', 1160)
 
 # reduce 305 omitted
 
-module_eval(<<'.,.,', 'parser.ry', 1166)
+module_eval(<<'.,.,', 'parser.ry', 1008)
   def _reduce_306(val, _values, result)
                        result = val[0]
                  
@@ -3301,7 +3143,7 @@ module_eval(<<'.,.,', 'parser.ry', 1166)
 
 # reduce 324 omitted
 
-module_eval(<<'.,.,', 'parser.ry', 1194)
+module_eval(<<'.,.,', 'parser.ry', 1036)
   def _reduce_325(val, _values, result)
                        # @todo timeout_spec is not implemented yet.
                    result = AceRecursiveQualifier.new(val[1])

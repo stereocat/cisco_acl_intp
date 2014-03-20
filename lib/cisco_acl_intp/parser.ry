@@ -135,83 +135,57 @@ std_acl_log_spec:
 
      ip_proto: 'ahp'
                  {
-                   result = AceIpProtoSpec.new(
-                     :name => val[0], :number => 51
-                     )
+                   result = AceIpProtoSpec.new(val[0])
                  }
              | 'eigrp'
                  {
-                   result = AceIpProtoSpec.new(
-                     :name => val[0], :number => 88
-                     )
+                   result = AceIpProtoSpec.new(val[0])
                  }
              | 'esp'
                  {
-                   result = AceIpProtoSpec.new(
-                     :name => val[0], :number => 50
-                     )
+                   result = AceIpProtoSpec.new(val[0])
                  }
              | 'gre'
                  {
-                   result = AceIpProtoSpec.new(
-                     :name => val[0], :number => 47
-                     )
+                   result = AceIpProtoSpec.new(val[0])
                  }
              | 'igmp'
                  {
-                   result = AceIpProtoSpec.new(
-                     :name => val[0], :number => 2
-                     )
+                   result = AceIpProtoSpec.new(val[0])
                  }
              | 'igrp'
                  {
-                   result = AceIpProtoSpec.new(
-                     :name => val[0], :number => 9
-                     )
+                   result = AceIpProtoSpec.new(val[0])
                  }
              | 'ip'
                  {
-                   result = AceIpProtoSpec.new(
-                     :name => val[0]
-                     )
+                   result = AceIpProtoSpec.new(val[0])
                  } # IS NOT 0! (no number)
              | 'ipinip'
                  {
-                   result = AceIpProtoSpec.new(
-                     :name => val[0], :number => 94
-                     )
+                   result = AceIpProtoSpec.new(val[0])
                  }
              | 'nos'
                  {
-                   result = AceIpProtoSpec.new(
-                     :name => val[0], :number => 4
-                     )
+                   result = AceIpProtoSpec.new(val[0])
                  }
              | 'ospf'
                  {
-                   result = AceIpProtoSpec.new(
-                     :name => val[0], :number => 89
-                     )
+                   result = AceIpProtoSpec.new(val[0])
                  }
              | 'pcp'
                  {
-                   result = AceIpProtoSpec.new(
-                     :name => val[0], :number => 108
-                     )
+                   result = AceIpProtoSpec.new(val[0])
                  }
              | 'pim'
                  {
-                   result = AceIpProtoSpec.new(
-                     :name => val[0], :number => 103
-                     )
+                   result = AceIpProtoSpec.new(val[0])
                  }
              | NUMBER # ip protocol number (0-255)
                  {
                    begin
                      dputs "ip_proto number: #{val[0]}"
-                     result = AceIpProtoSpec.new(
-                       :number => val[0].to_i
-                       )
+                     result = AceIpProtoSpec.new(val[0].to_i)
                    rescue => err
                      yyerror_with err.message
                    end
@@ -220,25 +194,19 @@ std_acl_log_spec:
    icmp_proto: 'icmp'
                  {
                    dputs 'icmp_proto'
-                   result = AceIpProtoSpec.new(
-                     :name => val[0], :number => 1
-                     )
+                   result = AceIpProtoSpec.new(val[0])
                  }
 
     tcp_proto: 'tcp'
                  {
                    dputs 'tcp_proto'
-                   result = AceIpProtoSpec.new(
-                     :name => val[0], :number => 6
-                     )
+                   result = AceIpProtoSpec.new(val[0])
                  }
 
     udp_proto: 'udp'
                  {
                    dputs 'udp_proto'
-                   result = AceIpProtoSpec.new(
-                     :name => val[0], :number => 17
-                     )
+                   result = AceIpProtoSpec.new(val[0])
                  }
 
 tcp_srcdst_spec: objgrp_srcdst_spec tcp_port_spec
@@ -594,12 +562,12 @@ tcp_port_spec:
                  {
                    # tcp any
                    dputs 'tcp port any'
-                   result = AceTcpPortSpec.new(:operator => 'any')
+                   result = AcePortSpec.new(:operator => 'any')
                  }
              | unary_operator tcp_port_qualifier
                  {
                    dputs "tcp port spec: #{val[0]}/#{val[1]}"
-                   result = AceTcpPortSpec.new(
+                   result = AcePortSpec.new(
                      :operator => val[0],
                      :port => val[1]
                      )
@@ -607,7 +575,7 @@ tcp_port_spec:
              | 'range' tcp_port_qualifier tcp_port_qualifier
                  {
                    dputs "tcp port spec: #{val[0]}/#{val[1]}/#{val[2]}"
-                   result = AceTcpPortSpec.new(
+                   result = AcePortSpec.new(
                      :operator => val[0],
                      :begin_port => val[1],
                      :end_port => val[2]
@@ -618,12 +586,12 @@ udp_port_spec:
                  {
                    # udp any
                    dputs 'udp port: any'
-                   result = AceUdpPortSpec.new(:operator => 'any')
+                   result = AcePortSpec.new(:operator => 'any')
                  }
              | unary_operator udp_port_qualifier
                  {
                    dputs "udp port spec: #{val[0]}/#{val[1]}"
-                   result = AceUdpPortSpec.new(
+                   result = AcePortSpec.new(
                      :operator => val[0],
                      :port => val[1]
                      )
@@ -631,7 +599,7 @@ udp_port_spec:
              | 'range' udp_port_qualifier udp_port_qualifier
                  {
                    dputs "udp port spec: #{val[0]}/#{val[1]}/#{val[2]}"
-                   result = AceUdpPortSpec.new(
+                   result = AcePortSpec.new(
                      :operator => val[0],
                      :begin_port => val[1],
                      :end_port => val[2]
@@ -647,386 +615,260 @@ tcp_port_qualifier: NUMBER
                  {
                    begin
                      # port number (0-65535)
-                     result = AceTcpProtoSpec.new(
-                       :number => val[0]
-                       )
+                     result = AceTcpProtoSpec.new(val[0])
                    rescue => err
                      yyerror_with err.message
                    end
                  }
              | 'bgp'
                  {
-                   result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 179
-                     )
+                   result = AceTcpProtoSpec.new(val[0])
                  }
              | 'chargen'
                  {
-                   result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 19
-                     )
+                   result = AceTcpProtoSpec.new(val[0])
                  }
              | 'cmd'
                  {
-                   result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 514
-                     )
+                   result = AceTcpProtoSpec.new(val[0])
                  }
              | 'daytime'
                  {
-                   result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 13
-                     )
+                   result = AceTcpProtoSpec.new(val[0])
                  }
              | 'discard'
                  {
-                   result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 9
-                     )
+                   result = AceTcpProtoSpec.new(val[0])
                  }
              | 'domain'
                  {
-                   result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 53
-                     )
+                   result = AceTcpProtoSpec.new(val[0])
                  }
              | 'drip'
                  {
-                   result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 3949
-                     )
+                   result = AceTcpProtoSpec.new(val[0])
                  }
              | 'echo'
                  {
-                   result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 7
-                     )
+                   result = AceTcpProtoSpec.new(val[0])
                  }
              | 'exec'
                  {
-                   result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 512
-                     )
+                   result = AceTcpProtoSpec.new(val[0])
                  }
              | 'finger'
                  {
-                   result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 79
-                     )
+                   result = AceTcpProtoSpec.new(val[0])
                  }
              | 'ftp'
                  {
-                   result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 21
-                     )
+                   result = AceTcpProtoSpec.new(val[0])
                  }
              | 'ftp-data'
                  {
-                   result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 20
-                     )
+                   result = AceTcpProtoSpec.new(val[0])
                  }
              | 'gopher'
                  {
-                   result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 70
-                     )
+                   result = AceTcpProtoSpec.new(val[0])
                  }
              | 'hostname'
                  {
-                   result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 101
-                     )
+                   result = AceTcpProtoSpec.new(val[0])
                  }
              | 'ident'
                  {
-                   result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 113
-                     )
+                   result = AceTcpProtoSpec.new(val[0])
                  }
              | 'irc'
                  {
-                   result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 194
-                     )
+                   result = AceTcpProtoSpec.new(val[0])
                  }
              | 'klogin'
                  {
-                   result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 543
-                     )
+                   result = AceTcpProtoSpec.new(val[0])
                  }
              | 'kshell'
                  {
-                   result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 544
-                     )
+                   result = AceTcpProtoSpec.new(val[0])
                  }
              | 'login'
                  {
-                   result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 513
-                     )
+                   result = AceTcpProtoSpec.new(val[0])
                  }
              | 'lpd'
                  {
-                   result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 515
-                     )
+                   result = AceTcpProtoSpec.new(val[0])
                  }
              | 'nntp'
                  {
-                   result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 119
-                     )
+                   result = AceTcpProtoSpec.new(val[0])
                  }
              | 'pim-auto-rp'
                  {
-                   result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 496
-                     )
+                   result = AceTcpProtoSpec.new(val[0])
                  }
              | 'pop2'
                  {
-                   result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 109
-                     )
+                   result = AceTcpProtoSpec.new(val[0])
                  }
              | 'pop3'
                  {
-                   result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 110
-                     )
+                   result = AceTcpProtoSpec.new(val[0])
                  }
              | 'smtp'
                  {
-                   result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 25
-                     )
+                   result = AceTcpProtoSpec.new(val[0])
                  }
              | 'sunrpc'
                  {
-                   result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 111
-                     )
+                   result = AceTcpProtoSpec.new(val[0])
                  }
              | 'syslog'
                  {
-                   result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 514
-                     )
+                   result = AceTcpProtoSpec.new(val[0])
                  }
              | 'tacacs'
                  {
-                   result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 49
-                     )
+                   result = AceTcpProtoSpec.new(val[0])
                  }
              | 'talk'
                  {
-                   result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 517
-                     )
+                   result = AceTcpProtoSpec.new(val[0])
                  }
              | 'telnet'
                  {
-                   result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 23
-                     )
+                   result = AceTcpProtoSpec.new(val[0])
                  }
              | 'time'
                  {
-                   result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 37
-                     )
+                   result = AceTcpProtoSpec.new(val[0])
                  }
              | 'uucp'
                  {
-                   result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 540
-                     )
+                   result = AceTcpProtoSpec.new(val[0])
                  }
              | 'whois'
                  {
-                   result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 43
-                     )
+                   result = AceTcpProtoSpec.new(val[0])
                  }
              | 'www'
                  {
-                   result = AceTcpProtoSpec.new(
-                     :name => val[0], :number => 80
-                     )
+                   result = AceTcpProtoSpec.new(val[0])
                  }
 
 udp_port_qualifier: NUMBER
                  {
                    # port number (0-65535)
-                   result = AceUdpProtoSpec.new(
-                     :number => val[0]
-                     )
+                   result = AceUdpProtoSpec.new(val[0])
                  }
              | 'biff'
                  {
-                   result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 512
-                     )
+                   result = AceUdpProtoSpec.new(val[0])
                  }
              | 'bootpc'
                  {
-                   result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 68
-                     )
+                   result = AceUdpProtoSpec.new(val[0])
                  }
              | 'bootps'
                  {
-                   result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 67
-                     )
+                   result = AceUdpProtoSpec.new(val[0])
                  }
              | 'discard'
                  {
-                   result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 9
-                     )
+                   result = AceUdpProtoSpec.new(val[0])
                  }
              | 'dnsix'
                  {
-                   result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 195
-                     )
+                   result = AceUdpProtoSpec.new(val[0])
                  }
              | 'domain'
                  {
-                   result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 53
-                     )
+                   result = AceUdpProtoSpec.new(val[0])
                  }
              | 'echo'
                  {
-                   result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 7
-                     )
+                   result = AceUdpProtoSpec.new(val[0])
                  }
              | 'isakmp'
                  {
-                   result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 500
-                     )
+                   result = AceUdpProtoSpec.new(val[0])
                  }
              | 'mobile-ip'
                  {
-                   result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 434
-                     )
+                   result = AceUdpProtoSpec.new(val[0])
                  }
              | 'nameserver'
                  {
-                   result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 42
-                     )
+                   result = AceUdpProtoSpec.new(val[0])
                  }
              | 'netbios-dgm'
                  {
-                   result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 138
-                     )
+                   result = AceUdpProtoSpec.new(val[0])
                  }
              | 'netbios-ns'
                  {
-                   result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 137
-                     )
+                   result = AceUdpProtoSpec.new(val[0])
                  }
              | 'netbios-ss'
                  {
-                   result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 139
-                     )
+                   result = AceUdpProtoSpec.new(val[0])
                  }
              | 'non500-isakmp'
                  {
-                   result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 4500
-                     )
+                   result = AceUdpProtoSpec.new(val[0])
                  }
              | 'ntp'
                  {
-                   result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 123
-                     )
+                   result = AceUdpProtoSpec.new(val[0])
                  }
              | 'pim-auto-rp'
                  {
-                   result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 496
-                     )
+                   result = AceUdpProtoSpec.new(val[0])
                  }
              | 'rip'
                  {
-                   result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 520
-                     )
+                   result = AceUdpProtoSpec.new(val[0])
                  }
              | 'snmp'
                  {
-                   result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 161
-                     )
+                   result = AceUdpProtoSpec.new(val[0])
                  }
              | 'snmptrap'
                  {
-                   result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 162
-                     )
+                   result = AceUdpProtoSpec.new(val[0])
                  }
              | 'sunrpc'
                  {
-                   result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 111
-                     )
+                   result = AceUdpProtoSpec.new(val[0])
                  }
              | 'syslog'
                  {
-                   result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 514
-                     )
+                   result = AceUdpProtoSpec.new(val[0])
                  }
              | 'tacacs'
                  {
-                   result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 49
-                     )
+                   result = AceUdpProtoSpec.new(val[0])
                  }
              | 'talk'
                  {
-                   result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 517
-                     )
+                   result = AceUdpProtoSpec.new(val[0])
                  }
              | 'tftp'
                  {
-                   result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 69
-                     )
+                   result = AceUdpProtoSpec.new(val[0])
                  }
              | 'time'
                  {
-                   result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 37
-                     )
+                   result = AceUdpProtoSpec.new(val[0])
                  }
              | 'who'
                  {
-                   result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 513
-                     )
+                   result = AceUdpProtoSpec.new(val[0])
                  }
              | 'xdmcp'
                  {
-                   result = AceUdpProtoSpec.new(
-                     :name => val[0], :number => 177
-                     )
+                   result = AceUdpProtoSpec.new(val[0])
                  }
 
                  # tcp flags list

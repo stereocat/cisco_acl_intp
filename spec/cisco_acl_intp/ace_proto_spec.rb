@@ -13,7 +13,7 @@ def get_codes(port_table, classname)
   port_table.each_pair.reduce([]) do |list, (key, value)|
     list.push(<<"EOL")
       it 'should be [#{key}] when only number:#{value} specified' do
-        aups = #{classname}.new(:number => #{value})
+        aups = #{classname}.new(#{value})
         aups.to_s.should be_aclstr('#{key}')
       end
 EOL
@@ -26,43 +26,27 @@ def number_data_to_codes(data, classname)
   codes.join
 end
 
-describe AceProtoSpecBase do
-  describe '#valid_range? as abstract' do
-    it 'should be true when integer port number' do
-      apsb = AceProtoSpecBase.new(number: 22)
-      apsb.valid_range?.should be_true
-    end
-
-    it 'should be error calling name_to_number' do
-      apsb = AceProtoSpecBase.new(number: 22)
-      lambda do
-        apsb.name_to_number
-      end.should raise_error(AclArgumentError)
-    end
-  end
-end
-
 describe AceUdpProtoSpec do
   describe '#name_to_numer, #to_i' do
     it 'should be "111" by converting proto name "sunrpc"' do
-      aups = AceUdpProtoSpec.new(name: 'sunrpc')
+      aups = AceUdpProtoSpec.new('sunrpc')
       aups.number.should eq 111
       aups.to_i.should eq 111
     end
 
     it 'should be error by converting unknown proto name "hoge"' do
       lambda do
-        AceUdpProtoSpec.new(name: 'hoge')
+        AceUdpProtoSpec.new('hoge')
       end.should raise_error(AclArgumentError)
     end
   end
 
   describe 'class#valid_name?' do
-    it 'should be true when valid tcp port name' do
+    it 'should be true when valid udp port name' do
       AceUdpProtoSpec.valid_name?('snmp').should be_true
     end
 
-    it 'should be false when invalid tcp port name' do
+    it 'should be false when invalid udp port name' do
       AceUdpProtoSpec.valid_name?('daytime').should be_false
     end
   end
@@ -101,32 +85,26 @@ EOL
     instance_eval(codes)
 
     it 'should be number string when it not match IOS acl literal' do
-      aups = AceUdpProtoSpec.new(number: 3_333)
+      aups = AceUdpProtoSpec.new(3_333)
       aups.to_s.should be_aclstr('3333')
     end
 
     it 'should be error when out of range port number' do
       lambda do
-        AceUdpProtoSpec.new(number: 65_536)
+        AceUdpProtoSpec.new(65_536)
       end.should raise_error(AclArgumentError)
 
       lambda do
-        AceUdpProtoSpec.new(number: -1)
-      end.should raise_error(AclArgumentError)
-    end
-
-    it 'should be error when not specified name and number' do
-      lambda do
-        AceUdpProtoSpec.new(name: '')
+        AceUdpProtoSpec.new(-1)
       end.should raise_error(AclArgumentError)
     end
 
-    it 'should be error when specified name and number are not match' do
+    it 'should be error when not specified name/number' do
       lambda do
-        AceUdpProtoSpec.new(
-          name: 'time',
-          number: 49
-        )
+        AceUdpProtoSpec.new
+      end.should raise_error(AclArgumentError)
+      lambda do
+        AceUdpProtoSpec.new('')
       end.should raise_error(AclArgumentError)
     end
   end
@@ -135,14 +113,14 @@ end
 describe AceTcpProtoSpec do
   describe '#name_to_numer, #to_i' do
     it 'should be "49" by converting proto name "tacacs"' do
-      atps = AceTcpProtoSpec.new(name: 'tacacs')
+      atps = AceTcpProtoSpec.new('tacacs')
       atps.number.should eq 49
       atps.to_i.should eq 49
     end
 
     it 'should be error by converting unknown proto name "fuga"' do
       lambda do
-        AceTcpProtoSpec.new(name: 'fuga')
+        AceTcpProtoSpec.new('fuga')
       end.should raise_error(AclArgumentError)
     end
   end
@@ -197,32 +175,26 @@ EOL
     instance_eval(codes)
 
     it 'should be number string when it not match IOS acl literal' do
-      aups = AceTcpProtoSpec.new(number: 6_633)
+      aups = AceTcpProtoSpec.new(6_633)
       aups.to_s.should be_aclstr('6633')
     end
 
-    it 'should be error when not specified name and number' do
+    it 'should be error when not specified name/number' do
       lambda do
-        AceTcpProtoSpec.new(hoge: 'hoge')
+        AceTcpProtoSpec.new
+      end.should raise_error(AclArgumentError)
+      lambda do
+        AceTcpProtoSpec.new('')
       end.should raise_error(AclArgumentError)
     end
 
     it 'should be error when out of range port number' do
       lambda do
-        AceTcpProtoSpec.new(number: 65_536)
+        AceTcpProtoSpec.new(65_536)
       end.should raise_error(AclArgumentError)
 
       lambda do
-        AceTcpProtoSpec.new(number: -1)
-      end.should raise_error(AclArgumentError)
-    end
-
-    it 'should be error when specified name and number are not match' do
-      lambda do
-        AceUdpProtoSpec.new(
-          name: 'bgp',
-          number: 517
-        )
+        AceTcpProtoSpec.new(-1)
       end.should raise_error(AclArgumentError)
     end
   end
@@ -231,14 +203,14 @@ end
 describe AceIpProtoSpec do
   describe '#name_to_numer' do
     it 'should be "88" by converting proto name "eigrp"' do
-      aips = AceIpProtoSpec.new(name: 'eigrp')
+      aips = AceIpProtoSpec.new('eigrp')
       aips.number.should eq 88
       aips.to_i.should eq 88
     end
 
     it 'should be error by converting unknown proto name "foo"' do
       lambda do
-        AceIpProtoSpec.new(name: 'foo')
+        AceIpProtoSpec.new('foo')
       end.should raise_error(AclArgumentError)
     end
   end
@@ -250,6 +222,45 @@ describe AceIpProtoSpec do
 
     it 'should be false when invalid tcp port name' do
       AceIpProtoSpec.valid_name?('daytime').should be_false
+    end
+  end
+
+  describe '#contains?' do
+    before(:all) do
+      @p_ip = AceIpProtoSpec.new('ip')
+      @p_ip2 = AceIpProtoSpec.new('ip')
+      @p_tcp = AceIpProtoSpec.new(6)
+      @p_tcp2 = AceIpProtoSpec.new('tcp')
+      @p_udp = AceIpProtoSpec.new(17)
+      @p_udp2 = AceIpProtoSpec.new('udp')
+      @p_esp = AceIpProtoSpec.new('esp')
+    end
+
+    it 'should be true, ip includes tcp/udp' do
+      @p_ip.contains?(@p_tcp).should be_true
+      @p_ip.contains?(@p_udp).should be_true
+      @p_ip.contains?(@p_ip2).should be_true
+    end
+
+    it 'should be false, ip not includes esp' do
+      @p_ip.contains?(@p_esp).should be_false
+      @p_esp.contains?(@p_ip).should be_false
+      @p_esp.contains?(@p_tcp).should be_false
+      @p_esp.contains?(@p_udp).should be_false
+    end
+
+    it 'should be true, tcp/udp includes tcp/udp' do
+      @p_tcp.contains?(@p_tcp2).should be_true
+      @p_udp.contains?(@p_udp2).should be_true
+    end
+
+    it 'should be false, tcp/udp not includes ip/udp/tcp' do
+      @p_tcp.contains?(@p_ip).should be_false
+      @p_tcp.contains?(@p_udp).should be_false
+      @p_tcp.contains?(@p_esp).should be_false
+      @p_udp.contains?(@p_ip).should be_false
+      @p_udp.contains?(@p_tcp).should be_false
+      @p_udp.contains?(@p_esp).should be_false
     end
   end
 
@@ -273,34 +284,33 @@ EOL
     instance_eval(codes)
 
     it 'should be number string when it not match IOS acl literal' do
-      aups = AceIpProtoSpec.new(number: 255)
+      aups = AceIpProtoSpec.new(255)
       aups.to_s.should be_aclstr('255')
     end
 
     it 'should be error when out of range port number' do
       lambda do
-        AceIpProtoSpec.new(number: 256)
+        AceIpProtoSpec.new(256)
       end.should raise_error(AclArgumentError)
 
       lambda do
-        AceIpProtoSpec.new(number: -1)
+        AceIpProtoSpec.new(-1)
       end.should raise_error(AclArgumentError)
     end
 
-    it 'should be error when not specified name and number' do
+    it 'should be error when not specified name/number' do
       lambda do
-        AceIpProtoSpec.new({})
+        AceIpProtoSpec.new
       end.should raise_error(AclArgumentError)
-    end
-
-    it 'should be error when specified name and number are not match' do
       lambda do
-        AceTcpProtoSpec.new(
-          name: 'ospf',
-          number: 17
-        )
+        AceIpProtoSpec.new('')
       end.should raise_error(AclArgumentError)
     end
-
   end
 end
+
+### Local variables:
+### mode: Ruby
+### coding: utf-8-unix
+### indent-tabs-mode: nil
+### End:

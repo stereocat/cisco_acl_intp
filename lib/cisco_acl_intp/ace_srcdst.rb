@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 require 'netaddr'
 require 'cisco_acl_intp/ace_ip'
 require 'cisco_acl_intp/ace_port'
@@ -9,7 +8,7 @@ require 'cisco_acl_intp/ace_tcp_flags'
 module CiscoAclIntp
   # IP Address and TCP/UDP Port Info
   # @todo Src/Dst takes Network Object Group or IP/wildcard.
-  #    object group is not implemented yet.
+  #    "object-group" is not implemented yet.
   class AceSrcDstSpec < AclContainerBase
     # @param [AceIpSpec] value IP address and Wildcard-mask
     # @return [AceIpSpec]
@@ -27,7 +26,7 @@ module CiscoAclIntp
     #   (dotted/bit-flipped notation)
     # @option opts [Integer] :netmask Subnet mask length (e.g. 24)
     # @option opts [AcePortSpec] :port_spec Port/Operator object
-    # @option opts [String] :operator Port operator
+    # @option opts [String, Symbol] :operator Port operator
     # @option opts [AceProtoSpecBase] :port port number (single/lower)
     #   (same as :begin_port, alias for unary operator)
     # @option opts [AceProtoSpecBase] :begin_port port number (single/lower)
@@ -56,45 +55,41 @@ module CiscoAclIntp
       sprintf('%s %s', @ip_spec, @port_spec)
     end
 
-    # Check address and port number matches this object or not.
-    # @param [String] address IP address (dotted notation)
-    # @param [Integer,String] port Port No./Name
+    # Check address and port number contains this object or not.
+    # @param [AceSrcDstSpec] other Conditions to compare
     # @return [Boolean]
     # @raise [AclArgumentError]
-    # @example Example of AceSrcDstSpec#matches?
-    #   AceSrcDstSpec#matches?('192.168.3.3') # /32 host and port any
-    #   AceSrcDstSpec#matches?('172.30.240.0/24', '80') # a subnet and port 80
-    #   AceSrcDstSpec#matches?('any', 'www') # any host and port 80
-    def matches?(address, port = nil)
-      matches_address?(address) && matches_port?(port)
+    def contains?(other)
+      contains_address?(other.ip_spec) &&
+        contains_port?(other.port_spec)
     end
 
     private
 
     # Check port match
-    # @param [Integer,String] port Port No.
+    # @param [AcePortSpec] port_spec TCP/UDP Port spec
     # @return [Boolean]
-    def matches_port?(port)
-      case port
-      when nil, 'any'
-        true
-      else
-        @port_spec.matches?(port)
-      end
+    def contains_port?(port_spec = nil)
+      port_spec = AcePortSpec.new(operator: :any) if port_spec.nil?
+      @port_spec.contains?(port_spec)
     end
 
-    # Check address match
-    # @param [String] address IP address (dotted notation)
+    # Check address match (by NetAddr)
+    # @param [AceIpSpec] ip_spec IP address spec.
     # @return [Boolean]
-    def matches_address?(address)
-      case address
-      when /(.+)\/(.+)/
-        # addr/mask or addr/mask-length notation
-        @ip_spec.contains?(address)
-      when '0.0.0.0', '0.0.0.0/0', 'any'
+    def contains_address?(ip_spec = nil)
+      case ip_spec
+      when nil # 'any', '0.0.0.0/0'
         true
       else
-        @ip_spec.matches?(address)
+        # IP match/contain checks are delegated to NetAddr
+        if @ip_spec.netmask.nil?
+          # check by wildcard
+          @ip_spec.matches?(ip_spec.ipaddr)
+        else
+          # check by CIDR(netmask)
+          @ip_spec.contains?(ip_spec.ipaddr)
+        end
       end
     end
 
@@ -116,7 +111,8 @@ module CiscoAclIntp
     # @return [AcePortSpec] Port/Operator object
     # @see #initialize
     def define_portspec
-      if @options.key?(:port_spec)
+      if @options.key?(:port_spec) &&
+          @options[:port_spec].kind_of?(AcePortSpec)
         @options[:port_spec]
       elsif @options.key?(:operator)
         AcePortSpec.new(

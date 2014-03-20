@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 require 'forwardable'
 require 'netaddr'
 require 'cisco_acl_intp/acl_base'
@@ -24,7 +23,7 @@ module CiscoAclIntp
     attr_reader :wildcard
 
     # `matches?' method is wildcard mask operation
-    def_delegators :@ipaddr, :matches?
+    def_delegators :@ipaddr, :matches?, :contains?
     # ip returns non-masked address
     def_delegators :@ipaddr, :ip
 
