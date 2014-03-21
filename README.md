@@ -165,9 +165,64 @@ obj,... See more detail in documents (see also, Documents section)
 
 ### ACL Varidator Web Frontend
 
-[Front-end of ACL Varidator](https://github.com/stereocat/cisco_acl_web)
-is at github. It not only can parse (with CLI tool, it can only
-parse), but also search for ACL(ACE).
+[Front-end of ACL Varidator]operator is matches only `:any` operator.
+
+# ACL operation as IP/Port set operation
+## Overview
+
+A CIDR-IP-Subnet, IP address with wildcard mask, TCP/UDP port
+numbere(s) with operator (`any`, `eq`, `neq`, `lt`, `gt`, `range`),
+these are set of IPs and/or ports. In CiscoAclIntp, `contains?`
+methods are implemented some ACL/ACE class. It is a set operation
+method of IP address and TCP/UDP port (to check set inclusion
+relation).
+
+Example:
+```ruby
+src = AceSrcDstSpec.new(
+  ipaddr: '192.168.15.15', wildcard: '0.0.7.6',
+  operator: 'gt', port: AceTcpProtoSpec.new(32_767)
+)
+dst = AceSrcDstSpec.new(
+  ipaddr: '192.168.30.3', wildcard: '0.0.0.0',
+  operator: 'range',
+  begin_port: AceTcpProtoSpec.new(1_024),
+  end_port: AceTcpProtoSpec.new(65_535)
+)
+
+# permit tcp 192.168.15.15 0.0.7.6 gt 32767 host 192.168.30.3 range 1024 65535
+ace = ExtendedAce.new(
+  action: 'permit', protocol: 'tcp', src: src, dst: dst
+)
+
+ace.contains?(
+  protocol: 'tcp',
+  src_operator: :eq, src_ip: '192.168.9.11', src_port: 51234
+)
+#=> true
+```
+
+## IP Addr Operation
+
+See `NetAddr::CIDR#matches?` for CIDR subnet operation and
+`NetAddr::CIDR#contains?` for IP with wildcard mask.
+
+## Port Operation
+
+| User       | any  | eq X   | neq X  | lt X   | gt X   | range X1 X2   |
+|------------|------|--------|--------|--------|--------|---------------|
+| any        | true | true   | true   | true   | true   | true          |
+| strict_any | true | false  | false  | false  | false  | false         |
+| eq P       | true | P = X  | P != X | P < X  | X < P  | X1 <= P <= X2 |
+| neq P      | true | false  | P = X  | P = X = 65535 | P = X = 0 | (P=X1=0 and X2=65535) or (X1=0 and P=X2=65535) |
+| lt P       | true | false  | P <= X | P <= X | false   | X1 = 0 and P < X2 |
+| gt P       | true | false  | X <= P | false  | X <= P  | X1 < P and X2 = 65535 |
+| range P1 P2| true | false  | P2 < X or X < P1 | P2 < X | X < P1 | X1 <= P1 and P2 <= X2 |
+
+In abobe table, “User” column is the argment of `contains?`, and,
+operators at table header are receiver of `contains?`. For example,
+`[gt X].contains?([eq P])` is true if port `X < P`. `:strict_any`
+operator is matches only `:any` operator.
 
 ## Documents
 
