@@ -165,7 +165,9 @@ obj,... See more detail in documents (see also, Documents section)
 
 ### ACL Varidator Web Frontend
 
-[Front-end of ACL Varidator]operator is matches only `:any` operator.
+[Web front-end of ACL Varidator](https://github.com/stereocat/cisco_acl_web)
+is at my github repository. It not only can parse (with CLI tool, it
+can only parse), but also search for ACL(ACE).
 
 ## ACL operation as IP/Port set operation
 ### Overview
@@ -219,10 +221,14 @@ See `NetAddr::CIDR#matches?` for CIDR subnet operation and
 | gt P       | true | false  | X <= P | false  | X <= P  | X1 < P and X2 = 65535 |
 | range P1 P2| true | false  | P2 < X or X < P1 | P2 < X | X < P1 | X1 <= P1 and P2 <= X2 |
 
-In abobe table, “User” column is the argment of `contains?`, and,
+In above table, “User” column is the argment of `contains?`, and,
 operators at table header are receiver of `contains?`. For example,
-`[gt X].contains?([eq P])` is true if port `X < P`. `:strict_any`
-operator is matches only `:any` operator.
+`[gt X].contains?([eq P])` will be `true` if port `X < P`. It means
+the ACL `[gt X]` permit (or deny) the flow `[eq P]`. You can search
+ACEs which matches a flows specified by search conditions.
+
+`:strict_any` is a special operator to search acl, the operator is
+matches only `:any` operator.
 
 ## Documents
 
