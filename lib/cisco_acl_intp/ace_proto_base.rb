@@ -52,7 +52,6 @@ module CiscoAclIntp
       when Integer
         define_param_by_integer(proto_id)
       else
-        puts "## proto_id #{proto_id}"
         fail AclArgumentError, "invalid protocol id #{proto_id}"
       end
     end
@@ -129,7 +128,7 @@ module CiscoAclIntp
       if proto_table.key?(@name)
         proto_table[@name]
       else
-        fail AclArgumentError, "Unknown udp port name: #{@name}"
+        fail AclArgumentError, "Unknown protocol name: #{@name}"
       end
     end
 

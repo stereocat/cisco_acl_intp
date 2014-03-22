@@ -98,7 +98,7 @@ module CiscoAclIntp
     # @return [AceIpSpec] IP address/Mask object
     # @see #initialize
     def define_ipspec
-      if @options.key?(:ip_spec)
+      if @options.key?(:ip_spec) # AceIpSpec Obj
         @options[:ip_spec]
       elsif @options.key?(:ipaddr)
         AceIpSpec.new(@options)

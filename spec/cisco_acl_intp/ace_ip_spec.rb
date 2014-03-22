@@ -49,6 +49,15 @@ describe AceIpSpec do
     it 'should be false same ip and different wildcard' do
       (@ip1 == @ip5).should be_false
     end
+
+    it 'should be true ANY object' do
+      ip1 = AceIpSpec.new(ipaddr: 'any')
+      ip2 = AceIpSpec.new(ipaddr: '0.0.0.0', wildcard: '255.255.255.255')
+      ip3 = AceIpSpec.new(ipaddr: '0.0.0.0', netmask: 0)
+      (ip1 == ip2).should be_true
+      (ip2 == ip3).should be_true
+      (ip3 == ip1).should be_true
+    end
   end
 
   describe '#netmask, #wildcard' do
@@ -103,6 +112,11 @@ describe AceIpSpec do
         wildcard: '0.0.7.6'
       )
       ip.to_s.should be_aclstr('192.168.8.9 0.0.7.6')
+    end
+
+    it 'should be "any" with any alias' do
+      ip = AceIpSpec.new(ipaddr: 'any')
+      ip.to_s.should be_aclstr('any')
     end
 
     it 'should be "any"' do

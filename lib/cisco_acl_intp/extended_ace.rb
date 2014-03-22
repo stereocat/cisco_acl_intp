@@ -33,6 +33,13 @@ module CiscoAclIntp
       end
     end
 
+    # @param [String] proto Protocol name.
+    # @param [Integer, String] port Port No./Name.
+    # @return [AceTcpProtoSpec, AceUdpProtoSpec] TCP/UDP port object.
+    def generate_port_obj(proto, port = nil)
+      port.nil? ? nil : select_proto_class(proto).new(port)
+    end
+
     # Generate port spec by protocol
     # @param [String] proto Protocol name.
     # @param [String, Symbol] opr Port operator.
@@ -43,11 +50,10 @@ module CiscoAclIntp
       if opr.nil?
         AcePortSpec.new(operator: :any) # any
       else
-        proto_class = select_proto_class(proto)
         AcePortSpec.new(
           operator: opr,
-          begin_port: proto_class.new(begin_port),
-          end_port: defined?(end_port) ? nil : proto_class.new(end_port)
+          begin_port: generate_port_obj(proto, begin_port),
+          end_port: generate_port_obj(proto, end_port)
         )
       end
     end
@@ -73,12 +79,6 @@ module CiscoAclIntp
       end
     end
 
-    # @param [String,Integer] protocol IP Protocol Name/No.
-    # @return [AceIpProtoSpec] IP protocol object.
-    def ip_proto_condition(protocol)
-      AceIpProtoSpec.new(protocol)
-    end
-
     # Generate hash key to slice
     # @param [Symbol] pt Prefix of key
     # @param [Symbol] key Postfix of key
@@ -87,15 +87,30 @@ module CiscoAclIntp
       [pt.to_s, key.to_s].join('_').intern
     end
 
-    # Generate list of values sliced hash
+    # Generate list of values sliced hash (args of srcdst_condition)
+    # @param [AceIpProtoSpec] proto_cond IP protocol condition
     # @param [Symbol] pt Prefix of key
     # @param [Hash] opts Option hash for slice
-    def slice_contains_opts(pt, opts)
+    def slice_contains_opts(proto_cond, pt, opts)
       [
+        proto_cond,
         opts[ptkey(pt, :ip)],
         opts[ptkey(pt, :operator)],
         (opts[ptkey(pt, :port)] || opts[ptkey(pt, :begin_port)]),
         opts[ptkey(pt, :end_port)]
+      ]
+    end
+
+    # Generate ACE search(contains?) conditions
+    # @param [Hash] opts Options (target packet info)
+    # @see options is same as ExtendedAce#contains?
+    # @return [Array<AceIpProtoSpec, AceSrcDstSpec, AceSrcDstSpec>]
+    def search_conditions(opts)
+      proto_cond = AceIpProtoSpec.new(opts[:protocol])
+      [
+        proto_cond,
+        srcdst_condition(*slice_contains_opts(proto_cond, :src, opts)),
+        srcdst_condition(*slice_contains_opts(proto_cond, :dst, opts))
       ]
     end
   end # module ExtendedAceSearchUtility
@@ -208,17 +223,11 @@ module CiscoAclIntp
     def contains?(opts)
       if opts.key?(:protocol)
         # generate proto/src/dst object by search conditions
-        proto_condition = ip_proto_condition(opts[:protocol])
-        src_condition = srcdst_condition(
-          proto_condition, *slice_contains_opts(:src, opts)
-        )
-        dst_condition = srcdst_condition(
-          proto_condition, *slice_contains_opts(:dst, opts)
-        )
+        (proto_cond, src_cond, dst_cond) = search_conditions(opts)
         # check if search conditions are matches self.
-        @protocol.contains?(proto_condition) &&
-          @src_spec.contains?(src_condition) &&
-          @dst_spec.contains?(dst_condition)
+        @protocol.contains?(proto_cond) &&
+          @src_spec.contains?(src_cond) &&
+          @dst_spec.contains?(dst_cond)
       else
         fail AclArgumentError, 'Invalid match target protocol'
       end

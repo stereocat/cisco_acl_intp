@@ -13,7 +13,7 @@ module CiscoAclIntp
     # @return [NetAddr::CIDR]
     attr_reader :ipaddr
 
-    # @param [Integer] value Netmask length
+    # @param [Integer] value Netmask *length*
     # @return [Integer]
     attr_reader :netmask
 
@@ -112,8 +112,19 @@ module CiscoAclIntp
       end
     end
 
+    # Check ip addr string: alias 'any' ipaddr
+    # @return [AceIpSpec] IP spec object.
+    def check_ip_any_alias
+      case @options[:ipaddr]
+      when nil, '', 'any', /^\s*$/
+        @options[:ipaddr] = '0.0.0.0'
+        @options[:netmask] = 0
+      end
+    end
+
     # Set instance variables
     def define_addrinfo
+      check_ip_any_alias
       if @options.key?(:wildcard)
         define_addrinfo_prefer_wildcard
       else
@@ -163,12 +174,8 @@ module CiscoAclIntp
 
     # Set instance variables with ip/default-netmask
     def define_addrinfo_with_default_netmask
-      # default mask
-      @netmask = '255.255.255.255'
-      @ipaddr = NetAddr::CIDR.create(
-        [@options[:ipaddr], @netmask].join(' ')
-      )
-      @wildcard = @ipaddr.wildcard_mask(true)
+      @options[:netmask] = 32 # default ('host' mask)
+      define_addrinfo_with_netmask
     end
   end
 end # module
