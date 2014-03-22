@@ -65,7 +65,7 @@ module CiscoAclIntp
     # Generate string for Cisco IOS access list
     # @return [String]
     def to_s
-      sprintf(
+      format(
         '%s %s',
         @input ? 'log-input' : 'log',
         @cookie ? @cookie : ''
@@ -100,7 +100,7 @@ module CiscoAclIntp
     # Generate string for Cisco IOS access list
     # @return [String]
     def to_s
-      sprintf 'reflect %s', tag_name(@recursive_name)
+      format 'reflect %s', tag_name(@recursive_name)
     end
 
     # @param [AceRecursiveQualifier] other RHS object

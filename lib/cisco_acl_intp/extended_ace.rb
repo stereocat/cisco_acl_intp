@@ -196,7 +196,7 @@ module CiscoAclIntp
     # Generate string for Cisco IOS access list
     # @return [String]
     def to_s
-      sprintf(
+      format(
         '%s %s %s %s %s %s',
         tag_action(@action.to_s),
         tag_protocol(@protocol.to_s),

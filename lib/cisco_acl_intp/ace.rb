@@ -56,7 +56,7 @@ module CiscoAclIntp
     end
 
     def to_s
-      tag_error(sprintf('!! error !! %s', @line))
+      tag_error(format('!! error !! %s', @line))
     end
   end
 
@@ -83,7 +83,7 @@ module CiscoAclIntp
     # Generate string for Cisco IOS access list
     # @return [String] Comment string
     def to_s
-      sprintf 'remark %s', tag_remark(@comment.to_s)
+      format 'remark %s', tag_remark(@comment.to_s)
     end
 
     # Search matched ACE
@@ -132,7 +132,7 @@ module CiscoAclIntp
     # Generate string for Cisco IOS access list
     # @return [String]
     def to_s
-      sprintf 'evaluate %s', tag_name(@recursive_name)
+      format 'evaluate %s', tag_name(@recursive_name)
     end
 
     # Search matched ACE

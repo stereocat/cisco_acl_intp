@@ -49,7 +49,7 @@ module CiscoAclIntp
     # Generate ACL header string
     # @return [String] ACL header string
     def header_string
-      sprintf(
+      format(
         '%s %s %s',
         tag_header('ip access-list'),
         tag_type(@acl_type),
@@ -61,7 +61,7 @@ module CiscoAclIntp
     # @param [AceBase] entry ACE object
     def line_string(entry)
       # add indent
-      sprintf(' %s', clean_acl_string(entry.to_s))
+      format ' %s', clean_acl_string(entry.to_s)
     end
 
     # Generate string for Cisco IOS access list
@@ -112,7 +112,7 @@ module CiscoAclIntp
     # Generate ACL header string
     # @return [String] ACL header string
     def header_string
-      sprintf(
+      format(
         '%s %s',
         tag_header('access-list'),
         tag_name(@name)
@@ -122,7 +122,7 @@ module CiscoAclIntp
     # Generate ACL line string
     # @param [AceBase] entry ACE object
     def line_string(entry)
-      clean_acl_string(sprintf('%s %s', header_string, entry))
+      clean_acl_string(format('%s %s', header_string, entry))
     end
 
     # Generate string for Cisco IOS access list

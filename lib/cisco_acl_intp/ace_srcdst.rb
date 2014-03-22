@@ -52,7 +52,7 @@ module CiscoAclIntp
     # Generate string for Cisco IOS access list
     # @return [String]
     def to_s
-      sprintf('%s %s', @ip_spec, @port_spec)
+      format '%s %s', @ip_spec, @port_spec
     end
 
     # Check address and port number contains this object or not.

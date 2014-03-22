@@ -41,7 +41,7 @@ module CiscoAclIntp
     def to_s
       tag_port(
         clean_acl_string(
-          sprintf('%s %s %s', @operator, @begin_port, @end_port)
+          format('%s %s %s', @operator, @begin_port, @end_port)
         )
       )
     end

@@ -48,10 +48,8 @@ module CiscoAclIntp
     # @param [AceIpSpec] other RHS Object
     # @return [Boolean]
     def ==(other)
-      @ipaddr == other.ipaddr &&
-        ip == other.ip &&
-        @netmask == other.netmask &&
-        @wildcard == other.wildcard
+      @ipaddr == other.ipaddr && ip == other.ip &&
+        @netmask == other.netmask && @wildcard == other.wildcard
     end
 
     # Generate string for Cisco IOS access list
@@ -63,9 +61,9 @@ module CiscoAclIntp
       else
         if @wildcard == '0.0.0.0'
           # /32 mask
-          sprintf('%s %s', tag_mask('host'), tag_ip(@ipaddr.ip))
+          format '%s %s', tag_mask('host'), tag_ip(@ipaddr.ip)
         else
-          sprintf('%s %s', tag_ip(to_wmasked_ip_s), tag_mask(@wildcard))
+          format '%s %s', tag_ip(to_wmasked_ip_s), tag_mask(@wildcard)
         end
       end
     end
@@ -150,7 +148,8 @@ module CiscoAclIntp
       if @options.key?(:netmask)
         define_addrinfo_with_netmask
       else
-        define_addrinfo_with_default_netmask
+        @options[:netmask] = 32 # default ('host' mask)
+        define_addrinfo_with_netmask
       end
     end
 
@@ -167,15 +166,9 @@ module CiscoAclIntp
     def define_addrinfo_with_netmask
       @netmask = @options[:netmask]
       @ipaddr = NetAddr::CIDR.create(
-        sprintf('%s/%s', @options[:ipaddr], @netmask)
+        format '%s/%s', @options[:ipaddr], @netmask
       )
       @wildcard = @ipaddr.wildcard_mask(true)
-    end
-
-    # Set instance variables with ip/default-netmask
-    def define_addrinfo_with_default_netmask
-      @options[:netmask] = 32 # default ('host' mask)
-      define_addrinfo_with_netmask
     end
   end
 end # module

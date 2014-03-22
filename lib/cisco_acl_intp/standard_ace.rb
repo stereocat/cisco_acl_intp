@@ -41,12 +41,12 @@ module CiscoAclIntp
     # Generate string for Cisco IOS access list
     # @return [String]
     def to_s
-      sprintf(
+      format(
         '%s %s %s',
         tag_action(@action.to_s),
         @src_spec,
         tag_other_qualifier(@log_spec ? @log_spec : '')
-     )
+      )
     end
 
     # Search matched ACE

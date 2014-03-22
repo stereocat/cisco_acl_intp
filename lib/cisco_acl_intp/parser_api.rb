@@ -159,7 +159,7 @@ module CiscoAclIntp
 
     # Syntax error handler
     def on_error(tok, val, vstack)
-      errstr = sprintf(
+      errstr = format(
         '%s, near value: %s, (token: %s)',
         err_pos_str, val, token_to_str(tok)
       )
@@ -228,7 +228,7 @@ module CiscoAclIntp
     # Generate error string
     # @return [String] error position string
     def err_pos_str
-      sprintf(
+      format(
         'in acl: %s, line: %s',
         @curr_acl_name,
         if @acl_table.key?(@curr_acl_name)

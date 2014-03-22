@@ -12,7 +12,7 @@ describe 'AclContainerBase' do
         end
 
         def to_s_with_tag(tag)
-          instance_eval("tag_#{tag.to_s}(@str)")
+          instance_eval("tag_#{tag}(@str)")
         end
 
         def to_s_with_cleaning
@@ -34,7 +34,7 @@ describe 'AclContainerBase' do
     it 'should be colored string when mode html' do
       AclContainerBase.color_mode = :html
       tag = :header
-      matchstr = "span.*acltag_#{tag.to_s}.*teststr.*span"
+      matchstr = "span.*acltag_#{tag}.*teststr.*span"
       @mock.to_s_with_tag(tag).should match(/#{matchstr}/)
       AclContainerBase.color_mode = :none
     end
