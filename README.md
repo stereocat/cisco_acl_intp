@@ -167,8 +167,8 @@ obj,... See more detail in documents (see also, Documents section)
 
 [Front-end of ACL Varidator]operator is matches only `:any` operator.
 
-# ACL operation as IP/Port set operation
-## Overview
+## ACL operation as IP/Port set operation
+### Overview
 
 A CIDR-IP-Subnet, IP address with wildcard mask, TCP/UDP port
 numbere(s) with operator (`any`, `eq`, `neq`, `lt`, `gt`, `range`),
@@ -202,12 +202,12 @@ ace.contains?(
 #=> true
 ```
 
-## IP Addr Operation
+### IP Addr Operation
 
 See `NetAddr::CIDR#matches?` for CIDR subnet operation and
 `NetAddr::CIDR#contains?` for IP with wildcard mask.
 
-## Port Operation
+### Port Operation
 
 | User       | any  | eq X   | neq X  | lt X   | gt X   | range X1 X2   |
 |------------|------|--------|--------|--------|--------|---------------|
