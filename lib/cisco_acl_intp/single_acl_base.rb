@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
-
 require 'forwardable'
 require 'cisco_acl_intp/extended_ace'
+require 'cisco_acl_intp/acl_utils'
 
 module CiscoAclIntp
   # Single access-list container base
   class SingleAclBase < AclContainerBase
     extend Forwardable
     include Enumerable
+    include AceSearchUtility
 
     # @return [String] name ACL name,
     #   when numbered acl, /\d+/ string
@@ -69,6 +70,7 @@ module CiscoAclIntp
       end
     end
 
+    # Check equality
     # @return [Boolean]
     def ==(other)
       if @acl_type &&
@@ -96,7 +98,9 @@ module CiscoAclIntp
     # @see ExtendedAce#contains?
     # @raise [AclArgumentError]
     def search_ace(opts)
-      @list.find { |each| each.contains?(opts) }
+      # generate proto/src/dst object by search conditions
+      target_ace = target_ace(opts)
+      @list.find { |each| each.contains?(target_ace) }
     end
 
     # acl string clean-up (override)
