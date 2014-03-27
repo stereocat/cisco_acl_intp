@@ -48,16 +48,6 @@ module CiscoAclIntp
     #   TCP Flags object
     # @raise [AclArgumentError]
     # @return [ExtendACE]
-    #
-    # @example Construct ACE object
-    #   ExtendACE.new(
-    #     :protocol => 'tcp',
-    #     :number => 10,
-    #     :action => 'permit',
-    #     :src => { :ipaddr => '192.168.3.0', :wildcard => '0.0.0.127' },
-    #     :dst => { :ipaddr => '172.30.0.0', :wildcard => '0.0.7.127',
-    #               :operator => 'eq', :begin_port => 80 })
-    #
     def initialize(opts)
       super
       @options = opts

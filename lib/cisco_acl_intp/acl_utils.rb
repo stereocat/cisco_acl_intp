@@ -4,6 +4,8 @@ require 'cisco_acl_intp/extended_ace'
 module CiscoAclIntp
   # Extended Ace utilities for ace search
   module AceSearchUtility
+    module_function
+
     # Select protocol spec class for tcp/udp.
     # @param [String] proto Protocol name.
     # @return [Class] Class name.
@@ -108,7 +110,7 @@ module CiscoAclIntp
         src: src_cond, dst: dst_cond
       )
     end
-  end # module ExtendedAceSearchUtility
+  end
 end # module
 
 ### Local variables:

@@ -74,7 +74,7 @@ EOL
     end
   end
 
-  describe '#search_ace' do
+  describe '#find_aces_contains' do
     # for standard ace, it is same as named/numbered ace.
     # so that, tests only named-standard-ace
     # and omit numbered-standard-acl
@@ -95,7 +95,7 @@ EOL
     end
 
     it 'should be match 2nd entry' do
-      ace = @acl.search_ace(
+      ace = @acl.find_aces_contains(
         protocol: 'tcp',
         src_operator: :eq, src_ip: '192.168.10.3', src_port: 64_332
       )
@@ -103,7 +103,7 @@ EOL
     end
 
     it 'should be last entry' do
-      ace = @acl.search_ace(
+      ace = @acl.find_aces_contains(
         protocol: 'tcp',
         src_operator: :eq, src_ip: '10.0.0.3', src_port: 33_890
       )
@@ -111,7 +111,7 @@ EOL
     end
 
     it 'should be nil if not found match entry' do
-      @acl.search_ace(
+      @acl.find_aces_contains(
         protocol: 'udp',
         src_operator: :eq, src_ip: '11.0.0.3', src_port: 33_333
       ).should be_nil
