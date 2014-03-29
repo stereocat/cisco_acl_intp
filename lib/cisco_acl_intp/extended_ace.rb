@@ -87,8 +87,8 @@ module CiscoAclIntp
     # @return [Boolean] Matched or not
     # @see SingleAceBase#search_ace
     def contains?(other)
-      @protocol.contains?(other.protocol) &&
-        @src_spec.contains?(other.src_spec) &&
+      super(other) &&
+        @protocol.contains?(other.protocol) &&
         @dst_spec.contains?(other.dst_spec)
     end
 
