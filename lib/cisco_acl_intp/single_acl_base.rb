@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
-
 require 'forwardable'
 require 'cisco_acl_intp/extended_ace'
+require 'cisco_acl_intp/acl_utils'
 
 module CiscoAclIntp
   # Single access-list container base
   class SingleAclBase < AclContainerBase
     extend Forwardable
     include Enumerable
+    include AceSearchUtility
 
     # @return [String] name ACL name,
     #   when numbered acl, /\d+/ string
@@ -69,6 +70,7 @@ module CiscoAclIntp
       end
     end
 
+    # Check equality
     # @return [Boolean]
     def ==(other)
       if @acl_type &&
@@ -79,10 +81,28 @@ module CiscoAclIntp
       end
     end
 
-    # Search matched ACE from list
+    # Find lists of ACEs that contains flow by options
+    # @param [Hash] opts Options (target packet info)
+    #   options are same as #find_aces_with
+    # @see #find_aces_with
+    # @return [Array<AceBase>] List of ACEs or nil(not found)
+    def find_aces_contains(opts)
+      find_aces_with(opts) { |ace, target_ace| ace.contains?(target_ace) }
+    end
+
+    # Find lists of ACEs that is contained flow by options
+    # @param [Hash] opts Options (target packet info)
+    #   options are same as #find_aces_with
+    # @see #find_aces_with
+    # @return [Array<AceBase>] List of ACEs or nil(not found)
+    def find_aces_contained(opts)
+      find_aces_with(opts) { |ace, target_ace| target_ace.contains?(ace) }
+    end
+
+    # Find lists of ACEs
     # @note In Standard ACL, only src_ip option is used and another
     #   conditions are ignored (if specified).
-    # @param [Hash] opts Options (target packet info),
+    # @param [Hash] opts Options (target flow info),
     # @option opts [Integer,String] protocol L3 protocol No./Name
     # @option opts [String] src_ip Source IP Address
     # @option opts [String] src_operator Source port operator.
@@ -91,12 +111,14 @@ module CiscoAclIntp
     # @option opts [String] dst_ip Destination IP Address
     # @option opts [Integer,String] dst_begin_port Destination Port No./Name
     # @option opts [Integer,String] dst_end_port Destination Port No./Name
-    # @return [AceBase] Matched ACE object or nil(not found)
-    # @see StandardAce#contains?
-    # @see ExtendedAce#contains?
-    # @raise [AclArgumentError]
-    def search_ace(opts)
-      @list.find { |each| each.contains?(opts) }
+    # @yield Find lists of ACEs
+    # @yieldparam [ExtendedAce] ace ACE
+    # @yieldparam [ExtendedAce] target_ace Target ACE
+    # @yieldreturn [Boolean] Condition to find
+    # @return [Array<AceBase>] List of ACEs or nil(not found)
+    def find_aces_with(opts)
+      target_ace = target_ace(opts)
+      @list.find { |ace| yield(ace, target_ace) }
     end
 
     # acl string clean-up (override)

@@ -50,17 +50,11 @@ module CiscoAclIntp
     end
 
     # Search matched ACE
-    # @param [Hash] opts Options (target packet info)
-    # @option opts [String] :src_ip Source IP Address
+    # @param [StandardAce] other Target ACE
     # @return [Boolean] Matched or not
-    # @raise [AclArgumentError] Invalid src_ip
-    def contains?(opts)
-      if opts.key?(:src_ip)
-        src_condition = AceSrcDstSpec.new(ipaddr: opts[:src_ip])
-        @src_spec.contains?(src_condition)
-      else
-        fail AclArgumentError, 'Invalid match target src IP address'
-      end
+    def contains?(other)
+      other.kind_of?(StandardAce) &&
+        @src_spec.contains?(other.src_spec)
     end
 
     private
