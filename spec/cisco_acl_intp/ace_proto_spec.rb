@@ -2,7 +2,7 @@
 require 'spec_helper'
 
 def get_port_table(data)
-  data.split(/\n/).reduce({}) do |tbl, line|
+  data.split(/\n/).each_with_object({}) do |line, tbl|
     md = line.match(/^\s*([\w\d\-]+)\s+.+[\s\(](\d+)\)$/)
     tbl[md[1]] = md[2] if md
     tbl

@@ -8,10 +8,10 @@ gemspec
 group :development, :test do
   gem 'coveralls', require: false
   gem 'racc', '~> 1.4.11'
-  gem 'rake', '~> 10.1.1'
-  gem 'reek', '~> 1.3.6'
+  gem 'rake', '~> 10.3.2'
+  gem 'reek', '~> 1.3.7'
   gem 'rspec', '~> 2.14.1'
-  gem 'rubocop', '~> 0.19.1' if RUBY_VERSION >= '1.9.0'
+  gem 'rubocop', '~> 0.22.0' if RUBY_VERSION >= '1.9.0'
   gem 'simplecov', '~> 0.8.2' if RUBY_VERSION >= '1.9.0'
   gem 'yard', '~> 0.8.7'
 end

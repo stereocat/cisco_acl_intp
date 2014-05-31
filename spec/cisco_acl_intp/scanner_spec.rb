@@ -73,19 +73,18 @@ EOL
         lines.each do |each_line|
           file.puts each_line[:line]
 
+          next unless each_line[:tokens]
           # make tokens data
-          if each_line[:tokens]
-            each_line[:tokens].each do |each_token|
-              case each_token
-              when Array
-                (symbstr, val) = each_token
-                tokens.push [symbstr.intern, val] # symbolize
-              when String
-                tokens.push [each_token, each_token]
-              end
+          each_line[:tokens].each do |each_token|
+            case each_token
+            when Array
+              (symbstr, val) = each_token
+              tokens.push [symbstr.intern, val] # symbolize
+            when String
+              tokens.push [each_token, each_token]
             end
-            tokens.push [:EOS, nil] # End of String
           end
+          tokens.push [:EOS, nil] # End of String
         end
         tokens.push [false, 'EOF'] # last token (End of File)
       end

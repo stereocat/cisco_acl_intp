@@ -158,7 +158,7 @@ module CiscoAclIntp
     end
 
     # Syntax error handler
-    def on_error(tok, val, vstack)
+    def on_error(tok, val, _vstack)
       errstr = format(
         '%s, near value: %s, (token: %s)',
         err_pos_str, val, token_to_str(tok)

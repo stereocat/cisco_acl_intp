@@ -18,7 +18,7 @@ module CiscoAclIntp
     # @param [File] file File IO object
     # @return [Array] Scanned tokens array (Queue)
     def scan_file(file)
-      run_scaner(file) do |each|
+      run_scaner(file) do
         # no-op
       end
     end
@@ -144,13 +144,11 @@ module CiscoAclIntp
     # @return [Boolean] if line matched tokens
     def scan_match_arg_tokens
       @arg_tokens.each do |(str, length)|
-        if @ss.scan(/#{str}/)
-          (1...length).each do |idx|
-            @line_queue.push token_list(@ss[idx])
-          end
-          @line_queue.push [:STRING, @ss[length]] # last element
-          break
+        next unless @ss.scan(/#{str}/)
+        (1...length).each do |idx|
+          @line_queue.push token_list(@ss[idx])
         end
+        @line_queue.push [:STRING, @ss[length]] # last element
       end
       @ss.matched?
     end

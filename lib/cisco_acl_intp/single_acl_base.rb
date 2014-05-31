@@ -73,12 +73,11 @@ module CiscoAclIntp
     # Check equality
     # @return [Boolean]
     def ==(other)
-      if @acl_type &&
-          @name_type &&
-          @acl_type == other.acl_type &&
-          @name_type == other.name_type
+      @acl_type &&
+        @name_type &&
+        @acl_type == other.acl_type &&
+        @name_type == other.name_type &&
         @list == other.list
-      end
     end
 
     # Find lists of ACEs that contains flow by options

@@ -5,7 +5,7 @@ module CiscoAclIntp
   # ANY operator class
   class AcePortOpAny < AceUnaryOpBase
     # Constructor
-    def initialize(*args)
+    def initialize(*_args)
       @begin_port = nil
       @end_port = nil
       @operator = :any

@@ -71,35 +71,35 @@ module CiscoAclIntp
     # Operate EQUAL containing check
     # @param [AcePortOperator] other Another operator
     # @return [Boolean]
-    def compare_eq(other)
+    def compare_eq(_other)
       false
     end
 
     # Operate NOT_EQUAL containing check
     # @param [AcePortOperator] other Another operator
     # @return [Boolean]
-    def compare_neq(other)
+    def compare_neq(_other)
       false
     end
 
     # Operate LOWER_THAN containing check
     # @param [AcePortOperator] other Another operator
     # @return [Boolean]
-    def compare_lt(other)
+    def compare_lt(_other)
       false
     end
 
     # Operate GREATER_THAN containing check
     # @param [AcePortOperator] other Another operator
     # @return [Boolean]
-    def compare_gt(other)
+    def compare_gt(_other)
       false
     end
 
     # Operate RANGE containing check
     # @param [AcePortOperator] other Another operator
     # @return [Boolean]
-    def compare_range(other)
+    def compare_range(_other)
       false
     end
 

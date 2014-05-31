@@ -34,13 +34,12 @@ def gen_testcase(tokens, fields)
 end
 
 def create_data(field_patterns, leftover_results)
-  field_patterns.reduce([]) do |curr_results, each|
+  field_patterns.each_with_object([]) do |each, curr_results|
     leftover_results.each do |each_res|
       ## do not add pattern that has multiple 'false'
       ## add single fault pattern.
-      if each[:valid] || each_res[:valid]
-        curr_results.push(single_data(each, each_res))
-      end
+      next unless each[:valid] || each_res[:valid]
+      curr_results.push(single_data(each, each_res))
     end
     curr_results
   end

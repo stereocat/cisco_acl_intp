@@ -122,7 +122,8 @@ module CiscoAclIntp
         )
       else
         # in standard acl, not used port_spec
-        # if not specified port spec: default: any port
+        # if not specified port spec: default: any port.
+        # port spec should be ignored except tcp/udp protocol.
         AcePortSpec.new(operator: 'any')
       end
     end

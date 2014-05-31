@@ -89,7 +89,7 @@ module CiscoAclIntp
     # Search matched ACE
     # @param [Hash] opts Options
     # return [Boolean] false, Remark does not match anithyng.
-    def contains?(opts = nil)
+    def contains?(_opts = nil)
       false
     end
   end
@@ -139,7 +139,7 @@ module CiscoAclIntp
     # @param [Hash] opts Options
     # return [Boolean]
     # @todo for Recursive name matching is not implemented yet
-    def contains?(opts = nil)
+    def contains?(_opts = nil)
       false
     end
   end
