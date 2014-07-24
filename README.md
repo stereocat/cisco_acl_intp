@@ -25,8 +25,8 @@ CiscoAclIntp *CANNOT*...
 
 Supports
 
-* Ruby/1.9 or later. (Development and testing is being conducted in
-  Ruby/2.0.0 and *NOT* supported Ruby/1.8.x)
+* Ruby/2.0.0 or later. (Development and testing is being conducted in
+  Ruby/2.0.0 and 2.1.1. It does *NOT* support Ruby/1.8.x and 1.9.x)
 * Racc/1.4.9 or later.
 
 ## Installation
