@@ -1,12 +1,12 @@
 AllCops:
-  Includes:
+  Include:
     - lib/**/*.rb
     - tool/*.rb
     - spec/**/*.rb
     - Rakefile
     - Gemfile
     - cisco_acl_intp.gemspec
-  Excludes:
+  Exclude:
     - lib/**/parser.rb
     - spec/data/*.rb
 MethodLength:
