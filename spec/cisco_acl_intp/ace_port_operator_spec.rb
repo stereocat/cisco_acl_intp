@@ -10,13 +10,13 @@ describe 'AcePortOpAny' do
     end
 
     it 'should be true all conditions' do
-      @aclop.contains?(AcePortOpAny.new).should be_true
-      @aclop.contains?(AcePortOpStrictAny.new).should be_true
-      @aclop.contains?(AcePortOpEq.new(@port1)).should be_true
-      @aclop.contains?(AcePortOpNeq.new(@port1)).should be_true
-      @aclop.contains?(AcePortOpLt.new(@port1)).should be_true
-      @aclop.contains?(AcePortOpGt.new(@port1)).should be_true
-      @aclop.contains?(AcePortOpRange.new(@port1, @port2)).should be_true
+      expect(@aclop.contains?(AcePortOpAny.new)).to be_truthy
+      expect(@aclop.contains?(AcePortOpStrictAny.new)).to be_truthy
+      expect(@aclop.contains?(AcePortOpEq.new(@port1))).to be_truthy
+      expect(@aclop.contains?(AcePortOpNeq.new(@port1))).to be_truthy
+      expect(@aclop.contains?(AcePortOpLt.new(@port1))).to be_truthy
+      expect(@aclop.contains?(AcePortOpGt.new(@port1))).to be_truthy
+      expect(@aclop.contains?(AcePortOpRange.new(@port1, @port2))).to be_truthy
     end
   end
 end
@@ -30,16 +30,16 @@ describe 'AcePortOpStrictAny' do
     end
 
     it 'should be true when only ANY conditions' do
-      @aclop.contains?(AcePortOpAny.new).should be_true
-      @aclop.contains?(AcePortOpStrictAny.new).should be_true
+      expect(@aclop.contains?(AcePortOpAny.new)).to be_truthy
+      expect(@aclop.contains?(AcePortOpStrictAny.new)).to be_truthy
     end
 
     it 'should be false with other operators' do
-      @aclop.contains?(AcePortOpEq.new(@port1)).should be_false
-      @aclop.contains?(AcePortOpNeq.new(@port1)).should be_false
-      @aclop.contains?(AcePortOpLt.new(@port1)).should be_false
-      @aclop.contains?(AcePortOpGt.new(@port1)).should be_false
-      @aclop.contains?(AcePortOpRange.new(@port1, @port2)).should be_false
+      expect(@aclop.contains?(AcePortOpEq.new(@port1))).to be_falsey
+      expect(@aclop.contains?(AcePortOpNeq.new(@port1))).to be_falsey
+      expect(@aclop.contains?(AcePortOpLt.new(@port1))).to be_falsey
+      expect(@aclop.contains?(AcePortOpGt.new(@port1))).to be_falsey
+      expect(@aclop.contains?(AcePortOpRange.new(@port1, @port2))).to be_falsey
     end
   end
 end
@@ -53,23 +53,23 @@ describe 'AcePortOpEq' do
     end
 
     it 'should be true with ANY' do
-      @aclop.contains?(AcePortOpAny.new).should be_true
+      expect(@aclop.contains?(AcePortOpAny.new)).to be_truthy
     end
 
     it 'should be false with STRICT_ANY' do
-      @aclop.contains?(AcePortOpStrictAny.new).should be_true
+      expect(@aclop.contains?(AcePortOpStrictAny.new)).to be_truthy
     end
 
     it 'should be true when same eq/port operator' do
-      @aclop.contains?(AcePortOpEq.new(@port1)).should be_true
-      @aclop.contains?(AcePortOpEq.new(@port2)).should be_false
+      expect(@aclop.contains?(AcePortOpEq.new(@port1))).to be_truthy
+      expect(@aclop.contains?(AcePortOpEq.new(@port2))).to be_falsey
     end
 
     it 'should be false with other operator' do
-      @aclop.contains?(AcePortOpNeq.new(@port1)).should be_false
-      @aclop.contains?(AcePortOpLt.new(@port1)).should be_false
-      @aclop.contains?(AcePortOpGt.new(@port1)).should be_false
-      @aclop.contains?(AcePortOpRange.new(@port1, @port2)).should be_false
+      expect(@aclop.contains?(AcePortOpNeq.new(@port1))).to be_falsey
+      expect(@aclop.contains?(AcePortOpLt.new(@port1))).to be_falsey
+      expect(@aclop.contains?(AcePortOpGt.new(@port1))).to be_falsey
+      expect(@aclop.contains?(AcePortOpRange.new(@port1, @port2))).to be_falsey
     end
   end
 end
@@ -84,45 +84,45 @@ describe 'AcePortOpNeq' do
     end
 
     it 'should be true with ANY' do
-      @aclop.contains?(AcePortOpAny.new).should be_true
+      expect(@aclop.contains?(AcePortOpAny.new)).to be_truthy
     end
 
     it 'should be false with STRICT_ANY' do
-      @aclop.contains?(AcePortOpStrictAny.new).should be_true
+      expect(@aclop.contains?(AcePortOpStrictAny.new)).to be_truthy
     end
 
     it 'should be checked with EQUAL' do
-      @aclop.contains?(AcePortOpEq.new(@port1)).should be_true
-      @aclop.contains?(AcePortOpEq.new(@port2)).should be_false
-      @aclop.contains?(AcePortOpEq.new(@port3)).should be_true
+      expect(@aclop.contains?(AcePortOpEq.new(@port1))).to be_truthy
+      expect(@aclop.contains?(AcePortOpEq.new(@port2))).to be_falsey
+      expect(@aclop.contains?(AcePortOpEq.new(@port3))).to be_truthy
     end
 
     it 'should be checked with NOT_EQUAL' do
-      @aclop.contains?(AcePortOpNeq.new(@port1)).should be_false
-      @aclop.contains?(AcePortOpNeq.new(@port2)).should be_true
-      @aclop.contains?(AcePortOpNeq.new(@port3)).should be_false
+      expect(@aclop.contains?(AcePortOpNeq.new(@port1))).to be_falsey
+      expect(@aclop.contains?(AcePortOpNeq.new(@port2))).to be_truthy
+      expect(@aclop.contains?(AcePortOpNeq.new(@port3))).to be_falsey
     end
 
     it 'should be checked with LOWER_THAN' do
-      @aclop.contains?(AcePortOpLt.new(@port1)).should be_true
-      @aclop.contains?(AcePortOpLt.new(@port2)).should be_true
-      @aclop.contains?(AcePortOpLt.new(@port3)).should be_false
+      expect(@aclop.contains?(AcePortOpLt.new(@port1))).to be_truthy
+      expect(@aclop.contains?(AcePortOpLt.new(@port2))).to be_truthy
+      expect(@aclop.contains?(AcePortOpLt.new(@port3))).to be_falsey
     end
 
     it 'should be checked with GRATER_THAN' do
-      @aclop.contains?(AcePortOpGt.new(@port1)).should be_false
-      @aclop.contains?(AcePortOpGt.new(@port2)).should be_true
-      @aclop.contains?(AcePortOpGt.new(@port3)).should be_true
+      expect(@aclop.contains?(AcePortOpGt.new(@port1))).to be_falsey
+      expect(@aclop.contains?(AcePortOpGt.new(@port2))).to be_truthy
+      expect(@aclop.contains?(AcePortOpGt.new(@port3))).to be_truthy
     end
 
     it 'should be checked with RANGE' do
       port2a = AceTcpProtoSpec.new(79)
       port2b = AceTcpProtoSpec.new(81)
-      @aclop.contains?(AcePortOpRange.new(@port1, port2a)).should be_true
-      @aclop.contains?(AcePortOpRange.new(@port1, @port2)).should be_false
-      @aclop.contains?(AcePortOpRange.new(@port2, @port3)).should be_false
-      @aclop.contains?(AcePortOpRange.new(port2b, @port3)).should be_true
-      @aclop.contains?(AcePortOpRange.new(@port1, @port3)).should be_false
+      expect(@aclop.contains?(AcePortOpRange.new(@port1, port2a))).to be_truthy
+      expect(@aclop.contains?(AcePortOpRange.new(@port1, @port2))).to be_falsey
+      expect(@aclop.contains?(AcePortOpRange.new(@port2, @port3))).to be_falsey
+      expect(@aclop.contains?(AcePortOpRange.new(port2b, @port3))).to be_truthy
+      expect(@aclop.contains?(AcePortOpRange.new(@port1, @port3))).to be_falsey
     end
   end
 end
@@ -138,50 +138,50 @@ describe 'AcePortOpLt' do
     end
 
     it 'should be true with ANY' do
-      @aclop.contains?(AcePortOpAny.new).should be_true
+      expect(@aclop.contains?(AcePortOpAny.new)).to be_truthy
     end
 
     it 'should be false with STRICT_ANY' do
-      @aclop.contains?(AcePortOpStrictAny.new).should be_true
+      expect(@aclop.contains?(AcePortOpStrictAny.new)).to be_truthy
     end
 
     it 'should be checked with EQUAL' do
-      @aclop.contains?(AcePortOpEq.new(@port1)).should be_true
-      @aclop.contains?(AcePortOpEq.new(@port2)).should be_false
-      @aclop.contains?(AcePortOpEq.new(@port3)).should be_false
+      expect(@aclop.contains?(AcePortOpEq.new(@port1))).to be_truthy
+      expect(@aclop.contains?(AcePortOpEq.new(@port2))).to be_falsey
+      expect(@aclop.contains?(AcePortOpEq.new(@port3))).to be_falsey
     end
 
     it 'should be checked with NOT_EQUAL(1)' do
-      @aclop.contains?(AcePortOpNeq.new(@port1)).should be_false
-      @aclop.contains?(AcePortOpNeq.new(@port2)).should be_false
-      @aclop.contains?(AcePortOpNeq.new(@port3)).should be_false
+      expect(@aclop.contains?(AcePortOpNeq.new(@port1))).to be_falsey
+      expect(@aclop.contains?(AcePortOpNeq.new(@port2))).to be_falsey
+      expect(@aclop.contains?(AcePortOpNeq.new(@port3))).to be_falsey
     end
 
     it 'should be checked with NOT_EQUAL(2)' do
       aclop = AcePortOpLt.new(@port_max)
-      aclop.contains?(AcePortOpNeq.new(@port_max)).should be_true
+      expect(aclop.contains?(AcePortOpNeq.new(@port_max))).to be_truthy
     end
 
     it 'should be checked with LOWER_THAN' do
-      @aclop.contains?(AcePortOpLt.new(@port1)).should be_true
-      @aclop.contains?(AcePortOpLt.new(@port2)).should be_true
-      @aclop.contains?(AcePortOpLt.new(@port3)).should be_false
+      expect(@aclop.contains?(AcePortOpLt.new(@port1))).to be_truthy
+      expect(@aclop.contains?(AcePortOpLt.new(@port2))).to be_truthy
+      expect(@aclop.contains?(AcePortOpLt.new(@port3))).to be_falsey
     end
 
     it 'should be checked with GRATER_THAN' do
-      @aclop.contains?(AcePortOpGt.new(@port1)).should be_false
-      @aclop.contains?(AcePortOpGt.new(@port2)).should be_false
-      @aclop.contains?(AcePortOpGt.new(@port3)).should be_false
+      expect(@aclop.contains?(AcePortOpGt.new(@port1))).to be_falsey
+      expect(@aclop.contains?(AcePortOpGt.new(@port2))).to be_falsey
+      expect(@aclop.contains?(AcePortOpGt.new(@port3))).to be_falsey
     end
 
     it 'should be checked with RANGE' do
       port2a = AceTcpProtoSpec.new(79)
       port2b = AceTcpProtoSpec.new(81)
-      @aclop.contains?(AcePortOpRange.new(@port1, port2a)).should be_true
-      @aclop.contains?(AcePortOpRange.new(@port1, @port2)).should be_false
-      @aclop.contains?(AcePortOpRange.new(@port2, @port3)).should be_false
-      @aclop.contains?(AcePortOpRange.new(port2b, @port3)).should be_false
-      @aclop.contains?(AcePortOpRange.new(@port1, @port3)).should be_false
+      expect(@aclop.contains?(AcePortOpRange.new(@port1, port2a))).to be_truthy
+      expect(@aclop.contains?(AcePortOpRange.new(@port1, @port2))).to be_falsey
+      expect(@aclop.contains?(AcePortOpRange.new(@port2, @port3))).to be_falsey
+      expect(@aclop.contains?(AcePortOpRange.new(port2b, @port3))).to be_falsey
+      expect(@aclop.contains?(AcePortOpRange.new(@port1, @port3))).to be_falsey
     end
   end
 end
@@ -197,50 +197,50 @@ describe 'AcePortOpGt' do
     end
 
     it 'should be true with ANY' do
-      @aclop.contains?(AcePortOpAny.new).should be_true
+      expect(@aclop.contains?(AcePortOpAny.new)).to be_truthy
     end
 
     it 'should be false with STRICT_ANY' do
-      @aclop.contains?(AcePortOpStrictAny.new).should be_true
+      expect(@aclop.contains?(AcePortOpStrictAny.new)).to be_truthy
     end
 
     it 'should be checked with EQUAL' do
-      @aclop.contains?(AcePortOpEq.new(@port1)).should be_false
-      @aclop.contains?(AcePortOpEq.new(@port2)).should be_false
-      @aclop.contains?(AcePortOpEq.new(@port3)).should be_true
+      expect(@aclop.contains?(AcePortOpEq.new(@port1))).to be_falsey
+      expect(@aclop.contains?(AcePortOpEq.new(@port2))).to be_falsey
+      expect(@aclop.contains?(AcePortOpEq.new(@port3))).to be_truthy
     end
 
     it 'should be checked with NOT_EQUAL(1)' do
-      @aclop.contains?(AcePortOpNeq.new(@port1)).should be_false
-      @aclop.contains?(AcePortOpNeq.new(@port2)).should be_false
-      @aclop.contains?(AcePortOpNeq.new(@port3)).should be_false
+      expect(@aclop.contains?(AcePortOpNeq.new(@port1))).to be_falsey
+      expect(@aclop.contains?(AcePortOpNeq.new(@port2))).to be_falsey
+      expect(@aclop.contains?(AcePortOpNeq.new(@port3))).to be_falsey
     end
 
     it 'should be checked with NOT_EQUAL(2)' do
       aclop = AcePortOpGt.new(@port_min)
-      aclop.contains?(AcePortOpNeq.new(@port_min)).should be_true
+      expect(aclop.contains?(AcePortOpNeq.new(@port_min))).to be_truthy
     end
 
     it 'should be checked with LOWER_THAN' do
-      @aclop.contains?(AcePortOpLt.new(@port1)).should be_false
-      @aclop.contains?(AcePortOpLt.new(@port2)).should be_false
-      @aclop.contains?(AcePortOpLt.new(@port3)).should be_false
+      expect(@aclop.contains?(AcePortOpLt.new(@port1))).to be_falsey
+      expect(@aclop.contains?(AcePortOpLt.new(@port2))).to be_falsey
+      expect(@aclop.contains?(AcePortOpLt.new(@port3))).to be_falsey
     end
 
     it 'should be checked with GRATER_THAN' do
-      @aclop.contains?(AcePortOpGt.new(@port1)).should be_false
-      @aclop.contains?(AcePortOpGt.new(@port2)).should be_true
-      @aclop.contains?(AcePortOpGt.new(@port3)).should be_true
+      expect(@aclop.contains?(AcePortOpGt.new(@port1))).to be_falsey
+      expect(@aclop.contains?(AcePortOpGt.new(@port2))).to be_truthy
+      expect(@aclop.contains?(AcePortOpGt.new(@port3))).to be_truthy
     end
 
     it 'should be checked with RANGE' do
       port2a = AceTcpProtoSpec.new(79)
       port2b = AceTcpProtoSpec.new(81)
-      @aclop.contains?(AcePortOpRange.new(@port1, port2a)).should be_false
-      @aclop.contains?(AcePortOpRange.new(@port1, @port2)).should be_false
-      @aclop.contains?(AcePortOpRange.new(@port2, @port3)).should be_false
-      @aclop.contains?(AcePortOpRange.new(port2b, @port3)).should be_true
-      @aclop.contains?(AcePortOpRange.new(@port1, @port3)).should be_false
+      expect(@aclop.contains?(AcePortOpRange.new(@port1, port2a))).to be_falsey
+      expect(@aclop.contains?(AcePortOpRange.new(@port1, @port2))).to be_falsey
+      expect(@aclop.contains?(AcePortOpRange.new(@port2, @port3))).to be_falsey
+      expect(@aclop.contains?(AcePortOpRange.new(port2b, @port3))).to be_truthy
+      expect(@aclop.contains?(AcePortOpRange.new(@port1, @port3))).to be_falsey
     end
   end
 end
@@ -265,70 +265,70 @@ describe 'AcePortOpRange' do
     end
 
     it 'should be true with ANY' do
-      @aclop.contains?(AcePortOpAny.new).should be_true
+      expect(@aclop.contains?(AcePortOpAny.new)).to be_truthy
     end
 
     it 'should be false with STRICT_ANY' do
-      @aclop.contains?(AcePortOpStrictAny.new).should be_true
+      expect(@aclop.contains?(AcePortOpStrictAny.new)).to be_truthy
     end
 
     it 'should be checked with EQUAL' do
-      @aclop.contains?(AcePortOpEq.new(@port1)).should be_false
-      @aclop.contains?(AcePortOpEq.new(@port2)).should be_true
-      @aclop.contains?(AcePortOpEq.new(@port3)).should be_true
-      @aclop.contains?(AcePortOpEq.new(@port4)).should be_false
+      expect(@aclop.contains?(AcePortOpEq.new(@port1))).to be_falsey
+      expect(@aclop.contains?(AcePortOpEq.new(@port2))).to be_truthy
+      expect(@aclop.contains?(AcePortOpEq.new(@port3))).to be_truthy
+      expect(@aclop.contains?(AcePortOpEq.new(@port4))).to be_falsey
     end
 
     it 'should be checked with NOT_EQUAL(1)' do
-      @aclop.contains?(AcePortOpNeq.new(@port1)).should be_false
-      @aclop.contains?(AcePortOpNeq.new(@port2)).should be_false
-      @aclop.contains?(AcePortOpNeq.new(@port3)).should be_false
-      @aclop.contains?(AcePortOpNeq.new(@port4)).should be_false
+      expect(@aclop.contains?(AcePortOpNeq.new(@port1))).to be_falsey
+      expect(@aclop.contains?(AcePortOpNeq.new(@port2))).to be_falsey
+      expect(@aclop.contains?(AcePortOpNeq.new(@port3))).to be_falsey
+      expect(@aclop.contains?(AcePortOpNeq.new(@port4))).to be_falsey
     end
 
     it 'should be checked with NOT_EQUAL(2)' do
       aclop = AcePortOpRange.new(@port_min, @port_max)
-      aclop.contains?(AcePortOpNeq.new(@port_min)).should be_true
-      aclop.contains?(AcePortOpNeq.new(@port_max)).should be_true
+      expect(aclop.contains?(AcePortOpNeq.new(@port_min))).to be_truthy
+      expect(aclop.contains?(AcePortOpNeq.new(@port_max))).to be_truthy
     end
 
     it 'should be checked with LOWER_THAN(1)' do
-      @aclop.contains?(AcePortOpLt.new(@port1)).should be_false
-      @aclop.contains?(AcePortOpLt.new(@port2)).should be_false
-      @aclop.contains?(AcePortOpLt.new(@port3)).should be_false
-      @aclop.contains?(AcePortOpLt.new(@port4)).should be_false
+      expect(@aclop.contains?(AcePortOpLt.new(@port1))).to be_falsey
+      expect(@aclop.contains?(AcePortOpLt.new(@port2))).to be_falsey
+      expect(@aclop.contains?(AcePortOpLt.new(@port3))).to be_falsey
+      expect(@aclop.contains?(AcePortOpLt.new(@port4))).to be_falsey
     end
 
     it 'should be checked with LOWER_THAN(2)' do
       aclop = AcePortOpRange.new(@port_min, @port3)
-      aclop.contains?(AcePortOpLt.new(@port3a)).should be_true
-      aclop.contains?(AcePortOpLt.new(@port3)).should be_false
-      aclop.contains?(AcePortOpLt.new(@port3b)).should be_false
+      expect(aclop.contains?(AcePortOpLt.new(@port3a))).to be_truthy
+      expect(aclop.contains?(AcePortOpLt.new(@port3))).to be_falsey
+      expect(aclop.contains?(AcePortOpLt.new(@port3b))).to be_falsey
     end
 
     it 'should be checked with GRATER_THAN(1)' do
-      @aclop.contains?(AcePortOpGt.new(@port1)).should be_false
-      @aclop.contains?(AcePortOpGt.new(@port2)).should be_false
-      @aclop.contains?(AcePortOpGt.new(@port3)).should be_false
-      @aclop.contains?(AcePortOpGt.new(@port4)).should be_false
+      expect(@aclop.contains?(AcePortOpGt.new(@port1))).to be_falsey
+      expect(@aclop.contains?(AcePortOpGt.new(@port2))).to be_falsey
+      expect(@aclop.contains?(AcePortOpGt.new(@port3))).to be_falsey
+      expect(@aclop.contains?(AcePortOpGt.new(@port4))).to be_falsey
     end
 
     it 'should be checked with GRATER_THAN(2)' do
       aclop = AcePortOpRange.new(@port2, @port_max)
-      aclop.contains?(AcePortOpGt.new(@port2a)).should be_false
-      aclop.contains?(AcePortOpGt.new(@port2)).should be_false
-      aclop.contains?(AcePortOpGt.new(@port2b)).should be_true
+      expect(aclop.contains?(AcePortOpGt.new(@port2a))).to be_falsey
+      expect(aclop.contains?(AcePortOpGt.new(@port2))).to be_falsey
+      expect(aclop.contains?(AcePortOpGt.new(@port2b))).to be_truthy
     end
 
     it 'should be checked with RANGE' do
-      @aclop.contains?(AcePortOpRange.new(@port1, @port2a)).should be_false
-      @aclop.contains?(AcePortOpRange.new(@port1, @port2)).should be_false
-      @aclop.contains?(AcePortOpRange.new(@port2, @port3a)).should be_true
-      @aclop.contains?(AcePortOpRange.new(@port2, @port3)).should be_true
-      @aclop.contains?(AcePortOpRange.new(@port2, @port3b)).should be_false
-      @aclop.contains?(AcePortOpRange.new(@port1, @port3)).should be_false
-      @aclop.contains?(AcePortOpRange.new(@port2, @port4)).should be_false
-      @aclop.contains?(AcePortOpRange.new(@port1, @port4)).should be_false
+      expect(@aclop.contains?(AcePortOpRange.new(@port1, @port2a))).to be_falsey
+      expect(@aclop.contains?(AcePortOpRange.new(@port1, @port2))).to be_falsey
+      expect(@aclop.contains?(AcePortOpRange.new(@port2, @port3a))).to be_truthy
+      expect(@aclop.contains?(AcePortOpRange.new(@port2, @port3))).to be_truthy
+      expect(@aclop.contains?(AcePortOpRange.new(@port2, @port3b))).to be_falsey
+      expect(@aclop.contains?(AcePortOpRange.new(@port1, @port3))).to be_falsey
+      expect(@aclop.contains?(AcePortOpRange.new(@port2, @port4))).to be_falsey
+      expect(@aclop.contains?(AcePortOpRange.new(@port1, @port4))).to be_falsey
     end
   end
 end

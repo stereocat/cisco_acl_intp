@@ -8,7 +8,7 @@ describe NamedStdAcl do
     end
 
     it 'should be zero when initialized' do
-      @acl.size.should be_zero
+      expect(@acl.size).to be_zero
     end
 
     it 'should be size 1 and matches aclstr when added a acl entry' do
@@ -20,12 +20,12 @@ describe NamedStdAcl do
         }
       )
       @acl.add_entry sa
-      @acl.size.should eq 1
+      expect(@acl.size).to eq 1
       aclstr = <<'EOL'
 ip access-list standard test-std-acl
  permit 192.168.3.0 0.0.0.127
 EOL
-      @acl.to_s.should be_aclstr(aclstr)
+      expect(@acl.to_s).to be_aclstr(aclstr)
     end
   end
 
@@ -49,7 +49,7 @@ EOL
     end
 
     it 'should be size 2' do
-      @acl.size.should eq 2
+      expect(@acl.size).to eq 2
     end
 
     it 'mutches aclstr' do
@@ -58,7 +58,7 @@ ip access-list standard test-std-acl2
  permit 192.168.3.0 0.0.0.127
  deny 192.168.4.0 0.0.0.255
 EOL
-      @acl.to_s.should be_aclstr(aclstr)
+      expect(@acl.to_s).to be_aclstr(aclstr)
     end
 
     it 'mutches aclstr with remark' do
@@ -70,7 +70,7 @@ ip access-list standard test-std-acl2
  deny 192.168.4.0 0.0.0.255
  remark this is remark!!
 EOL
-      @acl.to_s.should be_aclstr(aclstr)
+      expect(@acl.to_s).to be_aclstr(aclstr)
     end
   end
 
@@ -99,7 +99,7 @@ EOL
         protocol: 'tcp',
         src_operator: :eq, src_ip: '192.168.10.3', src_port: 64_332
       )
-      ace.to_s.should be_aclstr('deny host 192.168.10.3')
+      expect(ace.to_s).to be_aclstr('deny host 192.168.10.3')
     end
 
     it 'should be last entry' do
@@ -107,14 +107,14 @@ EOL
         protocol: 'tcp',
         src_operator: :eq, src_ip: '10.0.0.3', src_port: 33_890
       )
-      ace.to_s.should be_aclstr('deny 10.0.0.0 0.0.0.255')
+      expect(ace.to_s).to be_aclstr('deny 10.0.0.0 0.0.0.255')
     end
 
     it 'should be nil if not found match entry' do
-      @acl.find_aces_contains(
+      expect(@acl.find_aces_contains(
         protocol: 'udp',
         src_operator: :eq, src_ip: '11.0.0.3', src_port: 33_333
-      ).should be_nil
+      )).to be_nil
     end
   end
 end
@@ -126,7 +126,7 @@ describe NumberedStdAcl do
     end
 
     it 'should be zero when initialized' do
-      @acl.size.should be_zero
+      expect(@acl.size).to be_zero
     end
 
     it 'should be size 1 and matches aclstr when added a acl entry' do
@@ -138,11 +138,11 @@ describe NumberedStdAcl do
         }
       )
       @acl.add_entry sa
-      @acl.size.should eq 1
+      expect(@acl.size).to eq 1
       aclstr = <<'EOL'
 access-list 10 permit 192.168.3.0 0.0.0.127
 EOL
-      @acl.to_s.should be_aclstr(aclstr)
+      expect(@acl.to_s).to be_aclstr(aclstr)
     end
   end
 
@@ -166,7 +166,7 @@ EOL
     end
 
     it 'should be size 2' do
-      @acl.size.should eq 2
+      expect(@acl.size).to eq 2
     end
 
     it 'mutches aclstr' do
@@ -174,7 +174,7 @@ EOL
 access-list 14 permit 192.168.3.0 0.0.0.127
 access-list 14 deny 192.168.4.0 0.0.0.255
 EOL
-      @acl.to_s.should be_aclstr(aclstr)
+      expect(@acl.to_s).to be_aclstr(aclstr)
     end
 
     it 'mutches aclstr with remark' do
@@ -185,7 +185,7 @@ access-list 14 permit 192.168.3.0 0.0.0.127
 access-list 14 deny 192.168.4.0 0.0.0.255
 access-list 14 remark this is remark!!
 EOL
-      @acl.to_s.should be_aclstr(aclstr)
+      expect(@acl.to_s).to be_aclstr(aclstr)
     end
   end
 
@@ -202,7 +202,7 @@ EOL
       it 'should has seq number by add_entry' do
         @acl.renumber
         @acl.reduce(10) do |num, each|
-          each.seq_number.should eq num
+          expect(each.seq_number).to eq num
           num + 10
         end
       end
@@ -229,10 +229,10 @@ access-list 15 remark entry 4
 access-list 15 remark entry 2
 access-list 15 remark entry 3
 EOL
-        @acl.name.should eq acl_new.name
-        @acl.acl_type.should eq acl_new.acl_type
-        @acl.to_s.should be_aclstr(aclstr)
-        acl_new.to_s.should be_aclstr(aclstr_new)
+        expect(@acl.name).to eq acl_new.name
+        expect(@acl.acl_type).to eq acl_new.acl_type
+        expect(@acl.to_s).to be_aclstr(aclstr)
+        expect(acl_new.to_s).to be_aclstr(aclstr_new)
       end
     end
   end

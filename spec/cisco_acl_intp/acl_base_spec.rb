@@ -23,32 +23,34 @@ describe 'AclContainerBase' do
     end
 
     it 'shoud be cleaning whitespace' do
-      @mock.to_s_with_cleaning.should eq 'foo bar baz'
+      expect(@mock.to_s_with_cleaning).to eq 'foo bar baz'
     end
 
     it 'should be same as raw string' do
       AclContainerBase.color_mode = :none
-      @mock.to_s_with_tag(:port).should eq 'teststr'
+      expect(@mock.to_s_with_tag(:port)).to eq 'teststr'
     end
 
     it 'should be colored string when mode html' do
       AclContainerBase.color_mode = :html
       tag = :header
       matchstr = "span.*acltag_#{tag}.*teststr.*span"
-      @mock.to_s_with_tag(tag).should match(/#{matchstr}/)
+      expect(@mock.to_s_with_tag(tag)).to match(/#{matchstr}/)
       AclContainerBase.color_mode = :none
     end
 
     it 'should be colored string when mode term' do
       AclContainerBase.color_mode = :term
-      @mock.to_s_with_tag(:error).should match(/\e\[0?\d+m.*teststr.*\e\[0?m/)
+      expect(@mock.to_s_with_tag(:error)).to match(
+        /\e\[0?\d+m.*teststr.*\e\[0?m/
+      )
       AclContainerBase.color_mode = :none
     end
 
     it 'should be raised NoMethodError when unknown tag' do
-      lambda do
+      expect do
         @cntr.to_s_with_tag(:hoge)
-      end.should raise_error(NoMethodError)
+      end.to raise_error(NoMethodError)
     end
   end
 end
