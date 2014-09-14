@@ -7,7 +7,7 @@ gemspec
 
 group :development, :test do
   gem 'coveralls', require: false
-  gem 'racc', '~> 1.4.11'
+  gem 'racc', '~> 1.4.12'
   gem 'rake', '~> 10.3.2'
   gem 'reek', '~> 1.3.8'
   gem 'rspec', '~> 2.14.1'
