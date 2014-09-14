@@ -125,7 +125,7 @@ describe 'Parser' do
     it 'should be parsed acl [<%= now %>]: <%= t[:data] %>' do
       datastr = '<%= t[:data] %>'
       @parser.parse_string(datastr)
-      @parser.contains_error?.should be_false
+      expect(@parser.contains_error?).to be_falsey
     end
 <%-
     else
@@ -133,7 +133,7 @@ describe 'Parser' do
     it 'should not be parsed acl [<%= now %>]: <%= t[:data] %>' do
       datastr = StringIO.new('<%= t[:data] %>', 'r')
       @parser.parse_file(datastr)
-      @parser.contains_error?.should be_true
+      expect(@parser.contains_error?).to be_truthy
     end
 <%-
     end

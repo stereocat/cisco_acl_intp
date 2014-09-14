@@ -23,15 +23,15 @@ describe AceSrcDstSpec do
     end
 
     it 'should be true when same ip/netmask/wildcard' do
-      (@sds1 == @sds2).should be_true
+      expect(@sds1 == @sds2).to be_truthy
     end
 
     it 'should be false when different operator' do
-      (@sds1 == @sds3).should be_false
+      expect(@sds1 == @sds3).to be_falsey
     end
 
     it 'should be false when different ip' do
-      (@sds1 == @sds4).should be_false
+      expect(@sds1 == @sds4).to be_falsey
     end
   end
 
@@ -42,7 +42,7 @@ describe AceSrcDstSpec do
           ipaddr: '192.168.3.3',
           wildcard: '0.0.0.127'
         )
-        sds.to_s.should be_aclstr('192.168.3.0 0.0.0.127')
+        expect(sds.to_s).to be_aclstr('192.168.3.0 0.0.0.127')
       end
 
       it 'should be "192.168.3.0 eq www" with L4 port' do
@@ -52,17 +52,17 @@ describe AceSrcDstSpec do
           operator: 'eq',
           port: AceTcpProtoSpec.new(80)
         )
-        sds.to_s.should be_aclstr('192.168.3.0 0.0.0.127 eq www')
+        expect(sds.to_s).to be_aclstr('192.168.3.0 0.0.0.127 eq www')
       end
     end
 
     context 'Argument error case' do
       it 'should be raise exception when :ipaddr not specified' do
-        lambda do
+        expect do
           AceSrcDstSpec.new(
             wildcard: '0.0.0.127'
           )
-        end.should raise_error(AclArgumentError)
+        end.to raise_error(AclArgumentError)
       end
       ## TBD, error handling must be written in detail
     end
@@ -91,28 +91,48 @@ describe AceSrcDstSpec do
       end
 
       it 'should be true when match ip and ANY port' do
-        @sds0.contains?(_srcdst(@ip_match, :eq, @p1_match)).should be_true
-        @sds0.contains?(_srcdst(@ip_match, :eq, @p1_unmatch)).should be_true
+        expect(
+          @sds0.contains?(_srcdst(@ip_match, :eq, @p1_match))
+        ).to be_truthy
+        expect(
+          @sds0.contains?(_srcdst(@ip_match, :eq, @p1_unmatch))
+        ).to be_truthy
       end
 
       it 'should be false when unmatch ip and ANY port' do
-        @sds0.contains?(_srcdst(@ip_unmatch, :eq, @p1_match)).should be_false
-        @sds0.contains?(_srcdst(@ip_unmatch, :eq, @p1_unmatch)).should be_false
+        expect(
+          @sds0.contains?(_srcdst(@ip_unmatch, :eq, @p1_match))
+        ).to be_falsey
+        expect(
+          @sds0.contains?(_srcdst(@ip_unmatch, :eq, @p1_unmatch))
+        ).to be_falsey
       end
 
       it 'should be true when match ip and contained port set' do
-        @sds1.contains?(_srcdst(@ip_match, :eq, @p1_lower)).should be_true
-        @sds1.contains?(_srcdst(@ip_match, :lt, @p1_match)).should be_true
+        expect(
+          @sds1.contains?(_srcdst(@ip_match, :eq, @p1_lower))
+        ).to be_truthy
+        expect(
+          @sds1.contains?(_srcdst(@ip_match, :lt, @p1_match))
+        ).to be_truthy
       end
 
       it 'should be false when unmatch ip and contained port set' do
-        @sds1.contains?(_srcdst(@ip_unmatch, :eq, @p1_lower)).should be_false
-        @sds1.contains?(_srcdst(@ip_unmatch, :lt, @p1_match)).should be_false
+        expect(
+          @sds1.contains?(_srcdst(@ip_unmatch, :eq, @p1_lower))
+        ).to be_falsey
+        expect(
+          @sds1.contains?(_srcdst(@ip_unmatch, :lt, @p1_match))
+        ).to be_falsey
       end
 
       it 'should be false when match ip and not-contained port set' do
-        @sds1.contains?(_srcdst(@ip_match, :eq, @p1_match)).should be_false
-        @sds1.contains?(_srcdst(@ip_match, :lt, @p1_higher)).should be_false
+        expect(
+          @sds1.contains?(_srcdst(@ip_match, :eq, @p1_match))
+        ).to be_falsey
+        expect(
+          @sds1.contains?(_srcdst(@ip_match, :lt, @p1_higher))
+        ).to be_falsey
       end
     end
 
@@ -133,41 +153,49 @@ describe AceSrcDstSpec do
       end
 
       it 'should be true when contained (length)' do
-        @sds0.contains?(_srcdst(@ip_contained1, :eq, @p1_match)).should be_true
-        @sds1.contains?(_srcdst(@ip_contained1, :eq, @p1_match)).should be_true
+        expect(
+          @sds0.contains?(_srcdst(@ip_contained1, :eq, @p1_match))
+        ).to be_truthy
+        expect(
+          @sds1.contains?(_srcdst(@ip_contained1, :eq, @p1_match))
+        ).to be_truthy
       end
 
       it 'should be true when contained (bitmask)' do
-        @sds0.contains?(_srcdst(@ip_contained2, :eq, @p1_match)).should be_true
-        @sds1.contains?(_srcdst(@ip_contained2, :eq, @p1_match)).should be_true
+        expect(
+          @sds0.contains?(_srcdst(@ip_contained2, :eq, @p1_match))
+        ).to be_truthy
+        expect(
+          @sds1.contains?(_srcdst(@ip_contained2, :eq, @p1_match))
+        ).to be_truthy
       end
 
       it 'should be false when not contained (length)' do
-        @sds0.contains?(
-          _srcdst(@ip_not_contained1, :eq, @p1_match)
-        ).should be_false
-        @sds1.contains?(
-          _srcdst(@ip_not_contained1, :eq, @p1_match)
-        ).should be_false
+        expect(
+          @sds0.contains?(_srcdst(@ip_not_contained1, :eq, @p1_match))
+        ).to be_falsey
+        expect(
+          @sds1.contains?(_srcdst(@ip_not_contained1, :eq, @p1_match))
+        ).to be_falsey
       end
 
       it 'should be false when not contained (bitmask)' do
-        @sds0.contains?(
-          _srcdst(@ip_not_contained2, :eq, @p1_match)
-        ).should be_false
-        @sds1.contains?(
-          _srcdst(@ip_not_contained2, :eq, @p1_match)
-        ).should be_false
+        expect(
+          @sds0.contains?(_srcdst(@ip_not_contained2, :eq, @p1_match))
+        ).to be_falsey
+        expect(
+          @sds1.contains?(_srcdst(@ip_not_contained2, :eq, @p1_match))
+        ).to be_falsey
       end
 
       it 'should be raised error when invalid subnet notation' do
-        lambda do
+        expect do
           @sds0.contains?(_srcdst(@ip_error1, :eq, @p1_match))
-        end.should raise_error(NetAddr::ValidationError)
+        end.to raise_error(NetAddr::ValidationError)
 
-        lambda do
+        expect do
           @sds1.contains?(_srcdst(@ip_error1, :eq, @p1_match))
-        end.should raise_error(NetAddr::ValidationError)
+        end.to raise_error(NetAddr::ValidationError)
 
         # lambda do
         # @sds0.contains?(_srcdst(@ip_error2, :eq, @p1_match)).should be_false
@@ -198,16 +226,24 @@ describe AceSrcDstSpec do
       end
 
       it 'should be true, with match ip in range port' do
-        @sds.contains?(_srcdst(@ip_match, :eq, @p_in)).should be_true
+        expect(
+          @sds.contains?(_srcdst(@ip_match, :eq, @p_in))
+        ).to be_truthy
       end
 
       it 'should be false, with match ip and out of range port' do
-        @sds.contains?(_srcdst(@ip_match, :eq, @p_out_lower)).should be_false
-        @sds.contains?(_srcdst(@ip_match, :eq, @p_out_higher)).should be_false
+        expect(
+          @sds.contains?(_srcdst(@ip_match, :eq, @p_out_lower))
+        ).to be_falsey
+        expect(
+          @sds.contains?(_srcdst(@ip_match, :eq, @p_out_higher))
+        ).to be_falsey
       end
 
       it 'should be false, with unmatch ip match in range port' do
-        @sds.contains?(_srcdst(@ip_unmatch, :eq, @p_in)).should be_false
+        expect(
+          @sds.contains?(_srcdst(@ip_unmatch, :eq, @p_in))
+        ).to be_falsey
       end
     end
 
@@ -248,30 +284,54 @@ describe AceSrcDstSpec do
       end
 
       it 'should be true, for any ip' do
-        @sds1.contains?(_srcdst(@ip_match, :eq, @p_match)).should be_true
-        @sds1.contains?(_srcdst(@ip_unmatch, :eq, @p_match)).should be_true
+        expect(
+          @sds1.contains?(_srcdst(@ip_match, :eq, @p_match))
+        ).to be_truthy
+        expect(
+          @sds1.contains?(_srcdst(@ip_unmatch, :eq, @p_match))
+        ).to be_truthy
       end
 
       it 'should be false, for any ip with unmatch port' do
-        @sds1.contains?(_srcdst(@ip_match, :eq, @p_unmatch)).should be_false
-        @sds1.contains?(_srcdst(@ip_unmatch, :eq, @p_unmatch)).should be_false
+        expect(
+          @sds1.contains?(_srcdst(@ip_match, :eq, @p_unmatch))
+        ).to be_falsey
+        expect(
+          @sds1.contains?(_srcdst(@ip_unmatch, :eq, @p_unmatch))
+        ).to be_falsey
       end
 
       it 'should be true, for any port' do
-        @sds2.contains?(_srcdst(@ip_match, :eq, @p_match)).should be_true
-        @sds2.contains?(_srcdst(@ip_match, :eq, @p_unmatch)).should be_true
+        expect(
+          @sds2.contains?(_srcdst(@ip_match, :eq, @p_match))
+        ).to be_truthy
+        expect(
+          @sds2.contains?(_srcdst(@ip_match, :eq, @p_unmatch))
+        ).to be_truthy
       end
 
       it 'should be false, for any port with unmatch ip' do
-        @sds2.contains?(_srcdst(@ip_unmatch, :eq, @p_match)).should be_false
-        @sds2.contains?(_srcdst(@ip_unmatch, :eq, @p_unmatch)).should be_false
+        expect(
+          @sds2.contains?(_srcdst(@ip_unmatch, :eq, @p_match))
+        ).to be_falsey
+        expect(
+          @sds2.contains?(_srcdst(@ip_unmatch, :eq, @p_unmatch))
+        ).to be_falsey
       end
 
       it 'should be true, for any ip and any port' do
-        @sds3.contains?(_srcdst(@ip_match, :eq, @p_match)).should be_true
-        @sds3.contains?(_srcdst(@ip_match, :eq, @p_unmatch)).should be_true
-        @sds3.contains?(_srcdst(@ip_unmatch, :eq, @p_match)).should be_true
-        @sds3.contains?(_srcdst(@ip_unmatch, :eq, @p_unmatch)).should be_true
+        expect(
+          @sds3.contains?(_srcdst(@ip_match, :eq, @p_match))
+        ).to be_truthy
+        expect(
+          @sds3.contains?(_srcdst(@ip_match, :eq, @p_unmatch))
+        ).to be_truthy
+        expect(
+          @sds3.contains?(_srcdst(@ip_unmatch, :eq, @p_match))
+        ).to be_truthy
+        expect(
+          @sds3.contains?(_srcdst(@ip_unmatch, :eq, @p_unmatch))
+        ).to be_truthy
       end
     end
 

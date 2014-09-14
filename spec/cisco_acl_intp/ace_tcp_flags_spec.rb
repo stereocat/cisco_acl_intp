@@ -10,15 +10,15 @@ describe AceTcpFlag do
     end
 
     it 'should be make tcp flags' do
-      @flag.to_s.should be_aclstr('established')
+      expect(@flag.to_s).to be_aclstr('established')
     end
 
     it 'should be true when same flag' do
-      (@flag == @flag1).should be_true
+      expect(@flag == @flag1).to be_truthy
     end
 
     it 'should not false when different flag' do
-      (@flag == @flag2).should be_false
+      expect(@flag == @flag2).to be_falsey
     end
   end
 end
@@ -33,17 +33,17 @@ describe AceTcpFlagList do
     end
 
     it 'should be size 0 when empty list' do
-      @list.size.should be_zero
+      expect(@list.size).to be_zero
     end
 
     it 'should count-up size when added AceTcpFlag objects' do
       @list.push @f1
-      @list.size.should eq 1
+      expect(@list.size).to eq 1
       @list.push @f2
-      @list.size.should eq 2
+      expect(@list.size).to eq 2
       @list.push @f3
-      @list.size.should eq 3
-      @list.to_s.should be_aclstr('syn ack established')
+      expect(@list.size).to eq 3
+      expect(@list.to_s).to be_aclstr('syn ack established')
     end
   end
 
@@ -60,11 +60,11 @@ describe AceTcpFlagList do
     end
 
     it 'should be true when same list' do
-      (@list1 == @list2).should be_true
+      expect(@list1 == @list2).to be_truthy
     end
 
     it 'should be false when different list' do
-      (@list1 == @list3).should be_false
+      expect(@list1 == @list3).to be_falsey
     end
   end
 end

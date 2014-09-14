@@ -19,9 +19,9 @@ ip access-list extended FA8-OUT
 !
 EOL
       @parser.parse_string(datastr)
-      @parser.contains_error?.should be_false
+      expect(@parser.contains_error?).to be_falsey
       @parser.parse_string(StringIO.new(datastr))
-      @parser.contains_error?.should be_false
+      expect(@parser.contains_error?).to be_falsey
     end
 
     it 'should not be parsed acl' do
@@ -34,15 +34,15 @@ ip access-list extended FA8-OUT
 !
 EOL
       @parser.parse_string(datastr)
-      @parser.contains_error?.should be_true
+      expect(@parser.contains_error?).to be_truthy
       @parser.parse_string(StringIO.new(datastr))
-      @parser.contains_error?.should be_true
+      expect(@parser.contains_error?).to be_truthy
     end
 
     it 'should be error by NON-IO object' do
       @parser.parse_string(123_456_789)
-      @parser.contains_error?.should be_true
-      @parser.error_list.shift.should match(/acl error/)
+      expect(@parser.contains_error?).to be_truthy
+      expect(@parser.error_list.shift).to match(/acl error/)
     end
   end
 
@@ -60,7 +60,7 @@ ip access-list extended FA8-OUT
 !
 EOL
       @parser.parse_file(StringIO.new(datastr))
-      @parser.contains_error?.should be_false
+      expect(@parser.contains_error?).to be_falsey
     end
 
     it 'should not be parsed acl' do
@@ -73,13 +73,13 @@ ip access-list extended FA8-OUT
 !
 EOL
       @parser.parse_file(StringIO.new(datastr))
-      @parser.contains_error?.should be_true
+      expect(@parser.contains_error?).to be_truthy
     end
 
     it 'should be error by NON-IO object' do
       @parser.parse_file(123_456_789)
-      @parser.contains_error?.should be_true
-      @parser.error_list.shift.should match(/Parse aborted/)
+      expect(@parser.contains_error?).to be_truthy
+      expect(@parser.error_list.shift).to match(/Parse aborted/)
     end
   end
 
@@ -111,12 +111,12 @@ EOL
         if each_test[:correct]
           it "should be parsed #{acl_file} with no error" do
             @parser.parse_file(acl_file)
-            @parser.contains_error?.should be_false
+            expect(@parser.contains_error?).to be_falsey
           end
         else
           it "should be parsed #{acl_file} with error" do
             @parser.parse_file(acl_file)
-            @parser.contains_error?.should be_true
+            expect(@parser.contains_error?).to be_truthy
           end
         end
       end

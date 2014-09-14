@@ -31,32 +31,32 @@ describe AceIpSpec do
     end
 
     it 'should be true same ip and same wildcard' do
-      (@ip == @ip1).should be_true
+      expect(@ip == @ip1).to be_truthy
     end
 
     it 'should be true same ip and same wildcard/netmask' do
-      (@ip1 == @ip2).should be_true
+      expect(@ip1 == @ip2).to be_truthy
     end
 
     it 'should be false different ip and same netmask' do
-      (@ip2 == @ip3).should be_false
+      expect(@ip2 == @ip3).to be_falsey
     end
 
     it 'should be false different ip and same wildcard' do
-      (@ip1 == @ip4).should be_false
+      expect(@ip1 == @ip4).to be_falsey
     end
 
     it 'should be false same ip and different wildcard' do
-      (@ip1 == @ip5).should be_false
+      expect(@ip1 == @ip5).to be_falsey
     end
 
     it 'should be true ANY object' do
       ip1 = AceIpSpec.new(ipaddr: 'any')
       ip2 = AceIpSpec.new(ipaddr: '0.0.0.0', wildcard: '255.255.255.255')
       ip3 = AceIpSpec.new(ipaddr: '0.0.0.0', netmask: 0)
-      (ip1 == ip2).should be_true
-      (ip2 == ip3).should be_true
-      (ip3 == ip1).should be_true
+      expect(ip1 == ip2).to be_truthy
+      expect(ip2 == ip3).to be_truthy
+      expect(ip3 == ip1).to be_truthy
     end
   end
 
@@ -66,8 +66,8 @@ describe AceIpSpec do
         ipaddr: '192.168.15.15',
         wildcard: '0.0.31.255'
       )
-      ip.netmask.should eq 19
-      ip.wildcard.should eq '0.0.31.255'
+      expect(ip.netmask).to eq 19
+      expect(ip.wildcard).to eq '0.0.31.255'
     end
 
     it 'should not be converted wildcard/netmask' do
@@ -75,8 +75,8 @@ describe AceIpSpec do
         ipaddr: '192.168.15.15',
         wildcard: '0.3.5.0'
       )
-      ip.netmask.should be_nil
-      ip.wildcard.should eq '0.3.5.0'
+      expect(ip.netmask).to be_nil
+      expect(ip.wildcard).to eq '0.3.5.0'
     end
   end
 
@@ -89,19 +89,19 @@ describe AceIpSpec do
     end
 
     it 'should be true when subnet is contained' do
-      @ip.contains?('192.168.15.3/25').should be_true
+      expect(@ip.contains?('192.168.15.3/25')).to be_truthy
     end
 
     it 'should be true when same subnet' do
-      @ip.contains?('192.168.15.3/24').should be_true
+      expect(@ip.contains?('192.168.15.3/24')).to be_truthy
     end
 
     it 'should be false when larger subnet' do
-      @ip.contains?('192.168.15.3/23').should be_false
+      expect(@ip.contains?('192.168.15.3/23')).to be_falsey
     end
 
     it 'should be false with not related block' do
-      @ip.contains?('192.168.16.3/24').should be_false
+      expect(@ip.contains?('192.168.16.3/24')).to be_falsey
     end
   end
 
@@ -111,12 +111,12 @@ describe AceIpSpec do
         ipaddr: '192.168.15.15',
         wildcard: '0.0.7.6'
       )
-      ip.to_s.should be_aclstr('192.168.8.9 0.0.7.6')
+      expect(ip.to_s).to be_aclstr('192.168.8.9 0.0.7.6')
     end
 
     it 'should be "any" with any alias' do
       ip = AceIpSpec.new(ipaddr: 'any')
-      ip.to_s.should be_aclstr('any')
+      expect(ip.to_s).to be_aclstr('any')
     end
 
     it 'should be "any"' do
@@ -124,7 +124,7 @@ describe AceIpSpec do
         ipaddr: '0.0.0.0',
         wildcard: '255.255.255.255'
       )
-      ip.to_s.should be_aclstr('any')
+      expect(ip.to_s).to be_aclstr('any')
     end
 
     it 'should be "any" with full-bit wildcard mask' do
@@ -132,7 +132,7 @@ describe AceIpSpec do
         ipaddr: '192.168.15.15',
         wildcard: '255.255.255.255'
       )
-      ip.to_s.should be_aclstr('any')
+      expect(ip.to_s).to be_aclstr('any')
     end
 
     it 'should be "any" with zero-ip' do
@@ -140,7 +140,7 @@ describe AceIpSpec do
         ipaddr: '0.0.0.0',
         wildcard: '0.0.7.6'
       )
-      ip.to_s.should be_aclstr('any')
+      expect(ip.to_s).to be_aclstr('any')
     end
 
     it 'should be "host 192.168.15.15"' do
@@ -148,7 +148,7 @@ describe AceIpSpec do
         ipaddr: '192.168.15.15',
         wildcard: '0.0.0.0'
       )
-      ip.to_s.should be_aclstr('host 192.168.15.15')
+      expect(ip.to_s).to be_aclstr('host 192.168.15.15')
     end
 
     it 'should be "192.168.14.0 0.0.1.255" with netmask /23' do
@@ -156,7 +156,7 @@ describe AceIpSpec do
         ipaddr: '192.168.15.15',
         netmask: 23
       )
-      ip.to_s.should be_aclstr('192.168.14.0 0.0.1.255')
+      expect(ip.to_s).to be_aclstr('192.168.14.0 0.0.1.255')
     end
 
     it 'should be "any" with netmask /0' do
@@ -164,7 +164,7 @@ describe AceIpSpec do
         ipaddr: '192.168.15.15',
         netmask: 0
       )
-      ip.to_s.should be_aclstr('any')
+      expect(ip.to_s).to be_aclstr('any')
     end
 
     it 'should be "host 192.168.15.15" with netmask /32' do
@@ -172,41 +172,41 @@ describe AceIpSpec do
         ipaddr: '192.168.15.15',
         netmask: 32
       )
-      ip.to_s.should be_aclstr('host 192.168.15.15')
+      expect(ip.to_s).to be_aclstr('host 192.168.15.15')
     end
 
     it 'should be "host 192.168.15.15" in default' do
       ip = AceIpSpec.new(
         ipaddr: '192.168.15.15'
       )
-      ip.to_s.should be_aclstr('host 192.168.15.15')
+      expect(ip.to_s).to be_aclstr('host 192.168.15.15')
     end
 
     context 'Argument Error Case' do
       it 'raise error without ipaddr' do
-        lambda do
+        expect do
           AceIpSpec.new(
             netmask: 32
           )
-        end.should raise_error(AclArgumentError)
+        end.to raise_error(AclArgumentError)
       end
 
       it 'raise error with invalid ipaddr' do
-        lambda do
+        expect do
           AceIpSpec.new(
             ipaddr: '192.168.15.256'
           )
-        end.should raise_error
-        lambda do
+        end.to raise_error
+        expect do
           AceIpSpec.new(
             ipaddr: '192.168.250.3.3'
           )
-        end.should raise_error
-        lambda do
+        end.to raise_error
+        expect do
           AceIpSpec.new(
             ipaddr: '192,168.250.3'
           )
-        end.should raise_error
+        end.to raise_error
       end
     end
   end

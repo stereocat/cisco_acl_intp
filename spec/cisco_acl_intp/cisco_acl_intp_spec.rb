@@ -4,7 +4,7 @@ require 'spec_helper'
 
 describe CiscoAclIntp do
   it 'should have a version number' do
-    CiscoAclIntp::VERSION.should_not be_nil
+    expect(CiscoAclIntp::VERSION).not_to be_nil
   end
 end
 

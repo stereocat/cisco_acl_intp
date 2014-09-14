@@ -14,35 +14,34 @@ ip access-list extended FA8-OUT
     deny   udp any any eq bootpc
     permit ip any any
 EOL
-      @s.scan_line(acl).should == [
-        [:NAMED_ACL, 'ip access-list'],
-        %w(extended extended),
-        [:STRING, 'FA8-OUT'],
-        [:EOS, nil],
-        %w(deny deny),
-        %w(udp udp),
-        %w(any any),
-        %w(any any),
-        %w(eq eq),
-        %w(bootpc bootpc),
-        [:EOS, nil],
-        %w(permit permit),
-        %w(ip ip),
-        %w(any any),
-        %w(any any),
-        [:EOS, nil],
-        [false, 'EOF']
-     ]
+      expect(@s.scan_line(acl)).to eq(
+        [
+          [:NAMED_ACL, 'ip access-list'],
+          %w(extended extended),
+          [:STRING, 'FA8-OUT'],
+          [:EOS, nil],
+          %w(deny deny),
+          %w(udp udp),
+          %w(any any),
+          %w(any any),
+          %w(eq eq),
+          %w(bootpc bootpc),
+          [:EOS, nil],
+          %w(permit permit),
+          %w(ip ip),
+          %w(any any),
+          %w(any any),
+          [:EOS, nil],
+          [false, 'EOF']
+        ])
     end
 
     tokens = YAML.load_file(_spec_conf_dir('single_tokens.yml'))
     tokens.each do |each|
       # run test
       it "should be parsed single token: #{each}" do
-        @s.scan_line(each).should
-        eq [
+        expect(@s.scan_line(each)).to eq [
           [each, each],
-          [:EOS, nil],
           [:EOS, nil],
           [false, 'EOF']
         ]
@@ -105,7 +104,7 @@ EOL
 #{each_test[:test_description]}" do
         tokens = YAML.load_file(token_file)
         File.open(acl_file) do |file|
-          @s.scan_file(file).should eq tokens
+          expect(@s.scan_file(file)).to eq tokens
         end
       end
     end # tests.each

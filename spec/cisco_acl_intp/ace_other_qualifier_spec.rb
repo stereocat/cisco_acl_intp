@@ -10,33 +10,33 @@ describe AceLogSpec do
     end
 
     it 'should be true when same cookie' do
-      (@log2 == @log3).should be_true
+      expect(@log2 == @log3).to be_truthy
     end
 
     it 'should be false when different cookie' do
-      (@log2 == @log1).should be_false
+      expect(@log2 == @log1).to be_falsey
     end
   end
 
   describe '#to_s' do
     it 'should be log without cookie' do
       log = AceLogSpec.new
-      log.to_s.should be_aclstr('log')
+      expect(log.to_s).to be_aclstr('log')
     end
 
     it 'should be log-input without cookie string' do
       log = AceLogSpec.new('', true)
-      log.to_s.should be_aclstr('log-input')
+      expect(log.to_s).to be_aclstr('log-input')
     end
 
     it 'should be log with cookie' do
       log = AceLogSpec.new('Cookie0123')
-      log.to_s.should be_aclstr('log Cookie0123')
+      expect(log.to_s).to be_aclstr('log Cookie0123')
     end
 
     it 'should be log-input with cookie string' do
       log = AceLogSpec.new('log', true)
-      log.to_s.should be_aclstr('log-input log')
+      expect(log.to_s).to be_aclstr('log-input log')
     end
   end
 end
@@ -50,24 +50,24 @@ describe AceRecursiveQualifier do
     end
 
     it 'should be true when same recursive-name' do
-      (@rcsv2 == @rcsv3).should be_true
+      expect(@rcsv2 == @rcsv3).to be_truthy
     end
 
     it 'should be false when different recursive-name' do
-      (@rcsv2 == @rcsv1).should be_false
+      expect(@rcsv2 == @rcsv1).to be_falsey
     end
   end
 
   describe '#to_s' do
     it 'should be reflect spec string' do
       rcsv = AceRecursiveQualifier.new('established')
-      rcsv.to_s.should be_aclstr('reflect established')
+      expect(rcsv.to_s).to be_aclstr('reflect established')
     end
 
     it 'should be raised error' do
-      lambda do
+      expect do
         AceRecursiveQualifier.new('')
-      end.should raise_error(AclArgumentError)
+      end.to raise_error(AclArgumentError)
     end
   end
 end
@@ -81,15 +81,15 @@ describe AceOtherQualifierList do
     end
 
     it 'should be size 0 when empty list'do
-      @list.size.should be_zero
+      expect(@list.size).to be_zero
     end
 
     it 'should count-up size when added AceTcpFlag objects' do
       @list.push @oq1
-      @list.size.should eq 1
+      expect(@list.size).to eq 1
       @list.push @oq2
-      @list.size.should eq 2
-      @list.to_s.should be_aclstr('log reflect iptraffic')
+      expect(@list.size).to eq 2
+      expect(@list.to_s).to be_aclstr('log reflect iptraffic')
     end
   end
 
@@ -104,11 +104,11 @@ describe AceOtherQualifierList do
     end
 
     it 'should be true when same other qualifier elements' do
-      (@list1 == @list2).should be_true
+      expect(@list1 == @list2).to be_truthy
     end
 
     it 'should be false when different other qualifier elements' do
-      (@list1 == @list3).should be_false
+      expect(@list1 == @list3).to be_falsey
     end
   end
 end
