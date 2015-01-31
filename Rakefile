@@ -77,7 +77,7 @@ end
 if RUBY_VERSION >= '1.9.0'
   task quality: :rubocop
   require 'rubocop/rake_task'
-  Rubocop::RakeTask.new do |task|
+  RuboCop::RakeTask.new do |task|
     # file patterns in ".rubocop.yml"
     task.fail_on_error = false
   end

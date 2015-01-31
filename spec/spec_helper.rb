@@ -33,9 +33,9 @@ def _pph(hash)
   hash.each do | k, v |
     case v
     when String
-      kv.push %Q(:#{k}=>"#{v}")
+      kv.push %(:#{k}=>"#{v}")
     else
-      kv.push %Q(:#{k}=>#{v})
+      kv.push %(:#{k}=>#{v})
     end
   end
   kv.join(',')

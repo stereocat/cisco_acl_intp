@@ -91,7 +91,6 @@ ip access-list extended test-ext-acl2
 EOL
       expect(@acl.to_s).to be_aclstr(aclstr)
     end
-
   end
 
   describe '#find_aces_contains' do

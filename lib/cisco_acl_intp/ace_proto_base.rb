@@ -59,7 +59,7 @@ module CiscoAclIntp
     # Check the port number in valid range of port number
     # @return [Boolean]
     def valid_range?
-      (0 .. @max_num).include?(@number)
+      (0..@max_num).include?(@number)
     end
 
     # Check the port name is known or not.

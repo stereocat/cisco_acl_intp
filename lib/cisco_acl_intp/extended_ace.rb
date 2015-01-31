@@ -133,11 +133,9 @@ module CiscoAclIntp
     # Set instance variables
     # @return [AceOtherQualifierList]
     def define_tcp_flags
-      if @protocol.name == 'tcp' && @options.key?(:tcp_flags_qualifier)
-        @options[:tcp_flags_qualifier]
-      else
-        nil
-      end
+      return unless @protocol.name == 'tcp' &&
+                    @options.key?(:tcp_flags_qualifier)
+      @options[:tcp_flags_qualifier]
     end
   end
 end # module

@@ -53,7 +53,7 @@ module CiscoAclIntp
       when :term
         TERM_COLOR_TABLE[tag]
       when :html
-        %Q(<span class="acltag_#{tag}">)
+        %(<span class="acltag_#{tag}">)
       else
         ''
       end

@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.version       = CiscoAclIntp::VERSION
   spec.authors       = ['stereocat']
   spec.email         = ['stereocat@gmail.com']
-  spec.description   = %q(Cisco ACL Interpreter)
-  spec.summary       = %q(Cisco IOS Access Control List Interpreter)
+  spec.description   = 'Cisco ACL Interpreter'
+  spec.summary       = 'Cisco IOS Access Control List Interpreter'
   spec.homepage      = 'https://github.com/stereocat/cisco_acl_intp'
   spec.license       = 'MIT'
 
@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'netaddr', '~> 1.5.0'
   spec.add_runtime_dependency 'term-ansicolor', '~> 1.3.0'
-  spec.add_development_dependency 'bundler', '~> 1.7.2'
+  spec.add_development_dependency 'bundler', '~> 1.7.12'
 end
 
 ### Local variables:

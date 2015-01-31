@@ -53,7 +53,7 @@ module CiscoAclIntp
     # @param [StandardAce] other Target ACE
     # @return [Boolean] Matched or not
     def contains?(other)
-      other.kind_of?(StandardAce) &&
+      other.is_a?(StandardAce) &&
         @src_spec.contains?(other.src_spec)
     end
 

@@ -71,8 +71,8 @@ describe AcePortSpec do
         )
         expect(p.to_s).to be_empty
       end
-
     end
+
     context 'Argument error case' do
       it 'raise error when not specified operator' do
         expect do

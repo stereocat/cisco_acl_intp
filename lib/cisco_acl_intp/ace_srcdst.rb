@@ -112,7 +112,7 @@ module CiscoAclIntp
     # @see #initialize
     def define_portspec
       if @options.key?(:port_spec) &&
-          @options[:port_spec].kind_of?(AcePortSpec)
+         @options[:port_spec].is_a?(AcePortSpec)
         @options[:port_spec]
       elsif @options.key?(:operator)
         AcePortSpec.new(

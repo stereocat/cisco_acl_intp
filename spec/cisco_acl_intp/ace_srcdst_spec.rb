@@ -334,6 +334,5 @@ describe AceSrcDstSpec do
         ).to be_truthy
       end
     end
-
   end # describe contains?
 end # describe AceSrcDstSpec

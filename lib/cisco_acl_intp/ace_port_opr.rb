@@ -15,7 +15,7 @@ module CiscoAclIntp
     # @param [AcePortOperator] other Another operator
     # @return [Boolean]
     def contains?(other)
-      other.kind_of?(AcePortOperatorBase) # match any conditions
+      other.is_a?(AcePortOperatorBase) # match any conditions
     end
 
     # Generate string for Cisco IOS access list

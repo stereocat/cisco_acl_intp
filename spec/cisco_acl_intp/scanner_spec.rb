@@ -47,7 +47,6 @@ EOL
         ]
       end
     end
-
   end # scan_line
 
   describe '#scan_file' do
@@ -108,9 +107,7 @@ EOL
         end
       end
     end # tests.each
-
   end # scan_file
-
 end # describe Scanner
 
 ### Local variables:

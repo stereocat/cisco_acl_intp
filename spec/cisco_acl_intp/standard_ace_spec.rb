@@ -4,7 +4,6 @@ require 'spec_helper'
 describe StandardAce do
   describe '#to_s' do
     context 'Normal case' do
-
       it 'should be permit action and set ip/wildcard' do
         sa = StandardAce.new(
           action: 'permit',
@@ -28,11 +27,9 @@ describe StandardAce do
         sa = StandardAce.new(action: 'permit', src: asds)
         expect(sa.to_s).to be_aclstr('permit 192.168.3.128 0.0.0.127')
       end
-
     end
 
     context 'Argument error case' do
-
       it 'should be rased exception when :action not specified' do
         expect do
           StandardAce.new(
@@ -40,7 +37,6 @@ describe StandardAce do
           )
         end.to raise_error(AclArgumentError)
       end
-
     end
   end
 

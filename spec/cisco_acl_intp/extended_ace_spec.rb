@@ -56,7 +56,6 @@ describe ExtendedAce do
           'deny tcp 192.168.8.9 0.0.7.6 host 192.168.30.3 range 1024 65535'
         )
       end
-
     end
 
     context 'Argument error case' do
@@ -113,7 +112,6 @@ describe ExtendedAce do
           )
         end.to raise_error(AclArgumentError)
       end
-
     end
   end
 
@@ -199,7 +197,6 @@ describe ExtendedAce do
           end
         end # it
       end # tests.each
-
     end # context full spec test
 
     context 'ANY ip/port port exists case' do

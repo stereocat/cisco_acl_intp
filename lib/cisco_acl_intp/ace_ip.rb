@@ -102,11 +102,8 @@ module CiscoAclIntp
     #   e.g. '0.0.0.1.255' #=> 31
     def wildcard_bitlength
       @wildcard.split(/\./).reduce(0) do |len, octet|
-        if len && OCTET_BIT_LENGTH.key?(octet)
-          len + OCTET_BIT_LENGTH[octet]
-        else
-          nil
-        end
+        return unless len && OCTET_BIT_LENGTH.key?(octet)
+        len + OCTET_BIT_LENGTH[octet]
       end
     end
 
