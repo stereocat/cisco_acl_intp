@@ -230,9 +230,14 @@ udp_srcdst_spec: objgrp_srcdst_spec udp_port_spec
     named_acl: std_named_acl_header std_named_acl_entry_list
              | ext_named_acl_header ext_named_acl_entry_list
                  # Notice:
-                 # acl header でエラーがあると、そのあとのエントリ追加用のハコ(object)が
-                 # つくれないので、エラーリカバリしようがない。
-                 # acl_entry_list の中身については可能な範囲で parse して追加。
+                 #
+                 # If an error exists in ACL header, parser cannot
+                 # create 'body' object for add ACL entries that come
+                 # next of header.  Then parser cannot parse any ACL
+                 # entries and cannot recover its error.  When ACL
+                 # header is correct, parser add ACL entires to 'body'
+                 # if each entry can read.  (parse and add all correct
+                 # ACL entries.)
 
 std_named_acl_header: NAMED_ACL 'standard' STRING eos
                  {

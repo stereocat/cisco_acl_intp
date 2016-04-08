@@ -7,12 +7,13 @@ gemspec
 
 group :development, :test do
   gem 'coveralls', require: false
-  gem 'racc', '~> 1.4.12'
-  gem 'rake', '~> 10.4.2'
-  gem 'reek', '~> 1.6.4'
-  gem 'rspec', '~> 3.1.0'
-  gem 'rubocop', '~> 0.28.0' if RUBY_VERSION >= '1.9.0'
-  gem 'simplecov', '~> 0.9.1' if RUBY_VERSION >= '1.9.0'
+  gem 'racc', '~> 1.4.14'
+  gem 'rake', '~> 11.1.2'
+  gem 'reek', '~> 4.0.0'
+  gem 'rspec', '~> 3.4.0'
+  gem 'rspec-core', '~> 3.4.4'
+  gem 'rubocop', '~> 0.39.0' if RUBY_VERSION >= '1.9.0'
+  gem 'simplecov', '~> 0.11.2' if RUBY_VERSION >= '1.9.0'
   gem 'yard', '~> 0.8.7'
 end
 

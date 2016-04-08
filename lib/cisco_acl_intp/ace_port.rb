@@ -32,7 +32,7 @@ module CiscoAclIntp
         @options = opts
         define_operator_and_ports
       else
-        fail AclArgumentError, 'Not specified port operator'
+        raise AclArgumentError, 'Not specified port operator'
       end
     end
 
@@ -61,21 +61,18 @@ module CiscoAclIntp
       lt: AcePortOpLt,
       gt: AcePortOpGt,
       range: AcePortOpRange
-    }
+    }.freeze
 
     # Set instance variables
     # @raise [AclArgumentError]
     # @return [AcePortOperatorBase] Port set operator object.
     def define_operator_and_ports
       opr = @options.key?(:operator) ? @options[:operator].intern : :any
-      if OPERATOR_CLASS.key?(opr)
-        @operator = OPERATOR_CLASS[opr].new(
-          (@options[:port] || @options[:begin_port]),
-          @options[:end_port]
-        )
-      else
-        fail AclArgumentError, 'Unknown operator'
-      end
+      raise AclArgumentError, 'Unknown operator' unless OPERATOR_CLASS.key?(opr)
+      @operator = OPERATOR_CLASS[opr].new(
+        (@options[:port] || @options[:begin_port]),
+        @options[:end_port]
+      )
     end
   end
 end # module

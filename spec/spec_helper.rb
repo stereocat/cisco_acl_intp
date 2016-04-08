@@ -17,8 +17,8 @@ require 'cisco_acl_intp'
 include CiscoAclIntp
 AclContainerBase.disable_color
 
-RSpec::Matchers.define :be_aclstr do | expected_str |
-  match do | actual_str |
+RSpec::Matchers.define :be_aclstr do |expected_str|
+  match do |actual_str|
     a = actual_str.strip
     b = expected_str.strip
     a.split(/\s+/) == b.split(/[\s\r\n]+/)
@@ -30,7 +30,7 @@ end
 # hash to hash-code-string
 def _pph(hash)
   kv = []
-  hash.each do | k, v |
+  hash.each do |k, v|
     case v
     when String
       kv.push %(:#{k}=>"#{v}")

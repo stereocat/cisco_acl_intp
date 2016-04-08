@@ -66,7 +66,7 @@ module CiscoAclIntp
       if @options.key?(:action)
         @options[:action]
       else
-        fail AclArgumentError, 'Not specified action'
+        raise AclArgumentError, 'Not specified action'
       end
     end
 
@@ -82,10 +82,10 @@ module CiscoAclIntp
         when AceSrcDstSpec
           src
         else
-          fail AclArgumentError, 'src spec: unknown class'
+          raise AclArgumentError, 'src spec: unknown class'
         end
       else
-        fail AclArgumentError, 'Not specified src spec'
+        raise AclArgumentError, 'Not specified src spec'
       end
     end
 

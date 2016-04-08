@@ -80,7 +80,7 @@ describe AceOtherQualifierList do
       @list = AceOtherQualifierList.new
     end
 
-    it 'should be size 0 when empty list'do
+    it 'should be size 0 when empty list' do
       expect(@list.size).to be_zero
     end
 

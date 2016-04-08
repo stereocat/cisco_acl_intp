@@ -7,7 +7,7 @@ TOKEN_SEQ_FILE_LIST = [
   'stdacl_token_seq.yml',
   'extacl_token_seq.yml',
   # 'extacl_objgrp_token_seq.yml'
-]
+].freeze
 
 # return spec conf dir
 def _spec_conf_dir(file)

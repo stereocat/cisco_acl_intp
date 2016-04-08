@@ -23,7 +23,7 @@ module CiscoAclIntp
     #   because there are keys exists including '-'.
     DUMMY_PROTO_TABLE = {
       'any' => -1 # dummy
-    }
+    }.freeze
 
     # Protocol Table
     # @return [Hash] Protocol table
@@ -52,14 +52,14 @@ module CiscoAclIntp
       when Integer
         define_param_by_integer(proto_id)
       else
-        fail AclArgumentError, "invalid protocol id #{proto_id}"
+        raise AclArgumentError, "invalid protocol id #{proto_id}"
       end
     end
 
     # Check the port number in valid range of port number
     # @return [Boolean]
     def valid_range?
-      (0..@max_num).include?(@number)
+      (0..@max_num).cover?(@number)
     end
 
     # Check the port name is known or not.
@@ -128,7 +128,7 @@ module CiscoAclIntp
       if proto_table.key?(@name)
         proto_table[@name]
       else
-        fail AclArgumentError, "Unknown protocol name: #{@name}"
+        raise AclArgumentError, "Unknown protocol name: #{@name}"
       end
     end
 
@@ -139,7 +139,7 @@ module CiscoAclIntp
       if valid_name?
         @number = name_to_number
       else
-        fail AclArgumentError, "Unknown protocol name: #{@name}"
+        raise AclArgumentError, "Unknown protocol name: #{@name}"
       end
     end
 
@@ -150,7 +150,7 @@ module CiscoAclIntp
       if valid_range?
         @name = number_to_name
       else
-        fail AclArgumentError, "Invalid protocol number: #{@number}"
+        raise AclArgumentError, "Invalid protocol number: #{@number}"
       end
     end
   end

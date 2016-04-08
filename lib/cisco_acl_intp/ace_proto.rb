@@ -24,7 +24,7 @@ module CiscoAclIntp
       'tcp' => 6,
       'udp' => 17,
       'ip' => -1 # dummy
-    }
+    }.freeze
 
     # Constructor
     # @param [String, Integer] proto_id L3 Protocol ID (No. or Name)
@@ -124,7 +124,7 @@ module CiscoAclIntp
       'uucp' => 540,
       'whois' => 43,
       'www' => 80
-    }
+    }.freeze
 
     # Constructor
     # @param [String, Integer] proto_id Protocol ID (No. or Name)
@@ -179,7 +179,7 @@ module CiscoAclIntp
       'time' => 37,
       'who' => 513,
       'xdmcp' => 177
-    }
+    }.freeze
 
     # Constructor
     # @param [String, Integer] proto_id Protocol ID (No. or Name)

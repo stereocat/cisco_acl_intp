@@ -103,7 +103,7 @@ module CiscoAclIntp
       elsif @options.key?(:ipaddr)
         AceIpSpec.new(@options)
       else
-        fail AclArgumentError, 'Not specified: ip spec'
+        raise AclArgumentError, 'Not specified: ip spec'
       end
     end
 

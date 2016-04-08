@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 require 'spec_helper'
 
-def _build_taget(opts)
+def _build_target(opts)
   ExtendedAce.new(
     action: (opts[:target] || 'permit'),
     protocol: (opts[:protocol] || 'tcp'),
@@ -191,9 +191,9 @@ describe ExtendedAce do
         # run test
         it teststr do
           if eres
-            expect(@ea.contains?(_build_taget(eopts))).to be_truthy
+            expect(@ea.contains?(_build_target(eopts))).to be_truthy
           else
-            expect(@ea.contains?(_build_taget(eopts))).to be_falsey
+            expect(@ea.contains?(_build_target(eopts))).to be_falsey
           end
         end # it
       end # tests.each
@@ -242,160 +242,192 @@ describe ExtendedAce do
         ea = ExtendedAce.new(
           action: 'permit', protocol: 'tcp', src: @src1, dst: @dst0
         )
-        expect(ea.contains?(_build_taget(
-            protocol: 'tcp',
-            src_operator: :eq,
-            src_ip: @src_ip_match, src_port: @src_port_match,
-            dst_operator: :eq,
-            dst_ip: @dst_ip_match, dst_port: @dst_port_match
-        ))).to be_truthy
-        expect(ea.contains?(_build_taget(
-            protocol: 'tcp',
-            src_operator: :eq,
-            src_ip: @src_ip_unmatch, src_port: @src_port_match,
-            dst_operator: :eq,
-            dst_ip: @dst_ip_match,   dst_port: @dst_port_match
-        ))).to be_truthy
+        expect(
+          ea.contains?(
+            _build_target(
+              protocol: 'tcp',
+              src_operator: :eq,
+              src_ip: @src_ip_match, src_port: @src_port_match,
+              dst_operator: :eq,
+              dst_ip: @dst_ip_match, dst_port: @dst_port_match
+            ))).to be_truthy
+        expect(
+          ea.contains?(
+            _build_target(
+              protocol: 'tcp',
+              src_operator: :eq,
+              src_ip: @src_ip_unmatch, src_port: @src_port_match,
+              dst_operator: :eq,
+              dst_ip: @dst_ip_match, dst_port: @dst_port_match
+            ))).to be_truthy
       end
 
       it 'should be false when any source ip and unmatch port' do
         ea = ExtendedAce.new(
           action: 'permit', protocol: 'tcp', src: @src1, dst: @dst0
         )
-        expect(ea.contains?(_build_taget(
-            protocol: 'tcp',
-            src_operator: :eq,
-            src_ip: @src_ip_match, src_port: @src_port_unmatch,
-            dst_operator: :eq,
-            dst_ip: @dst_ip_match, dst_port: @dst_port_match
-        ))).to be_falsey
-        expect(ea.contains?(_build_taget(
-            protocol: 'tcp',
-            src_operator: :eq,
-            src_ip: @src_ip_unmatch, src_port: @src_port_unmatch,
-            dst_operator: :eq,
-            dst_ip: @dst_ip_match,   dst_port: @dst_port_match
-        ))).to be_falsey
+        expect(
+          ea.contains?(
+            _build_target(
+              protocol: 'tcp',
+              src_operator: :eq,
+              src_ip: @src_ip_match, src_port: @src_port_unmatch,
+              dst_operator: :eq,
+              dst_ip: @dst_ip_match, dst_port: @dst_port_match
+            ))).to be_falsey
+        expect(
+          ea.contains?(
+            _build_target(
+              protocol: 'tcp',
+              src_operator: :eq,
+              src_ip: @src_ip_unmatch, src_port: @src_port_unmatch,
+              dst_operator: :eq,
+              dst_ip: @dst_ip_match, dst_port: @dst_port_match
+            ))).to be_falsey
       end
 
       it 'should be true when any source port' do
         ea = ExtendedAce.new(
           action: 'permit', protocol: 'tcp', src: @src2, dst: @dst0
         )
-        expect(ea.contains?(_build_taget(
-            protocol: 'tcp',
-            src_operator: :eq,
-            src_ip: @src_ip_match, src_port: @src_port_match,
-            dst_operator: :eq,
-            dst_ip: @dst_ip_match, dst_port: @dst_port_match
-        ))).to be_truthy
-        expect(ea.contains?(_build_taget(
-            protocol: 'tcp',
-            src_operator: :eq,
-            src_ip: @src_ip_match, src_port: @src_port_unmatch,
-            dst_operator: :eq,
-            dst_ip: @dst_ip_match, dst_port: @dst_port_match
-        ))).to be_truthy
+        expect(
+          ea.contains?(
+            _build_target(
+              protocol: 'tcp',
+              src_operator: :eq,
+              src_ip: @src_ip_match, src_port: @src_port_match,
+              dst_operator: :eq,
+              dst_ip: @dst_ip_match, dst_port: @dst_port_match
+            ))).to be_truthy
+        expect(
+          ea.contains?(
+            _build_target(
+              protocol: 'tcp',
+              src_operator: :eq,
+              src_ip: @src_ip_match, src_port: @src_port_unmatch,
+              dst_operator: :eq,
+              dst_ip: @dst_ip_match, dst_port: @dst_port_match
+            ))).to be_truthy
       end
 
       it 'should be false when any source port and unmatch ip' do
         ea = ExtendedAce.new(
           action: 'permit', protocol: 'tcp', src: @src2, dst: @dst0
         )
-        expect(ea.contains?(_build_taget(
-            protocol: 'tcp',
-            src_operator: :eq,
-            src_ip: @src_ip_unmatch, src_port: @src_port_match,
-            dst_operator: :eq,
-            dst_ip: @dst_ip_match,   dst_port: @dst_port_match
-        ))).to be_falsey
-        expect(ea.contains?(_build_taget(
-            protocol: 'tcp',
-            src_operator: :eq,
-            src_ip: @src_ip_unmatch, src_port: @src_port_unmatch,
-            dst_operator: :eq,
-            dst_ip: @dst_ip_match,   dst_port: @dst_port_match
-        ))).to be_falsey
+        expect(
+          ea.contains?(
+            _build_target(
+              protocol: 'tcp',
+              src_operator: :eq,
+              src_ip: @src_ip_unmatch, src_port: @src_port_match,
+              dst_operator: :eq,
+              dst_ip: @dst_ip_match, dst_port: @dst_port_match
+            ))).to be_falsey
+        expect(
+          ea.contains?(
+            _build_target(
+              protocol: 'tcp',
+              src_operator: :eq,
+              src_ip: @src_ip_unmatch, src_port: @src_port_unmatch,
+              dst_operator: :eq,
+              dst_ip: @dst_ip_match, dst_port: @dst_port_match
+            ))).to be_falsey
       end
 
       it 'should be true when any destination ip' do
         ea = ExtendedAce.new(
           action: 'permit', protocol: 'tcp', src: @src0, dst: @dst1
         )
-        expect(ea.contains?(_build_taget(
-            protocol: 'tcp',
-            src_operator: :eq,
-            src_ip: @src_ip_match, src_port: @src_port_match,
-            dst_operator: :eq,
-            dst_ip: @dst_ip_match, dst_port: @dst_port_match
-        ))).to be_truthy
-        expect(ea.contains?(_build_taget(
-            protocol: 'tcp',
-            src_operator: :eq,
-            src_ip: @src_ip_match,   src_port: @src_port_match,
-            dst_operator: :eq,
-            dst_ip: @dst_ip_unmatch, dst_port: @dst_port_match
-        ))).to be_truthy
+        expect(
+          ea.contains?(
+            _build_target(
+              protocol: 'tcp',
+              src_operator: :eq,
+              src_ip: @src_ip_match, src_port: @src_port_match,
+              dst_operator: :eq,
+              dst_ip: @dst_ip_match, dst_port: @dst_port_match
+            ))).to be_truthy
+        expect(
+          ea.contains?(
+            _build_target(
+              protocol: 'tcp',
+              src_operator: :eq,
+              src_ip: @src_ip_match, src_port: @src_port_match,
+              dst_operator: :eq,
+              dst_ip: @dst_ip_unmatch, dst_port: @dst_port_match
+            ))).to be_truthy
       end
 
       it 'should be false when any destination ip and unmatch port' do
         ea = ExtendedAce.new(
           action: 'permit', protocol: 'tcp', src: @src0, dst: @dst1
         )
-        expect(ea.contains?(_build_taget(
-            protocol: 'tcp',
-            src_operator: :eq,
-            src_ip: @src_ip_match, src_port: @src_port_match,
-            dst_operator: :eq,
-            dst_ip: @dst_ip_match, dst_port: @dst_port_unmatch
-        ))).to be_falsey
-        expect(ea.contains?(_build_taget(
-            protocol: 'tcp',
-            src_operator: :eq,
-            src_ip: @src_ip_match,   src_port: @src_port_match,
-            dst_operator: :eq,
-            dst_ip: @dst_ip_unmatch, dst_port: @dst_port_unmatch
-        ))).to be_falsey
+        expect(
+          ea.contains?(
+            _build_target(
+              protocol: 'tcp',
+              src_operator: :eq,
+              src_ip: @src_ip_match, src_port: @src_port_match,
+              dst_operator: :eq,
+              dst_ip: @dst_ip_match, dst_port: @dst_port_unmatch
+            ))).to be_falsey
+        expect(
+          ea.contains?(
+            _build_target(
+              protocol: 'tcp',
+              src_operator: :eq,
+              src_ip: @src_ip_match, src_port: @src_port_match,
+              dst_operator: :eq,
+              dst_ip: @dst_ip_unmatch, dst_port: @dst_port_unmatch
+            ))).to be_falsey
       end
 
       it 'should be true when any destination port' do
         ea = ExtendedAce.new(
           action: 'permit', protocol: 'tcp', src: @src0, dst: @dst2
         )
-        expect(ea.contains?(_build_taget(
-            protocol: 'tcp',
-            src_operator: :eq,
-            src_ip: @src_ip_match, src_port: @src_port_match,
-            dst_operator: :eq,
-            dst_ip: @dst_ip_match, dst_port: @dst_port_match
-        ))).to be_truthy
-        expect(ea.contains?(_build_taget(
-            protocol: 'tcp',
-            src_operator: :eq,
-            src_ip: @src_ip_match, src_port: @src_port_match,
-            dst_operator: :eq,
-            dst_ip: @dst_ip_match, dst_port: @dst_port_unmatch
-        ))).to be_truthy
+        expect(
+          ea.contains?(
+            _build_target(
+              protocol: 'tcp',
+              src_operator: :eq,
+              src_ip: @src_ip_match, src_port: @src_port_match,
+              dst_operator: :eq,
+              dst_ip: @dst_ip_match, dst_port: @dst_port_match
+            ))).to be_truthy
+        expect(
+          ea.contains?(
+            _build_target(
+              protocol: 'tcp',
+              src_operator: :eq,
+              src_ip: @src_ip_match, src_port: @src_port_match,
+              dst_operator: :eq,
+              dst_ip: @dst_ip_match, dst_port: @dst_port_unmatch
+            ))).to be_truthy
       end
 
       it 'should be false when any destination port and unmatch ip' do
         ea = ExtendedAce.new(
           action: 'permit', protocol: 'tcp', src: @src0, dst: @dst2
         )
-        expect(ea.contains?(_build_taget(
-            protocol: 'tcp',
-            src_operator: :eq,
-            src_ip: @src_ip_match,   src_port: @src_port_match,
-            dst_operator: :eq,
-            dst_ip: @dst_ip_unmatch, dst_port: @dst_port_match
-        ))).to be_falsey
-        expect(ea.contains?(_build_taget(
-            protocol: 'tcp',
-            src_operator: :eq,
-            src_ip: @src_ip_match,   src_port: @src_port_match,
-            dst_operator: :eq,
-            dst_ip: @dst_ip_unmatch, dst_port: @dst_port_unmatch
-        ))).to be_falsey
+        expect(
+          ea.contains?(
+            _build_target(
+              protocol: 'tcp',
+              src_operator: :eq,
+              src_ip: @src_ip_match, src_port: @src_port_match,
+              dst_operator: :eq,
+              dst_ip: @dst_ip_unmatch, dst_port: @dst_port_match
+            ))).to be_falsey
+        expect(
+          ea.contains?(
+            _build_target(
+              protocol: 'tcp',
+              src_operator: :eq,
+              src_ip: @src_ip_match, src_port: @src_port_match,
+              dst_operator: :eq,
+              dst_ip: @dst_ip_unmatch, dst_port: @dst_port_unmatch
+            ))).to be_falsey
       end
     end # context exists any ip/port
   end # describe contains?

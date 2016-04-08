@@ -51,7 +51,7 @@ module CiscoAclIntp
 
     # alias as boolean method
     # @return [Boolean]
-    alias_method(:input?, :input)
+    alias input? input
 
     # Constructor
     # @param [String] cookie Log cookie
@@ -90,10 +90,10 @@ module CiscoAclIntp
     # Constructor
     # @param [String] name Recursive name
     def initialize(name)
-      if name && (!name.empty?)
+      if name && !name.empty?
         @recursive_name = name
       else
-        fail AclArgumentError, 'Not specified recursive name'
+        raise AclArgumentError, 'Not specified recursive name'
       end
     end
 

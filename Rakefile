@@ -7,16 +7,16 @@ require 'yard'
 require 'yard/rake/yardoc_task'
 require 'reek/rake/task'
 
-LIB_DIR = './lib'
-PACKAGE_NAME = 'cisco_acl_intp'
-SPEC_ORIG_DIR = 'spec'
-SPEC_DIR = "#{SPEC_ORIG_DIR}/#{PACKAGE_NAME}/"
-SPEC_DATA_DIR = "#{SPEC_ORIG_DIR}/data"
-CLASS_DIR = "#{LIB_DIR}/#{PACKAGE_NAME}"
-CLASS_GRAPH_DOT = "doc/#{PACKAGE_NAME}.dot"
-CLASS_GRAPH_PNG = "doc/#{PACKAGE_NAME}.png"
-PARSER_RACC = "#{CLASS_DIR}/parser.ry"
-PARSER_RUBY = "#{CLASS_DIR}/parser.rb"
+LIB_DIR = './lib'.freeze
+PACKAGE_NAME = 'cisco_acl_intp'.freeze
+SPEC_ORIG_DIR = 'spec'.freeze
+SPEC_DIR = "#{SPEC_ORIG_DIR}/#{PACKAGE_NAME}/".freeze
+SPEC_DATA_DIR = "#{SPEC_ORIG_DIR}/data".freeze
+CLASS_DIR = "#{LIB_DIR}/#{PACKAGE_NAME}".freeze
+CLASS_GRAPH_DOT = "doc/#{PACKAGE_NAME}.dot".freeze
+CLASS_GRAPH_PNG = "doc/#{PACKAGE_NAME}.png".freeze
+PARSER_RACC = "#{CLASS_DIR}/parser.ry".freeze
+PARSER_RUBY = "#{CLASS_DIR}/parser.rb".freeze
 
 CLEAN.include(
   "#{SPEC_DATA_DIR}/*.*",
@@ -67,8 +67,6 @@ end
 Reek::Rake::Task.new do |t|
   t.fail_on_error = false
   t.verbose = false
-  t.ruby_opts = ['-rubygems']
-  t.reek_opts = '--quiet'
   t.source_files = FileList["#{LIB_DIR}/**/*.rb"].delete_if do |f|
     f =~ /parser.rb/
   end

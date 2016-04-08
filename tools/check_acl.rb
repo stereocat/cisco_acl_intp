@@ -6,7 +6,7 @@ require 'optparse'
 require 'cisco_acl_intp'
 
 opts = {}
-OptionParser.new do | each |
+OptionParser.new do |each|
   each.banner = "ruby #{$PROGRAM_NAME} [options] [args]"
   each.on('-c MODE', '--color', 'enable coloring (MODE=[term, html]') do |x|
     opts[:color] = x.intern

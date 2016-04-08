@@ -111,10 +111,11 @@ EOL
     end
 
     it 'should be nil if not found match entry' do
-      expect(@acl.find_aces_contains(
-        protocol: 'udp',
-        src_operator: :eq, src_ip: '11.0.0.3', src_port: 33_333
-      )).to be_nil
+      expect(
+        @acl.find_aces_contains(
+          protocol: 'udp',
+          src_operator: :eq, src_ip: '11.0.0.3', src_port: 33_333
+        )).to be_nil
     end
   end
 end

@@ -119,7 +119,7 @@ module CiscoAclIntp
       if @options.key?(:recursive_name)
         @options[:recursive_name]
       else
-        fail AclArgumentError, 'name not specified'
+        raise AclArgumentError, 'name not specified'
       end
     end
 

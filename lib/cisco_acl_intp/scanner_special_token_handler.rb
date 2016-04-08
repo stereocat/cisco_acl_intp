@@ -6,7 +6,7 @@ module CiscoAclIntp
   module SpecialTokenHandler
     # STRING token regexp:
     # first letter is alphabet or digit
-    STR_REGEXP = '[a-zA-Z\d]\S*'
+    STR_REGEXP = '[a-zA-Z\d]\S*'.freeze
 
     # Tokens that takes string parameter
     STRING_ARG_TOKENS = [
@@ -24,13 +24,13 @@ module CiscoAclIntp
       ['object-group', 'service', :word],
       ['object-group', :word], # longest match
       ['group-object', :word]
-    ]
+    ].freeze
 
     # Conversion table of string-tokens
     SYMBOL_TO_REGEXPSTR = {
       word: ['(', STR_REGEXP, ')'].join,
       leftover: '(.*)$'
-    }
+    }.freeze
 
     # Convert STRING_ARG_TOKENS to Regexp string
     # @param [Array] set Special tokens set

@@ -134,7 +134,7 @@ module CiscoAclIntp
           filename
         else
           @err_handler.count
-          fail AclError, "File: #{filename} not found."
+          raise AclError, "File: #{filename} not found."
         end
       end
     end
@@ -152,7 +152,7 @@ module CiscoAclIntp
           aclstr
         else
           @err_handler.count
-          fail AclError, "Argment: #{aclstr} not found."
+          raise AclError, "Argment: #{aclstr} not found."
         end
       end
     end

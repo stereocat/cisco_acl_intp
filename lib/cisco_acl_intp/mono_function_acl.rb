@@ -105,7 +105,7 @@ module CiscoAclIntp
       when String
         validate_name_by_string(name)
       else
-        fail AclArgumentError, 'acl number error'
+        raise AclArgumentError, 'acl number error'
       end
     end
 
@@ -142,7 +142,7 @@ module CiscoAclIntp
       if name =~ /\A\d+\Z/
         set_name_and_number(name, name.to_i)
       else
-        fail AclArgumentError, 'acl number string is not integer'
+        raise AclArgumentError, 'acl number string is not integer'
       end
     end
 

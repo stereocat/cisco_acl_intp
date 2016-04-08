@@ -28,10 +28,11 @@ describe RemarkAce do
   describe '#contains?' do
     it 'should be always false' do
       rmk = RemarkAce.new('asdfjklj;')
-      expect(rmk.contains?(
-        src_ip: '192.168.4.4',
-        dst_ip: '172.30.240.33'
-      )).to be_falsey
+      expect(
+        rmk.contains?(
+          src_ip: '192.168.4.4',
+          dst_ip: '172.30.240.33'
+        )).to be_falsey
       # with empty argments
       expect(rmk.contains?).to be_falsey
     end
@@ -79,10 +80,11 @@ describe EvaluateAce do
       evl = EvaluateAce.new(
         recursive_name: 'asdf_0-98'
       )
-      expect(evl.contains?(
-        src_ip: '192.168.4.4',
-        dst_ip: '172.30.240.33'
-      )).to be_falsey
+      expect(
+        evl.contains?(
+          src_ip: '192.168.4.4',
+          dst_ip: '172.30.240.33'
+        )).to be_falsey
       # with empty argments
       expect(evl.contains?).to be_falsey
     end

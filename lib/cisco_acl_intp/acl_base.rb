@@ -25,7 +25,7 @@ module CiscoAclIntp
     # @abstract
     # @return [String]
     def to_s
-      fail AclError, 'Not overridden AclContainerBase::to_s'
+      raise AclError, 'Not overridden AclContainerBase::to_s'
     end
 
     private
@@ -43,7 +43,7 @@ module CiscoAclIntp
       port: Term::ANSIColor.cyan,
       other_qualifier: Term::ANSIColor.green,
       error: [Term::ANSIColor.red, Term::ANSIColor.bold].join
-    }
+    }.freeze
 
     # Generate header of ACL tag
     # @param [Symbol] tag Tag symbol.

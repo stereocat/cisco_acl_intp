@@ -72,9 +72,9 @@ module CiscoAclIntp
     # @param [Integer] aclnum ACL number
     # @return [Array] Token list
     def check_numd_acl_type(aclnum)
-      if (1..99).include?(aclnum) || (1300..1999).include?(aclnum)
+      if (1..99).cover?(aclnum) || (1300..1999).cover?(aclnum)
         [:NUMD_STD_ACL, aclnum]
-      elsif (100..199).include?(aclnum) || (2000..2699).include?(aclnum)
+      elsif (100..199).cover?(aclnum) || (2000..2699).cover?(aclnum)
         [:NUMD_EXT_ACL, aclnum]
       else
         [:UNKNOWN, "access-list #{aclnum}"]
@@ -109,7 +109,7 @@ module CiscoAclIntp
       when @ss.scan(/(\d+\.\d+\.\d+\.\d+)\s/)
         ## IP Address
         @line_queue.push [:IPV4_ADDR, @ss[1]]
-      when @ss.scan(/(\d+\.\d+\.\d+\.\d+)(\/)(\d+)\s/)
+      when @ss.scan(%r{(\d+\.\d+\.\d+\.\d+)(\/)(\d+)\s})
         ## IP Address of 'ip/mask' notation
         @line_queue.push [:IPV4_ADDR, @ss[1]]
         @line_queue.push ['/',        @ss[2]]

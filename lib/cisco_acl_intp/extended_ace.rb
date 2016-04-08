@@ -79,7 +79,7 @@ module CiscoAclIntp
         @dst_spec,
         @tcp_flags,
         @tcp_other_qualifiers
-     )
+      )
     end
 
     # Search matched ACE
@@ -107,7 +107,7 @@ module CiscoAclIntp
           AceIpProtoSpec.new(protocol)
         end
       else
-        fail AclArgumentError, 'Not specified IP protocol'
+        raise AclArgumentError, 'Not specified IP protocol'
       end
     end
 
@@ -123,10 +123,10 @@ module CiscoAclIntp
         when AceSrcDstSpec
           dst
         else
-          fail AclArgumentError, 'Dst spec: unknown class'
+          raise AclArgumentError, 'Dst spec: unknown class'
         end
       else
-        fail AclArgumentError, 'Not specified dst spec'
+        raise AclArgumentError, 'Not specified dst spec'
       end
     end
 

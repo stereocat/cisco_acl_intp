@@ -41,7 +41,7 @@ module CiscoAclIntp
         @options = opts
         define_addrinfo
       else
-        fail AclArgumentError, 'Not specified IP address'
+        raise AclArgumentError, 'Not specified IP address'
       end
     end
 
@@ -58,13 +58,11 @@ module CiscoAclIntp
       if to_wmasked_ip_s == '0.0.0.0'
         # ip = '0.0.0.0' or wildcard = '255.255.255.255'
         tag_ip('any')
+      elsif @wildcard == '0.0.0.0'
+        # /32 mask
+        format '%s %s', tag_mask('host'), tag_ip(@ipaddr.ip)
       else
-        if @wildcard == '0.0.0.0'
-          # /32 mask
-          format '%s %s', tag_mask('host'), tag_ip(@ipaddr.ip)
-        else
-          format '%s %s', tag_ip(to_wmasked_ip_s), tag_mask(@wildcard)
-        end
+        format '%s %s', tag_ip(to_wmasked_ip_s), tag_mask(@wildcard)
       end
     end
 
@@ -93,7 +91,7 @@ module CiscoAclIntp
     OCTET_BIT_LENGTH = {
       '255' => 0, '127' => 1, '63' => 2, '31' => 3,
       '15' => 4, '7' => 5, '3' => 6, '1' => 7, '0' => 8
-    }
+    }.freeze
 
     # Covnet IPv4 bit-flapped wildcard to netmask length
     # @return [Fixnum] netmask length
@@ -102,7 +100,7 @@ module CiscoAclIntp
     #   e.g. '0.0.0.1.255' #=> 31
     def wildcard_bitlength
       @wildcard.split(/\./).reduce(0) do |len, octet|
-        return unless len && OCTET_BIT_LENGTH.key?(octet)
+        break unless len && OCTET_BIT_LENGTH.key?(octet)
         len + OCTET_BIT_LENGTH[octet]
       end
     end
@@ -142,12 +140,9 @@ module CiscoAclIntp
     # Set instance variables. Secondary prioritize option is netmask,
     #   and third(last) one is default-mask
     def define_addrinfo_by_netmask_or_default
-      if @options.key?(:netmask)
-        define_addrinfo_with_netmask
-      else
-        @options[:netmask] = 32 # default ('host' mask)
-        define_addrinfo_with_netmask
-      end
+      # default ('host' mask)
+      @options[:netmask] = 32 unless @options.key?(:netmask)
+      define_addrinfo_with_netmask
     end
 
     # Set instance variables with ip/wildcard
@@ -163,7 +158,7 @@ module CiscoAclIntp
     def define_addrinfo_with_netmask
       @netmask = @options[:netmask]
       @ipaddr = NetAddr::CIDR.create(
-        format '%s/%s', @options[:ipaddr], @netmask
+        format('%s/%s', @options[:ipaddr], @netmask)
       )
       @wildcard = @ipaddr.wildcard_mask(true)
     end

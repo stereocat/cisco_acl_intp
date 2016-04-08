@@ -198,7 +198,7 @@ module CiscoAclIntp
     def initialize(*args)
       super
       unless @begin_port < @end_port
-        fail AclArgumentError, 'Invalid port sequence'
+        raise AclArgumentError, 'Invalid port sequence'
       end
       @operator = :range
     end

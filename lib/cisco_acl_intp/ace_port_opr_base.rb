@@ -11,7 +11,7 @@ module CiscoAclIntp
     # @return [AceProtoSpecBase]
     attr_reader :begin_port
     # alias for unary operator
-    alias_method :port, :begin_port
+    alias port begin_port
 
     # @param [AceProtoSpecBase] value Port No. (higher)
     # @return [AceProtoSpecBase]
@@ -124,7 +124,7 @@ module CiscoAclIntp
     def initialize(*args)
       super
       if @begin_port.nil?
-        fail AclArgumentError, 'Port did not specified in unary operator'
+        raise AclArgumentError, 'Port did not specified in unary operator'
       end
       @end_port = nil
     end
