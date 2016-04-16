@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 require 'forwardable'
 require 'netaddr'
-require 'cisco_acl_intp/acl_base'
+require 'cisco_acl_intp/acespec_base'
 
 module CiscoAclIntp
   # IP Address and Wildcard mask container
-  class AceIpSpec < AclContainerBase
+  class AceIpSpec < AceSpecBase
     extend Forwardable
 
     # @param [NetAddr::CIDR] value IP address

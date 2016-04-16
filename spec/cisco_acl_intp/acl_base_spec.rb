@@ -6,7 +6,7 @@ describe 'AclContainerBase' do
   describe '#generate_tagged_str' do
     before do
       # test mock
-      class TestAclContainer < AclContainerBase
+      class TestAclContainer < AccessControlContainer
         def initialize(str)
           @str = str
         end
@@ -27,24 +27,24 @@ describe 'AclContainerBase' do
     end
 
     it 'should be same as raw string' do
-      AclContainerBase.color_mode = :none
+      AccessControlContainer.color_mode = :none
       expect(@mock.to_s_with_tag(:port)).to eq 'teststr'
     end
 
     it 'should be colored string when mode html' do
-      AclContainerBase.color_mode = :html
+      AccessControlContainer.color_mode = :html
       tag = :header
       matchstr = "span.*acltag_#{tag}.*teststr.*span"
       expect(@mock.to_s_with_tag(tag)).to match(/#{matchstr}/)
-      AclContainerBase.color_mode = :none
+      AccessControlContainer.color_mode = :none
     end
 
     it 'should be colored string when mode term' do
-      AclContainerBase.color_mode = :term
+      AccessControlContainer.color_mode = :term
       expect(@mock.to_s_with_tag(:error)).to match(
         /\e\[0?\d+m.*teststr.*\e\[0?m/
       )
-      AclContainerBase.color_mode = :none
+      AccessControlContainer.color_mode = :none
     end
 
     it 'should be raised NoMethodError when unknown tag' do

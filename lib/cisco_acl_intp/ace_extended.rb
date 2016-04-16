@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-require 'cisco_acl_intp/standard_ace'
+require 'cisco_acl_intp/ace_standard'
 
 module CiscoAclIntp
   # ACE for extended access list

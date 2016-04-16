@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-require 'cisco_acl_intp/ace_proto_base'
+require 'cisco_acl_intp/acespec_proto_base'
 
 module CiscoAclIntp
   # IP protocol number/name container

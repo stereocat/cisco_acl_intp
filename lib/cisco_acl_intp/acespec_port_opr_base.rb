@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-require 'cisco_acl_intp/acl_base'
+require 'cisco_acl_intp/acc'
 
 module CiscoAclIntp
   # TCP/UDP Port Set Operator Class
-  class AcePortOperatorBase < AclContainerBase
+  class AcePortOperatorBase < AceSpecBase
     # @return
     attr_reader :operator
 

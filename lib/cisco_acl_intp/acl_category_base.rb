@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 require 'forwardable'
-require 'cisco_acl_intp/single_acl_base'
+require 'cisco_acl_intp/acl_base'
 
 module CiscoAclIntp
   # Features for Extended ACL
@@ -33,7 +33,7 @@ module CiscoAclIntp
   ############################################################
 
   # Named ACL container base
-  class NamedAcl < SingleAclBase
+  class NamedAcl < AclBase
     # check acl type,Named ACL or not?
     # @return [Boolean]
     def named_acl?
@@ -75,7 +75,7 @@ module CiscoAclIntp
   end
 
   # Numbered ACL container base
-  class NumberedAcl < SingleAclBase
+  class NumberedAcl < AclBase
     # @return [Integer] Access list number
     attr_reader :number
 

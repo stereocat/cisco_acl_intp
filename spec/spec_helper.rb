@@ -15,7 +15,7 @@ end
 require 'cisco_acl_intp'
 
 include CiscoAclIntp
-AclContainerBase.disable_color
+AccessControlContainer.disable_color
 
 RSpec::Matchers.define :be_aclstr do |expected_str|
   match do |actual_str|

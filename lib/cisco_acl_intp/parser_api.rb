@@ -111,7 +111,7 @@ module CiscoAclIntp
       @silent_mode = @debug_print || opts[:silent] || false
 
       @color_mode = opts[:color] || :none
-      AclContainerBase.color_mode = @color_mode
+      AccessControlContainer.color_mode = @color_mode
 
       @err_handler = ParserErrorHandler.new
       @err_handler.reset_count

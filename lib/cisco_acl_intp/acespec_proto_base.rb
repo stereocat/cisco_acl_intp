@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-require 'cisco_acl_intp/acl_base'
+require 'cisco_acl_intp/acespec_base'
 
 module CiscoAclIntp
   # IP/TCP/UDP protocol number and protocol name container base
-  class AceProtoSpecBase < AclContainerBase
+  class AceProtoSpecBase < AceSpecBase
     include Comparable
 
     # @return [String] Protocol name

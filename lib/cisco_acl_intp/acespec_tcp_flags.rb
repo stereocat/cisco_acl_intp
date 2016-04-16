@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 require 'forwardable'
-require 'cisco_acl_intp/acl_base'
+require 'cisco_acl_intp/acespec_base'
 
 module CiscoAclIntp
   # TCP flag container
-  class AceTcpFlag < AclContainerBase
+  class AceTcpFlag < AceSpecBase
     # @param [String] value TCP flag name
     # @return [String]
     attr_accessor :flag
@@ -31,7 +31,7 @@ module CiscoAclIntp
   end
 
   # TCP flag list container
-  class AceTcpFlagList < AclContainerBase
+  class AceTcpFlagList < AceSpecBase
     extend Forwardable
 
     # @param [Array] value TCP Flags

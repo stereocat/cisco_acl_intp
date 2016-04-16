@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-require 'cisco_acl_intp/ace_srcdst'
+require 'cisco_acl_intp/acespec_srcdst'
 
 module CiscoAclIntp
-  # Access control entry base model
-  class AceBase < AclContainerBase
+  # AceBase: Base class of ACE(Access Control Entry).
+  # ACE is composed of each types of AceSpecs.
+  class AceBase < AccessControlContainer
     include Comparable
 
     # @param [Integer] value ACL sequence number
@@ -87,7 +88,7 @@ module CiscoAclIntp
     end
 
     # Search matched ACE
-    # @param [Hash] opts Options
+    # @param [Hash] _opts Options
     # return [Boolean] false, Remark does not match anithyng.
     def contains?(_opts = nil)
       false
@@ -136,7 +137,7 @@ module CiscoAclIntp
     end
 
     # Search matched ACE
-    # @param [Hash] opts Options
+    # @param [Hash] _opts Options
     # return [Boolean]
     # @todo for Recursive name matching is not implemented yet
     def contains?(_opts = nil)

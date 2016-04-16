@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-require 'cisco_acl_intp/ace_port_opr_base'
+require 'cisco_acl_intp/acespec_port_opr_base'
 
 module CiscoAclIntp
   # ANY operator class

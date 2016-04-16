@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 require 'forwardable'
-require 'cisco_acl_intp/acl_base'
+require 'cisco_acl_intp/acespec_base'
 
 module CiscoAclIntp
   # List of other-qualifiers for extended ace
-  class AceOtherQualifierList < AclContainerBase
+  class AceOtherQualifierList < AceSpecBase
     extend Forwardable
 
     # @param [Array] value List of {AceOtherQualifierList} object
@@ -36,7 +36,7 @@ module CiscoAclIntp
   end
 
   # Access list entry qualifier base
-  class AceOtherQualifierBase < AclContainerBase
+  class AceOtherQualifierBase < AceSpecBase
   end
 
   # Log spec container

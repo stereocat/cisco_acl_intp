@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 require 'forwardable'
-require 'cisco_acl_intp/mono_function_acl'
+require 'cisco_acl_intp/acl_category_base'
 
 module CiscoAclIntp
   # Named extended ACL container

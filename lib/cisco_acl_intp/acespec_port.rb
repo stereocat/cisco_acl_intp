@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 require 'forwardable'
-require 'cisco_acl_intp/ace_proto'
-require 'cisco_acl_intp/ace_port_opr'
+require 'cisco_acl_intp/acespec_proto'
+require 'cisco_acl_intp/acespec_port_opr'
 
 module CiscoAclIntp
   # IP(TCP/UDP) port number and operator container
-  class AcePortSpec < AclContainerBase
+  class AcePortSpec < AceSpecBase
     extend Forwardable
 
     # @return [AcePortOperatorBase] value Port-set operator

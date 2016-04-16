@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-require 'cisco_acl_intp/extended_ace'
+require 'cisco_acl_intp/ace_extended'
 
 module CiscoAclIntp
   # Extended Ace utilities for ace search

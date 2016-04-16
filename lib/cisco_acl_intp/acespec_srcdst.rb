@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 require 'netaddr'
-require 'cisco_acl_intp/ace_ip'
-require 'cisco_acl_intp/ace_port'
-require 'cisco_acl_intp/ace_other_qualifiers'
-require 'cisco_acl_intp/ace_tcp_flags'
+require 'cisco_acl_intp/acespec_ip'
+require 'cisco_acl_intp/acespec_port'
+require 'cisco_acl_intp/acespec_other_qualifiers'
+require 'cisco_acl_intp/acespec_tcp_flags'
 
 module CiscoAclIntp
   # IP Address and TCP/UDP Port Info
   # @todo Src/Dst takes Network Object Group or IP/wildcard.
   #    "object-group" is not implemented yet.
-  class AceSrcDstSpec < AclContainerBase
+  class AceSrcDstSpec < AceSpecBase
     # @param [AceIpSpec] value IP address and Wildcard-mask
     # @return [AceIpSpec]
     attr_accessor :ip_spec
