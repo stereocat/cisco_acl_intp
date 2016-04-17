@@ -52,12 +52,9 @@ describe 'AcePortOpEq' do
       @aclop = AcePortOpEq.new(@port1)
     end
 
-    it 'should be true with ANY' do
-      expect(@aclop.contains?(AcePortOpAny.new)).to be_truthy
-    end
-
-    it 'should be false with STRICT_ANY' do
-      expect(@aclop.contains?(AcePortOpStrictAny.new)).to be_truthy
+    it 'should be false with (STRICT_)ANY' do
+      expect(@aclop.contains?(AcePortOpAny.new)).to be_falsey
+      expect(@aclop.contains?(AcePortOpStrictAny.new)).to be_falsey
     end
 
     it 'should be true when same eq/port operator' do
@@ -83,12 +80,9 @@ describe 'AcePortOpNeq' do
       @aclop = AcePortOpNeq.new(@port2)
     end
 
-    it 'should be true with ANY' do
-      expect(@aclop.contains?(AcePortOpAny.new)).to be_truthy
-    end
-
-    it 'should be false with STRICT_ANY' do
-      expect(@aclop.contains?(AcePortOpStrictAny.new)).to be_truthy
+    it 'should be false with (STRICT_)ANY' do
+      expect(@aclop.contains?(AcePortOpAny.new)).to be_falsey
+      expect(@aclop.contains?(AcePortOpStrictAny.new)).to be_falsey
     end
 
     it 'should be checked with EQUAL' do
@@ -137,12 +131,9 @@ describe 'AcePortOpLt' do
       @aclop = AcePortOpLt.new(@port2)
     end
 
-    it 'should be true with ANY' do
-      expect(@aclop.contains?(AcePortOpAny.new)).to be_truthy
-    end
-
-    it 'should be false with STRICT_ANY' do
-      expect(@aclop.contains?(AcePortOpStrictAny.new)).to be_truthy
+    it 'should be false with (STRICT_)ANY' do
+      expect(@aclop.contains?(AcePortOpAny.new)).to be_falsey
+      expect(@aclop.contains?(AcePortOpStrictAny.new)).to be_falsey
     end
 
     it 'should be checked with EQUAL' do
@@ -196,12 +187,9 @@ describe 'AcePortOpGt' do
       @aclop = AcePortOpGt.new(@port2)
     end
 
-    it 'should be true with ANY' do
-      expect(@aclop.contains?(AcePortOpAny.new)).to be_truthy
-    end
-
-    it 'should be false with STRICT_ANY' do
-      expect(@aclop.contains?(AcePortOpStrictAny.new)).to be_truthy
+    it 'should be false with (STRICT_)ANY' do
+      expect(@aclop.contains?(AcePortOpAny.new)).to be_falsey
+      expect(@aclop.contains?(AcePortOpStrictAny.new)).to be_falsey
     end
 
     it 'should be checked with EQUAL' do
@@ -262,14 +250,17 @@ describe 'AcePortOpRange' do
       @port_min = AceTcpProtoSpec.new(0)
 
       @aclop = AcePortOpRange.new(@port2, @port3)
+      @aclop_any = AcePortOpRange.new(@port_min, @port_max)
     end
 
-    it 'should be true with ANY' do
-      expect(@aclop.contains?(AcePortOpAny.new)).to be_truthy
+    it 'should be checked with ANY' do
+      expect(@aclop.contains?(AcePortOpAny.new)).to be_falsey
+      expect(@aclop_any.contains?(AcePortOpAny.new)).to be_truthy
     end
 
     it 'should be false with STRICT_ANY' do
-      expect(@aclop.contains?(AcePortOpStrictAny.new)).to be_truthy
+      expect(@aclop.contains?(AcePortOpStrictAny.new)).to be_falsey
+      expect(@aclop_any.contains?(AcePortOpStrictAny.new)).to be_falsey
     end
 
     it 'should be checked with EQUAL' do

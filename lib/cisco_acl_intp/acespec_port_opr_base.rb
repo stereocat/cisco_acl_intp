@@ -52,69 +52,84 @@ module CiscoAclIntp
     def contains?(other)
       case other
       when AcePortOpEq
-        compare_eq(other)
+        contains_eq?(other)
       when AcePortOpNeq
-        compare_neq(other)
+        contains_neq?(other)
       when AcePortOpLt
-        compare_lt(other)
+        contains_lt?(other)
       when AcePortOpGt
-        compare_gt(other)
+        contains_gt?(other)
       when AcePortOpRange
-        compare_range(other)
+        contains_range?(other)
       else
-        contains_default(other)
+        check_any_operator(other)
       end
     end
 
     private
 
-    # Operate EQUAL containing check
-    # @param [AcePortOperator] other Another operator
+    # ANY operator check
+    # @param [AcePortOpAny] other Another operator
     # @return [Boolean]
-    def compare_eq(_other)
+    def check_any_operator(other)
+      case other
+      when AcePortOpStrictAny
+        # must match before AcePortOpAny (Base Class)
+        contains_strict_any?(other)
+      when AcePortOpAny
+        contains_any?(other)
+      else
+        false # unknown operator
+      end
+    end
+
+    # Operate ANY containing check
+    # @param [AcePortOpAny] _other Another operator
+    # @return [Boolean]
+    def contains_any?(_other)
+      false
+    end
+
+    # Operate STRICT_ANY containing check
+    # @param [AcePortOpStrictAny] _other Another operator
+    # @return [Boolean]
+    def contains_strict_any?(_other)
+      false
+    end
+
+    # Operate EQUAL containing check
+    # @param [AcePortOpEq] _other Another operator
+    # @return [Boolean]
+    def contains_eq?(_other)
       false
     end
 
     # Operate NOT_EQUAL containing check
-    # @param [AcePortOperator] other Another operator
+    # @param [AcePortOpNeq] _other Another operator
     # @return [Boolean]
-    def compare_neq(_other)
+    def contains_neq?(_other)
       false
     end
 
     # Operate LOWER_THAN containing check
-    # @param [AcePortOperator] other Another operator
+    # @param [AcePortOpLt] _other Another operator
     # @return [Boolean]
-    def compare_lt(_other)
+    def contains_lt?(_other)
       false
     end
 
     # Operate GREATER_THAN containing check
-    # @param [AcePortOperator] other Another operator
+    # @param [AcePortOpGt] _other Another operator
     # @return [Boolean]
-    def compare_gt(_other)
+    def contains_gt?(_other)
       false
     end
 
     # Operate RANGE containing check
-    # @param [AcePortOperator] other Another operator
+    # @param [AcePortOpRange] _other Another operator
     # @return [Boolean]
-    def compare_range(_other)
+    def contains_range?(_other)
       false
-    end
-
-    # Operate *ANY containing check
-    # @param [AcePortOperator] other Another operator
-    # @return [Boolean]
-    def contains_default(other)
-      case other
-      when AcePortOpAny
-        true
-      when AcePortOpStrictAny
-        false
-      else
-        false
-      end
     end
   end
 

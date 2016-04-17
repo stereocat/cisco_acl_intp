@@ -13,7 +13,7 @@ CiscoAclIntp can...
 * parse ACL types of below
   * Numbered ACL (standard/extended)
   * Named ACL (standard/extended)
-* parse almost ACL syntaxes.
+* parse almost ACL syntax.
   * basic IPv4 acl (protocol `ip`/`tcp`/`udp`)
 
 CiscoAclIntp *CANNOT*...
@@ -211,21 +211,26 @@ See `NetAddr::CIDR#matches?` for CIDR subnet operation and
 
 ### Port Operation
 
-| User       | any  | eq X   | neq X  | lt X   | gt X   | range X1 X2   |
-|------------|------|--------|--------|--------|--------|---------------|
-| any        | true | true   | true   | true   | true   | true          |
-| strict_any | true | false  | false  | false  | false  | false         |
-| eq P       | true | P = X  | P != X | P < X  | X < P  | X1 <= P <= X2 |
-| neq P      | true | false  | P = X  | P = X = 65535 | P = X = 0 | (P=X1=0 and X2=65535) or (X1=0 and P=X2=65535) |
-| lt P       | true | false  | P <= X | P <= X | false   | X1 = 0 and P < X2 |
-| gt P       | true | false  | X <= P | false  | X <= P  | X1 < P and X2 = 65535 |
-| range P1 P2| true | false  | P2 < X or X < P1 | P2 < X | X < P1 | X1 <= P1 and P2 <= X2 |
+In below table, "P" column is the argument of `#contains?`,
+and operators at table header are receiver of `#contains?`.
+The table shows case patterns with `port_X.contains?(port_P)`.
+(`port_X` is a instance of `AceUnaryOpBase`
+and it has port match operator and port number information.)
 
-In above table, “User” column is the argment of `contains?`, and,
-operators at table header are receiver of `contains?`. For example,
-`[gt X].contains?([eq P])` will be `true` if port `X < P`. It means
-the ACL `[gt X]` permit (or deny) the flow `[eq P]`. You can search
-ACEs which matches a flows specified by search conditions.
+| P          | strict_any | any  | eq X   | neq X  | lt X   | gt X   | range X1 X2   |
+|------------|------------|------|--------|--------|--------|--------|---------------|
+| strict_any | true       | true | false  | false  | false  | false  | false         |
+| any        | true       | true | false  | false  | false  | false  | X1=0 and X2=65535 |
+| eq P       | false      | true | P = X  | P != X | P < X  | X < P  | X1 <= P <= X2 |
+| neq P      | false      | true | false  | P = X  | P = X = 65535 | P = X = 0 | (P=X1=0 and X2=65535) or (X1=0 and P=X2=65535) |
+| lt P       | false      | true | false  | P <= X | P <= X | false   | X1 = 0 and P < X2 |
+| gt P       | false      | true | false  | X <= P | false  | X <= P  | X1 < P and X2 = 65535 |
+| range P1 P2| false      | true | false  | P2 < X or X < P1 | P2 < X | X < P1 | X1 <= P1 and P2 <= X2 |
+
+
+For example,`[gt X].contains?([eq P])` will be `true` if port `X < P`.
+It means the ACL `[gt X]` permit (or deny) the flow `[eq P]`.
+You can search ACEs which matches a flows specified by search conditions.
 
 `:strict_any` is a special operator to search acl, the operator is
 matches only `:any` operator.

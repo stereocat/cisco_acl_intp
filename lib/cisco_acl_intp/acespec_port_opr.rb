@@ -11,11 +11,11 @@ module CiscoAclIntp
       @operator = :any
     end
 
-    # Specified port-set is contained or not?
-    # @param [AcePortOperator] other Another operator
+    # ANY contains other_port? (always true)
+    # @param [AcePortOperatorBase] _other Another operator
     # @return [Boolean]
-    def contains?(other)
-      other.is_a?(AcePortOperatorBase) # match any conditions
+    def contains?(_other)
+      true
     end
 
     # Generate string for Cisco IOS access list
@@ -26,7 +26,7 @@ module CiscoAclIntp
     end
   end
 
-  # SSTRICT-ANY operator class
+  # STRICT-ANY operator class
   class AcePortOpStrictAny < AcePortOpAny
     # Constructor
     def initialize(*args)
@@ -34,8 +34,8 @@ module CiscoAclIntp
       @operator = :strict_any
     end
 
-    # Specified port-set is contained or not?
-    # @param [AcePortOperator] other Another operator
+    # STRICT_ANY contains other_port?
+    # @param [AcePortOperatorBase] other Another operator
     # @return [Boolean]
     def contains?(other)
       case other
@@ -55,16 +55,11 @@ module CiscoAclIntp
       @operator = :eq
     end
 
-    # Specified port-set is contained or not?
-    # @param [AcePortOperator] other Another operator
+    # EQ contains EQ?
+    # @param [AcePortOpEq] other Another operator
     # @return [Boolean]
-    def contains?(other)
-      case other
-      when AcePortOpEq
-        other.port == @begin_port
-      else
-        contains_default(other)
-      end
+    def contains_eq?(other)
+      other.port == @begin_port
     end
   end
 
@@ -78,38 +73,38 @@ module CiscoAclIntp
 
     private
 
-    # Operate EQUAL containing check
-    # @param [AcePortOperator] other Another operator
+    # NEQ contains EQ?
+    # @param [AcePortOpEq] other Another operator
     # @return [Boolean]
-    def compare_eq(other)
+    def contains_eq?(other)
       other.port != @begin_port
     end
 
-    # Operate NOT_EQUAL containing check
-    # @param [AcePortOperator] other Another operator
+    # NEQ contains NEQ?
+    # @param [AcePortOpNeq] other Another operator
     # @return [Boolean]
-    def compare_neq(other)
+    def contains_neq?(other)
       other.port == @begin_port
     end
 
-    # Operate LOWER_THAN containing check
-    # @param [AcePortOperator] other Another operator
+    # NEQ contains LT?
+    # @param [AcePortOpLt] other Another operator
     # @return [Boolean]
-    def compare_lt(other)
+    def contains_lt?(other)
       other.port <= @begin_port
     end
 
-    # Operate GREATER_THAN containing check
-    # @param [AcePortOperator] other Another operator
+    # NEQ contains GT?
+    # @param [AcePortOpGt] other Another operator
     # @return [Boolean]
-    def compare_gt(other)
+    def contains_gt?(other)
       @begin_port <= other.port
     end
 
-    # Operate RANGE containing check
-    # @param [AcePortOperator] other Another operator
+    # NEQ contains RANGE?
+    # @param [AcePortOpRange] other Another operator
     # @return [Boolean]
-    def compare_range(other)
+    def contains_range?(other)
       other.end_port < @begin_port || @begin_port < other.begin_port
     end
   end
@@ -124,31 +119,31 @@ module CiscoAclIntp
 
     private
 
-    # Operate EQUAL containing check
-    # @param [AcePortOperator] other Another operator
+    # LT contains EQ?
+    # @param [AcePortOpEq] other Another operator
     # @return [Boolean]
-    def compare_eq(other)
+    def contains_eq?(other)
       other.port < @begin_port
     end
 
-    # Operate NOT_EQUAL containing check
-    # @param [AcePortOperator] other Another operator
+    # LT contains NEQ?
+    # @param [AcePortOpNeq] other Another operator
     # @return [Boolean]
-    def compare_neq(other)
+    def contains_neq?(other)
       other.port.max? && @begin_port.max?
     end
 
-    # Operate LOWER_THAN containing check
-    # @param [AcePortOperator] other Another operator
+    # LT contains LT?
+    # @param [AcePortOpLt] other Another operator
     # @return [Boolean]
-    def compare_lt(other)
+    def contains_lt?(other)
       other.port <= @begin_port
     end
 
-    # Operate RANGE containing check
-    # @param [AcePortOperator] other Another operator
+    # LT contains RANGE?
+    # @param [AcePortOpRange] other Another operator
     # @return [Boolean]
-    def compare_range(other)
+    def contains_range?(other)
       other.end_port < @begin_port
     end
   end
@@ -163,31 +158,31 @@ module CiscoAclIntp
 
     private
 
-    # Operate EQUAL containing check
-    # @param [AcePortOperator] other Another operator
+    # GT contains EQ?
+    # @param [AcePortOpEq] other Another operator
     # @return [Boolean]
-    def compare_eq(other)
+    def contains_eq?(other)
       @begin_port < other.port
     end
 
-    # Operate NOT_EQUAL containing check
-    # @param [AcePortOperator] other Another operator
+    # GT contains NEQ?
+    # @param [AcePortOpNeq] other Another operator
     # @return [Boolean]
-    def compare_neq(other)
+    def contains_neq?(other)
       @begin_port.min? && other.port.min?
     end
 
-    # Operate GREATER_THAN containing check
-    # @param [AcePortOperator] other Another operator
+    # GT contains GT?
+    # @param [AcePortOpGt] other Another operator
     # @return [Boolean]
-    def compare_gt(other)
+    def contains_gt?(other)
       @begin_port <= other.port
     end
 
-    # Operate RANGE containing check
-    # @param [AcePortOperator] other Another operator
+    # GT contains RANGE?
+    # @param [AcePortOperatorBase] other Another operator
     # @return [Boolean]
-    def compare_range(other)
+    def contains_range?(other)
       @begin_port < other.begin_port
     end
   end
@@ -205,39 +200,46 @@ module CiscoAclIntp
 
     private
 
-    # Operate EQUAL containing check
-    # @param [AcePortOperator] other Another operator
+    # RANGE contains ANY?
+    # @param [AcePortOpAny] _other Another operator
     # @return [Boolean]
-    def compare_eq(other)
+    def contains_any?(_other)
+      @begin_port.min? && @end_port.max?
+    end
+
+    # RANGE contains EQ?
+    # @param [AcePortOpEq] other Another operator
+    # @return [Boolean]
+    def contains_eq?(other)
       @begin_port <= other.port && other.port <= @end_port
     end
 
-    # Operate NOT_EQUAL containing check
-    # @param [AcePortOperator] other Another operator
+    # RANGE contains NEQ?
+    # @param [AcePortOpNeq] other Another operator
     # @return [Boolean]
-    def compare_neq(other)
+    def contains_neq?(other)
       @begin_port.min? && @end_port.max? &&
         (other.port.min? || other.port.max?)
     end
 
-    # Operate LOWER_THAN containing check
-    # @param [AcePortOperator] other Another operator
+    # RANGE contains LT?
+    # @param [AcePortOpLt] other Another operator
     # @return [Boolean]
-    def compare_lt(other)
+    def contains_lt?(other)
       @begin_port.min? && other.port < @end_port
     end
 
-    # Operate GREATER_THAN containing check
-    # @param [AcePortOperator] other Another operator
+    # RANGE contains GT?
+    # @param [AcePortOpGt] other Another operator
     # @return [Boolean]
-    def compare_gt(other)
+    def contains_gt?(other)
       @begin_port < other.port && @end_port.max?
     end
 
-    # Operate RANGE containing check
-    # @param [AcePortOperator] other Another operator
+    # RANGE contains RANGE?
+    # @param [AcePortOpRange] other Another operator
     # @return [Boolean]
-    def compare_range(other)
+    def contains_range?(other)
       @begin_port <= other.begin_port &&
         other.end_port <= @end_port
     end
