@@ -3,7 +3,7 @@
 # CiscoAclIntp Module, version definition
 module CiscoAclIntp
   # Version number
-  VERSION = '0.0.3'.freeze
+  VERSION = '0.0.4'.freeze
 end
 
 ### Local variables:
