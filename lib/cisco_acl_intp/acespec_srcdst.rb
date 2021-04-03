@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# frozen_string_literal: true
+
 require 'netaddr'
 require 'cisco_acl_intp/acespec_ip'
 require 'cisco_acl_intp/acespec_port'
@@ -37,6 +38,7 @@ module CiscoAclIntp
     #   (:port_spec or :operator, :begin_port, :end_port)
     #   it assumed with ANY port.
     def initialize(opts)
+      super()
       @options = opts
       @ip_spec = define_ipspec
       @port_spec = define_portspec
@@ -52,7 +54,7 @@ module CiscoAclIntp
     # Generate string for Cisco IOS access list
     # @return [String]
     def to_s
-      format '%s %s', @ip_spec, @port_spec
+      format '%<ip>s %<port>s', ip: @ip_spec, port: @port_spec
     end
 
     # Check address and port number contains this object or not.
@@ -128,7 +130,7 @@ module CiscoAclIntp
       end
     end
   end
-end # module
+end
 
 ### Local variables:
 ### mode: Ruby

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# frozen_string_literal: true
 
 require 'bundler/gem_tasks'
 require 'rspec/core/rake_task'
@@ -7,16 +7,16 @@ require 'yard'
 require 'yard/rake/yardoc_task'
 require 'reek/rake/task'
 
-LIB_DIR = './lib'.freeze
-PACKAGE_NAME = 'cisco_acl_intp'.freeze
-SPEC_ORIG_DIR = 'spec'.freeze
-SPEC_DIR = "#{SPEC_ORIG_DIR}/#{PACKAGE_NAME}/".freeze
-SPEC_DATA_DIR = "#{SPEC_ORIG_DIR}/data".freeze
-CLASS_DIR = "#{LIB_DIR}/#{PACKAGE_NAME}".freeze
-CLASS_GRAPH_DOT = "doc/#{PACKAGE_NAME}.dot".freeze
-CLASS_GRAPH_PNG = "doc/#{PACKAGE_NAME}.png".freeze
-PARSER_RACC = "#{CLASS_DIR}/parser.ry".freeze
-PARSER_RUBY = "#{CLASS_DIR}/parser.rb".freeze
+LIB_DIR = './lib'
+PACKAGE_NAME = 'cisco_acl_intp'
+SPEC_ORIG_DIR = 'spec'
+SPEC_DIR = "#{SPEC_ORIG_DIR}/#{PACKAGE_NAME}/"
+SPEC_DATA_DIR = "#{SPEC_ORIG_DIR}/data"
+CLASS_DIR = "#{LIB_DIR}/#{PACKAGE_NAME}"
+CLASS_GRAPH_DOT = "doc/#{PACKAGE_NAME}.dot"
+CLASS_GRAPH_PNG = "doc/#{PACKAGE_NAME}.png"
+PARSER_RACC = "#{CLASS_DIR}/parser.ry"
+PARSER_RUBY = "#{CLASS_DIR}/parser.rb"
 
 CLEAN.include(
   "#{SPEC_DATA_DIR}/*.*",
@@ -29,7 +29,7 @@ CLOBBER.include(
 )
 
 task default: :travis
-task travis: [:parser, :spec, :rubocop]
+task travis: %i[parser spec rubocop]
 task parser: [PARSER_RUBY]
 task spec: [SPEC_DATA_DIR]
 

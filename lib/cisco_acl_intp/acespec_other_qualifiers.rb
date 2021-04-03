@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# frozen_string_literal: true
 
 require 'forwardable'
 require 'cisco_acl_intp/acespec_base'
@@ -17,6 +17,7 @@ module CiscoAclIntp
     # Constructor
     # @return [AceOtherQualifierList]
     def initialize(list = [])
+      super()
       @list = list
     end
 
@@ -57,8 +58,9 @@ module CiscoAclIntp
     # @param [String] cookie Log cookie
     # @param [Boolean] input set true 'log-input' logging
     # @return [AceLogSpec]
-    def initialize(cookie = nil, input = false)
-      @input = input
+    def initialize(cookie = nil, input = nil)
+      super()
+      @input = !input.nil? # default nil = false
       @cookie = cookie
     end
 
@@ -66,9 +68,9 @@ module CiscoAclIntp
     # @return [String]
     def to_s
       format(
-        '%s %s',
-        @input ? 'log-input' : 'log',
-        @cookie ? @cookie : ''
+        '%<input>s %<cookie>s',
+        input: @input ? 'log-input' : 'log',
+        cookie: @cookie || ''
       )
     end
 
@@ -90,11 +92,10 @@ module CiscoAclIntp
     # Constructor
     # @param [String] name Recursive name
     def initialize(name)
-      if name && !name.empty?
-        @recursive_name = name
-      else
-        raise AclArgumentError, 'Not specified recursive name'
-      end
+      super()
+      raise AclArgumentError, 'Not specified recursive name' unless name && !name.empty?
+
+      @recursive_name = name
     end
 
     # Generate string for Cisco IOS access list
@@ -110,7 +111,7 @@ module CiscoAclIntp
         @recursive_name == other.recursive_name
     end
   end
-end # module
+end
 
 ### Local variables:
 ### mode: Ruby

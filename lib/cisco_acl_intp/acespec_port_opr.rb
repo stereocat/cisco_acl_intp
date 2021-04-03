@@ -1,11 +1,16 @@
-# -*- coding: utf-8 -*-
+# frozen_string_literal: true
+
 require 'cisco_acl_intp/acespec_port_opr_base'
 
 module CiscoAclIntp
   # ANY operator class
   class AcePortOpAny < AceUnaryOpBase
     # Constructor
+    # NOTE: constructor receives multiple arguments: usually args=[nil, nil]
     def initialize(*_args)
+      # no-nil dummy arg (prevent error in super constructor)
+      super(AceProtoSpecBase.new(1))
+      # overwrite begin/end port and operator
       @begin_port = nil
       @end_port = nil
       @operator = :any
@@ -30,7 +35,7 @@ module CiscoAclIntp
   class AcePortOpStrictAny < AcePortOpAny
     # Constructor
     def initialize(*args)
-      super
+      super(*args)
       @operator = :strict_any
     end
 
@@ -51,7 +56,7 @@ module CiscoAclIntp
   class AcePortOpEq < AceUnaryOpBase
     # Constructor
     def initialize(*args)
-      super
+      super(*args)
       @operator = :eq
     end
 
@@ -67,7 +72,7 @@ module CiscoAclIntp
   class AcePortOpNeq < AceUnaryOpBase
     # Constructor
     def initialize(*args)
-      super
+      super(*args)
       @operator = :neq
     end
 
@@ -113,7 +118,7 @@ module CiscoAclIntp
   class AcePortOpLt < AceUnaryOpBase
     # Constructor
     def initialize(*args)
-      super
+      super(*args)
       @operator = :lt
     end
 
@@ -152,7 +157,7 @@ module CiscoAclIntp
   class AcePortOpGt < AceUnaryOpBase
     # Constructor
     def initialize(*args)
-      super
+      super(*args)
       @operator = :gt
     end
 
@@ -191,10 +196,9 @@ module CiscoAclIntp
   class AcePortOpRange < AcePortOperatorBase
     # Constructor
     def initialize(*args)
-      super
-      unless @begin_port < @end_port
-        raise AclArgumentError, 'Invalid port sequence'
-      end
+      super(*args)
+      raise AclArgumentError, 'Invalid port sequence' unless @begin_port < @end_port
+
       @operator = :range
     end
 
@@ -244,7 +248,7 @@ module CiscoAclIntp
         other.end_port <= @end_port
     end
   end
-end # module
+end
 
 ### Local variables:
 ### mode: Ruby

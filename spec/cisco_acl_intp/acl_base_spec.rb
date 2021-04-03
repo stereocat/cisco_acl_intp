@@ -1,24 +1,30 @@
-# -*- coding: utf-8 -*-
+# frozen_string_literal: true
 
 require 'spec_helper'
+
+module CiscoAclIntp
+  # test mock
+  class TestAclContainer < AccessControlContainer
+    def initialize(str)
+      super()
+      @str = str
+    end
+
+    def to_s_with_tag(tag)
+      # rubocop:disable Style/DocumentDynamicEvalDefinition
+      instance_eval("tag_#{tag}(@str)", __FILE__, __LINE__)
+      # rubocop:enable Style/DocumentDynamicEvalDefinition
+    end
+
+    def to_s_with_cleaning
+      clean_acl_string(' foo    bar baz    ')
+    end
+  end
+end
 
 describe 'AclContainerBase' do
   describe '#generate_tagged_str' do
     before do
-      # test mock
-      class TestAclContainer < AccessControlContainer
-        def initialize(str)
-          @str = str
-        end
-
-        def to_s_with_tag(tag)
-          instance_eval("tag_#{tag}(@str)")
-        end
-
-        def to_s_with_cleaning
-          clean_acl_string(' foo    bar baz    ')
-        end
-      end
       @mock = TestAclContainer.new('teststr')
     end
 

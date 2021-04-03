@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# frozen_string_literal: true
+
 require 'cisco_acl_intp/acespec_base'
 
 module CiscoAclIntp
@@ -41,6 +42,7 @@ module CiscoAclIntp
     # @note Variable '@protocol'
     #   should be assigned in inherited class constructor.
     def initialize(proto_id = nil, max_num = 255)
+      super()
       @protocol = nil # must be defined in inherited class.
       @max_num = max_num
 
@@ -103,7 +105,7 @@ module CiscoAclIntp
     # Check if port/protocol number is minimum.
     # @return [Boolean]
     def min?
-      @number == 0
+      @number.zero?
     end
 
     # Check if port/protocol number is maximum.
@@ -125,36 +127,30 @@ module CiscoAclIntp
     # Convert protocol/port name to number
     # @raise [AclArgumentError]
     def name_to_number
-      if proto_table.key?(@name)
-        proto_table[@name]
-      else
-        raise AclArgumentError, "Unknown protocol name: #{@name}"
-      end
+      raise AclArgumentError, "Unknown protocol name: #{@name}" unless proto_table.key?(@name)
+
+      proto_table[@name]
     end
 
     # @param [String] name Protocol name.
     # @raise [AclArgumentError]
     def define_param_by_string(name)
       @name = name
-      if valid_name?
-        @number = name_to_number
-      else
-        raise AclArgumentError, "Unknown protocol name: #{@name}"
-      end
+      raise AclArgumentError, "Unknown protocol name: #{@name}" unless valid_name?
+
+      @number = name_to_number
     end
 
     # @param [Integer] number Protocol No.
     # @raise [AclArgumentError]
     def define_param_by_integer(number)
       @number = number
-      if valid_range?
-        @name = number_to_name
-      else
-        raise AclArgumentError, "Invalid protocol number: #{@number}"
-      end
+      raise AclArgumentError, "Invalid protocol number: #{@number}" unless valid_range?
+
+      @name = number_to_name
     end
   end
-end # module
+end
 
 ### Local variables:
 ### mode: Ruby

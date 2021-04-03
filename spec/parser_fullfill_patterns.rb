@@ -1,11 +1,12 @@
-# -*- coding: utf-8 -*-
+# frozen_string_literal: true
+
 require 'yaml'
 require 'erb'
 
 # data files
 TOKEN_SEQ_FILE_LIST = [
   'stdacl_token_seq.yml',
-  'extacl_token_seq.yml',
+  'extacl_token_seq.yml'
   # 'extacl_objgrp_token_seq.yml'
 ].freeze
 
@@ -39,6 +40,7 @@ def create_data(field_patterns, leftover_results)
       ## do not add pattern that has multiple 'false'
       ## add single fault pattern.
       next unless each[:valid] || each_res[:valid]
+
       curr_results.push(single_data(each, each_res))
     end
     curr_results
@@ -92,7 +94,7 @@ end
 code_data = DATA.read
 puts '## generate spec code'
 each_test do |each|
-  spec_file_base = each[:testname] + '.rb'
+  spec_file_base = "#{each[:testname]}.rb"
   puts "Spec code Data: #{spec_file_base}"
   File.open(_spec_data_dir(spec_file_base), 'w') do |file|
     code_erb = ERB.new(code_data, nil, '-')

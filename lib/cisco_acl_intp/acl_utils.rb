@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# frozen_string_literal: true
+
 require 'cisco_acl_intp/ace_extended'
 
 module CiscoAclIntp
@@ -65,24 +66,24 @@ module CiscoAclIntp
     end
 
     # Generate hash key to slice
-    # @param [Symbol] pt Prefix of key
+    # @param [Symbol] direction_key Prefix of key
     # @param [Symbol] key Postfix of key
     # @return [Symbol]
-    def ptkey(pt, key)
-      [pt.to_s, key.to_s].join('_').intern
+    def generate_cond_keys(direction_key, key)
+      [direction_key.to_s, key.to_s].join('_').intern
     end
 
     # Generate list of values sliced hash (args of srcdst_condition)
     # @param [AceIpProtoSpec] proto_cond IP protocol condition
-    # @param [Symbol] pt Prefix of key
+    # @param [Symbol] direction_key Prefix of key
     # @param [Hash] opts Option hash for slice
-    def slice_contains_opts(proto_cond, pt, opts)
+    def slice_contains_opts(proto_cond, direction_key, opts)
       [
         proto_cond,
-        opts[ptkey(pt, :ip)],
-        opts[ptkey(pt, :operator)],
-        (opts[ptkey(pt, :port)] || opts[ptkey(pt, :begin_port)]),
-        opts[ptkey(pt, :end_port)]
+        opts[generate_cond_keys(direction_key, :ip)],
+        opts[generate_cond_keys(direction_key, :operator)],
+        (opts[generate_cond_keys(direction_key, :port)] || opts[generate_cond_keys(direction_key, :begin_port)]),
+        opts[generate_cond_keys(direction_key, :end_port)]
       ]
     end
 
@@ -111,7 +112,7 @@ module CiscoAclIntp
       )
     end
   end
-end # module
+end
 
 ### Local variables:
 ### mode: Ruby

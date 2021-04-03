@@ -1,9 +1,9 @@
-# -*- coding: utf-8 -*-
+# frozen_string_literal: true
 
 # CiscoAclIntp Module, version definition
 module CiscoAclIntp
   # Version number
-  VERSION = '0.0.4'.freeze
+  VERSION = '0.0.5'
 end
 
 ### Local variables:

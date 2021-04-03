@@ -1,4 +1,6 @@
 AllCops:
+  NewCops: enable
+  SuggestExtensions: false
   Include:
     - lib/**/*.rb
     - tool/*.rb
@@ -9,5 +11,12 @@ AllCops:
   Exclude:
     - lib/**/parser.rb
     - spec/data/*.rb
-MethodLength:
-  Max: 15
+    - vendor/**/*
+Metrics/BlockLength:
+  Max: 30
+  Enabled: false # temporary
+Metrics/MethodLength:
+  Max: 20
+  Enabled: false # temporary
+Naming/HeredocDelimiterNaming:
+  Enabled: false

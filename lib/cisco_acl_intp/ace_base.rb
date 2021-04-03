@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# frozen_string_literal: true
+
 require 'cisco_acl_intp/acespec_srcdst'
 
 module CiscoAclIntp
@@ -19,6 +20,7 @@ module CiscoAclIntp
     # @option opts [Integer] :number Sequence number
     # @return [AceBase]
     def initialize(opts)
+      super()
       @seq_number = opts[:number] || NO_SEQ_NUMBER
     end
 
@@ -71,6 +73,7 @@ module CiscoAclIntp
     # @param [String] str Comment string
     # @return [RemarkAce]
     def initialize(str)
+      super({})
       @comment = str.strip
       @seq_number = NO_SEQ_NUMBER # remark does not takes line number
     end
@@ -117,11 +120,9 @@ module CiscoAclIntp
     # return [String] Recursive entry name
     # raise [AclArgumentError]
     def define_recursive_name
-      if @options.key?(:recursive_name)
-        @options[:recursive_name]
-      else
-        raise AclArgumentError, 'name not specified'
-      end
+      raise AclArgumentError, 'name not specified' unless @options.key?(:recursive_name)
+
+      @options[:recursive_name]
     end
 
     # @return [Boolean] Compare with recursive entry name
@@ -144,7 +145,7 @@ module CiscoAclIntp
       false
     end
   end
-end # module
+end
 
 ### Local variables:
 ### mode: Ruby

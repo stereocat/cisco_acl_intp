@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# frozen_string_literal: true
+
 require 'cisco_acl_intp/ace_base'
 
 module CiscoAclIntp
@@ -42,10 +43,10 @@ module CiscoAclIntp
     # @return [String]
     def to_s
       format(
-        '%s %s %s',
-        tag_action(@action.to_s),
-        @src_spec,
-        tag_other_qualifier(@log_spec ? @log_spec : '')
+        '%<act>s %<src>s %<other>s',
+        act: tag_action(@action.to_s),
+        src: @src_spec,
+        other: tag_other_qualifier(@log_spec || '')
       )
     end
 
@@ -63,29 +64,25 @@ module CiscoAclIntp
     # @return [String] Action string
     # @raise [AclArgumentError]
     def define_action
-      if @options.key?(:action)
-        @options[:action]
-      else
-        raise AclArgumentError, 'Not specified action'
-      end
+      raise AclArgumentError, 'Not specified action' unless @options.key?(:action)
+
+      @options[:action]
     end
 
     # Set instance variables
     # @return [AceSrcDstSpec] Source spec object
     # @raise [AclArgumentError]
     def define_src_spec
-      if @options.key?(:src)
-        src = @options[:src]
-        case src
-        when Hash
-          AceSrcDstSpec.new(src)
-        when AceSrcDstSpec
-          src
-        else
-          raise AclArgumentError, 'src spec: unknown class'
-        end
+      raise AclArgumentError, 'Not specified src spec' unless @options.key?(:src)
+
+      src = @options[:src]
+      case src
+      when Hash
+        AceSrcDstSpec.new(src)
+      when AceSrcDstSpec
+        src
       else
-        raise AclArgumentError, 'Not specified src spec'
+        raise AclArgumentError, 'src spec: unknown class'
       end
     end
 
@@ -96,7 +93,7 @@ module CiscoAclIntp
       @options[:log] || nil
     end
   end
-end # module
+end
 
 ### Local variables:
 ### mode: Ruby

@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 def _build_target(opts)
@@ -137,7 +138,7 @@ describe ExtendedAce do
           src: src,
           dst: dst
         )
-      end # before
+      end
 
       ## generate test pattern data
       data_table = {
@@ -154,12 +155,12 @@ describe ExtendedAce do
       }
 
       bit = 5
-      test_data = [
-        :dst_port,
-        :dst_ip,
-        :src_port,
-        :src_ip,
-        :protocol
+      test_data = %i[
+        dst_port
+        dst_ip
+        src_port
+        src_ip
+        protocol
       ]
 
       tests = []
@@ -174,7 +175,7 @@ describe ExtendedAce do
         end
         tests.push(
           opts: opts,
-          res: num > 0 ? false : true
+          res: num <= 0
         )
       end
 
@@ -195,9 +196,9 @@ describe ExtendedAce do
           else
             expect(@ea.contains?(_build_target(eopts))).to be_falsey
           end
-        end # it
-      end # tests.each
-    end # context full spec test
+        end
+      end
+    end
 
     context 'ANY ip/port port exists case' do
       before do
@@ -250,7 +251,9 @@ describe ExtendedAce do
               src_ip: @src_ip_match, src_port: @src_port_match,
               dst_operator: :eq,
               dst_ip: @dst_ip_match, dst_port: @dst_port_match
-            ))).to be_truthy
+            )
+          )
+        ).to be_truthy
         expect(
           ea.contains?(
             _build_target(
@@ -259,7 +262,9 @@ describe ExtendedAce do
               src_ip: @src_ip_unmatch, src_port: @src_port_match,
               dst_operator: :eq,
               dst_ip: @dst_ip_match, dst_port: @dst_port_match
-            ))).to be_truthy
+            )
+          )
+        ).to be_truthy
       end
 
       it 'should be false when any source ip and unmatch port' do
@@ -274,7 +279,9 @@ describe ExtendedAce do
               src_ip: @src_ip_match, src_port: @src_port_unmatch,
               dst_operator: :eq,
               dst_ip: @dst_ip_match, dst_port: @dst_port_match
-            ))).to be_falsey
+            )
+          )
+        ).to be_falsey
         expect(
           ea.contains?(
             _build_target(
@@ -283,7 +290,9 @@ describe ExtendedAce do
               src_ip: @src_ip_unmatch, src_port: @src_port_unmatch,
               dst_operator: :eq,
               dst_ip: @dst_ip_match, dst_port: @dst_port_match
-            ))).to be_falsey
+            )
+          )
+        ).to be_falsey
       end
 
       it 'should be true when any source port' do
@@ -298,7 +307,9 @@ describe ExtendedAce do
               src_ip: @src_ip_match, src_port: @src_port_match,
               dst_operator: :eq,
               dst_ip: @dst_ip_match, dst_port: @dst_port_match
-            ))).to be_truthy
+            )
+          )
+        ).to be_truthy
         expect(
           ea.contains?(
             _build_target(
@@ -307,7 +318,9 @@ describe ExtendedAce do
               src_ip: @src_ip_match, src_port: @src_port_unmatch,
               dst_operator: :eq,
               dst_ip: @dst_ip_match, dst_port: @dst_port_match
-            ))).to be_truthy
+            )
+          )
+        ).to be_truthy
       end
 
       it 'should be false when any source port and unmatch ip' do
@@ -322,7 +335,9 @@ describe ExtendedAce do
               src_ip: @src_ip_unmatch, src_port: @src_port_match,
               dst_operator: :eq,
               dst_ip: @dst_ip_match, dst_port: @dst_port_match
-            ))).to be_falsey
+            )
+          )
+        ).to be_falsey
         expect(
           ea.contains?(
             _build_target(
@@ -331,7 +346,9 @@ describe ExtendedAce do
               src_ip: @src_ip_unmatch, src_port: @src_port_unmatch,
               dst_operator: :eq,
               dst_ip: @dst_ip_match, dst_port: @dst_port_match
-            ))).to be_falsey
+            )
+          )
+        ).to be_falsey
       end
 
       it 'should be true when any destination ip' do
@@ -346,7 +363,9 @@ describe ExtendedAce do
               src_ip: @src_ip_match, src_port: @src_port_match,
               dst_operator: :eq,
               dst_ip: @dst_ip_match, dst_port: @dst_port_match
-            ))).to be_truthy
+            )
+          )
+        ).to be_truthy
         expect(
           ea.contains?(
             _build_target(
@@ -355,7 +374,9 @@ describe ExtendedAce do
               src_ip: @src_ip_match, src_port: @src_port_match,
               dst_operator: :eq,
               dst_ip: @dst_ip_unmatch, dst_port: @dst_port_match
-            ))).to be_truthy
+            )
+          )
+        ).to be_truthy
       end
 
       it 'should be false when any destination ip and unmatch port' do
@@ -370,7 +391,9 @@ describe ExtendedAce do
               src_ip: @src_ip_match, src_port: @src_port_match,
               dst_operator: :eq,
               dst_ip: @dst_ip_match, dst_port: @dst_port_unmatch
-            ))).to be_falsey
+            )
+          )
+        ).to be_falsey
         expect(
           ea.contains?(
             _build_target(
@@ -379,7 +402,9 @@ describe ExtendedAce do
               src_ip: @src_ip_match, src_port: @src_port_match,
               dst_operator: :eq,
               dst_ip: @dst_ip_unmatch, dst_port: @dst_port_unmatch
-            ))).to be_falsey
+            )
+          )
+        ).to be_falsey
       end
 
       it 'should be true when any destination port' do
@@ -394,7 +419,9 @@ describe ExtendedAce do
               src_ip: @src_ip_match, src_port: @src_port_match,
               dst_operator: :eq,
               dst_ip: @dst_ip_match, dst_port: @dst_port_match
-            ))).to be_truthy
+            )
+          )
+        ).to be_truthy
         expect(
           ea.contains?(
             _build_target(
@@ -403,7 +430,9 @@ describe ExtendedAce do
               src_ip: @src_ip_match, src_port: @src_port_match,
               dst_operator: :eq,
               dst_ip: @dst_ip_match, dst_port: @dst_port_unmatch
-            ))).to be_truthy
+            )
+          )
+        ).to be_truthy
       end
 
       it 'should be false when any destination port and unmatch ip' do
@@ -418,7 +447,9 @@ describe ExtendedAce do
               src_ip: @src_ip_match, src_port: @src_port_match,
               dst_operator: :eq,
               dst_ip: @dst_ip_unmatch, dst_port: @dst_port_match
-            ))).to be_falsey
+            )
+          )
+        ).to be_falsey
         expect(
           ea.contains?(
             _build_target(
@@ -427,11 +458,13 @@ describe ExtendedAce do
               src_ip: @src_ip_match, src_port: @src_port_match,
               dst_operator: :eq,
               dst_ip: @dst_ip_unmatch, dst_port: @dst_port_unmatch
-            ))).to be_falsey
+            )
+          )
+        ).to be_falsey
       end
-    end # context exists any ip/port
-  end # describe contains?
-end # describe ExtendedAce
+    end
+  end
+end
 
 ### Local variables:
 ### mode: Ruby

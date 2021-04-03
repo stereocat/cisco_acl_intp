@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# frozen_string_literal: true
+
 require 'strscan'
 
 module CiscoAclIntp
@@ -6,7 +7,7 @@ module CiscoAclIntp
   module SpecialTokenHandler
     # STRING token regexp:
     # first letter is alphabet or digit
-    STR_REGEXP = '[a-zA-Z\d]\S*'.freeze
+    STR_REGEXP = '[a-zA-Z\d]\S*'
 
     # Tokens that takes string parameter
     STRING_ARG_TOKENS = [
@@ -39,7 +40,7 @@ module CiscoAclIntp
       set.map do |each|
         case each
         when String
-          '(' + each + ')'
+          "(#{each})"
         when Symbol
           SYMBOL_TO_REGEXPSTR[each]
         end
@@ -54,8 +55,8 @@ module CiscoAclIntp
         [re_str_list.join('\s+'), each.length]
       end
     end
-  end # module SpecialTokenMgr
-end # module CiscoAclIntp
+  end
+end
 
 ### Local variables:
 ### mode: Ruby

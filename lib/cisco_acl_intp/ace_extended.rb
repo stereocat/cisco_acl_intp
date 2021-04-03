@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# frozen_string_literal: true
+
 require 'cisco_acl_intp/ace_standard'
 
 module CiscoAclIntp
@@ -72,13 +73,13 @@ module CiscoAclIntp
     # @return [String]
     def to_s
       format(
-        '%s %s %s %s %s %s',
-        tag_action(@action.to_s),
-        tag_protocol(@protocol.to_s),
-        @src_spec,
-        @dst_spec,
-        @tcp_flags,
-        @tcp_other_qualifiers
+        '%<act>s %<prot>s %<src>s %<dst>s %<flag>s %<other>s',
+        act: tag_action(@action.to_s),
+        prot: tag_protocol(@protocol.to_s),
+        src: @src_spec,
+        dst: @dst_spec,
+        flag: @tcp_flags,
+        other: @tcp_other_qualifiers
       )
     end
 
@@ -98,16 +99,14 @@ module CiscoAclIntp
     # return [AceIpProtoSpec] IP protocol object
     # raise [AclArgumentError]
     def define_protocol
-      if @options.key?(:protocol)
-        protocol = @options[:protocol]
-        case protocol
-        when AceIpProtoSpec
-          protocol
-        else
-          AceIpProtoSpec.new(protocol)
-        end
+      raise AclArgumentError, 'Not specified IP protocol' unless @options.key?(:protocol)
+
+      protocol = @options[:protocol]
+      case protocol
+      when AceIpProtoSpec
+        protocol
       else
-        raise AclArgumentError, 'Not specified IP protocol'
+        AceIpProtoSpec.new(protocol)
       end
     end
 
@@ -115,18 +114,16 @@ module CiscoAclIntp
     # @return [AceSrcDstSpec] Destination spec object
     # @raise [AclArgumentError]
     def define_dst_spec
-      if @options.key?(:dst)
-        dst = @options[:dst]
-        case dst
-        when Hash
-          AceSrcDstSpec.new(dst)
-        when AceSrcDstSpec
-          dst
-        else
-          raise AclArgumentError, 'Dst spec: unknown class'
-        end
+      raise AclArgumentError, 'Not specified dst spec' unless @options.key?(:dst)
+
+      dst = @options[:dst]
+      case dst
+      when Hash
+        AceSrcDstSpec.new(dst)
+      when AceSrcDstSpec
+        dst
       else
-        raise AclArgumentError, 'Not specified dst spec'
+        raise AclArgumentError, 'Dst spec: unknown class'
       end
     end
 
@@ -135,10 +132,11 @@ module CiscoAclIntp
     def define_tcp_flags
       return unless @protocol.name == 'tcp' &&
                     @options.key?(:tcp_flags_qualifier)
+
       @options[:tcp_flags_qualifier]
     end
   end
-end # module
+end
 
 ### Local variables:
 ### mode: Ruby

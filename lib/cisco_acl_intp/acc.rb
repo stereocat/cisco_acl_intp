@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# frozen_string_literal: true
 
 require 'term/ansicolor'
 
@@ -92,6 +92,7 @@ module CiscoAclIntp
     end
 
     # Generate tagging method dynamically.
+    # @param [Symbol] name Method name.
     # @raise [NoMethodError]
     def method_missing(name, *args)
       name.to_s =~ /^tag_(.+)$/ && tag = Regexp.last_match(1).intern
@@ -100,6 +101,13 @@ module CiscoAclIntp
       else
         super
       end
+    end
+
+    # Check the method is enabled or not.
+    # @param [Symbol] name Method name.
+    # @param [Boolean] _include_private Check private methods if true.
+    def respond_to_missing?(name, _include_private)
+      !(name.to_s =~ /^tag_.+$/).nil?
     end
   end
 end

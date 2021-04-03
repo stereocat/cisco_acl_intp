@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# frozen_string_literal: true
+
 require 'cisco_acl_intp/acespec_proto_base'
 
 module CiscoAclIntp
@@ -202,7 +203,7 @@ module CiscoAclIntp
       UDP_PROTO_TABLE.key?(name)
     end
   end
-end # module
+end
 
 ### Local variables:
 ### mode: Ruby

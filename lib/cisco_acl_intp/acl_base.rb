@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# frozen_string_literal: true
+
 require 'forwardable'
 require 'cisco_acl_intp/ace_extended'
 require 'cisco_acl_intp/acl_utils'
@@ -37,6 +38,7 @@ module CiscoAclIntp
     # @param [String] name ACL name
     # @return [AclBase]
     def initialize(name)
+      super()
       @name = name # ACL name
       @list = [] # List of ACE
       @seq_number = 0 # Sequence Number of ACE
@@ -129,7 +131,7 @@ module CiscoAclIntp
       str =~ /remark/ ? str : super
     end
   end
-end # module
+end
 
 ### Local variables:
 ### mode: Ruby

@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe NamedStdAcl do
@@ -21,10 +22,10 @@ describe NamedStdAcl do
       )
       @acl.add_entry sa
       expect(@acl.size).to eq 1
-      aclstr = <<'EOL'
-ip access-list standard test-std-acl
- permit 192.168.3.0 0.0.0.127
-EOL
+      aclstr = <<~'EOL'
+        ip access-list standard test-std-acl
+         permit 192.168.3.0 0.0.0.127
+      EOL
       expect(@acl.to_s).to be_aclstr(aclstr)
     end
   end
@@ -53,23 +54,23 @@ EOL
     end
 
     it 'mutches aclstr' do
-      aclstr = <<'EOL'
-ip access-list standard test-std-acl2
- permit 192.168.3.0 0.0.0.127
- deny 192.168.4.0 0.0.0.255
-EOL
+      aclstr = <<~'EOL'
+        ip access-list standard test-std-acl2
+         permit 192.168.3.0 0.0.0.127
+         deny 192.168.4.0 0.0.0.255
+      EOL
       expect(@acl.to_s).to be_aclstr(aclstr)
     end
 
     it 'mutches aclstr with remark' do
       rmk = RemarkAce.new ' this is remark!!'
       @acl.add_entry rmk
-      aclstr = <<'EOL'
-ip access-list standard test-std-acl2
- permit 192.168.3.0 0.0.0.127
- deny 192.168.4.0 0.0.0.255
- remark this is remark!!
-EOL
+      aclstr = <<~'EOL'
+        ip access-list standard test-std-acl2
+         permit 192.168.3.0 0.0.0.127
+         deny 192.168.4.0 0.0.0.255
+         remark this is remark!!
+      EOL
       expect(@acl.to_s).to be_aclstr(aclstr)
     end
   end
@@ -115,7 +116,8 @@ EOL
         @acl.find_aces_contains(
           protocol: 'udp',
           src_operator: :eq, src_ip: '11.0.0.3', src_port: 33_333
-        )).to be_nil
+        )
+      ).to be_nil
     end
   end
 end
@@ -140,9 +142,9 @@ describe NumberedStdAcl do
       )
       @acl.add_entry sa
       expect(@acl.size).to eq 1
-      aclstr = <<'EOL'
-access-list 10 permit 192.168.3.0 0.0.0.127
-EOL
+      aclstr = <<~'EOL'
+        access-list 10 permit 192.168.3.0 0.0.0.127
+      EOL
       expect(@acl.to_s).to be_aclstr(aclstr)
     end
   end
@@ -171,21 +173,21 @@ EOL
     end
 
     it 'mutches aclstr' do
-      aclstr = <<'EOL'
-access-list 14 permit 192.168.3.0 0.0.0.127
-access-list 14 deny 192.168.4.0 0.0.0.255
-EOL
+      aclstr = <<~'EOL'
+        access-list 14 permit 192.168.3.0 0.0.0.127
+        access-list 14 deny 192.168.4.0 0.0.0.255
+      EOL
       expect(@acl.to_s).to be_aclstr(aclstr)
     end
 
     it 'mutches aclstr with remark' do
       rmk = RemarkAce.new ' this is remark!!'
       @acl.add_entry rmk
-      aclstr = <<'EOL'
-access-list 14 permit 192.168.3.0 0.0.0.127
-access-list 14 deny 192.168.4.0 0.0.0.255
-access-list 14 remark this is remark!!
-EOL
+      aclstr = <<~'EOL'
+        access-list 14 permit 192.168.3.0 0.0.0.127
+        access-list 14 deny 192.168.4.0 0.0.0.255
+        access-list 14 remark this is remark!!
+      EOL
       expect(@acl.to_s).to be_aclstr(aclstr)
     end
   end
@@ -218,18 +220,18 @@ EOL
         @acl.add_entry last_ace
         acl_new = @acl.dup_with_list(@acl.sort)
 
-        aclstr = <<'EOL'
-access-list 15 remark entry 1
-access-list 15 remark entry 2
-access-list 15 remark entry 3
-access-list 15 remark entry 4
-EOL
-        aclstr_new = <<'EOL'
-access-list 15 remark entry 1
-access-list 15 remark entry 4
-access-list 15 remark entry 2
-access-list 15 remark entry 3
-EOL
+        aclstr = <<~'EOL'
+          access-list 15 remark entry 1
+          access-list 15 remark entry 2
+          access-list 15 remark entry 3
+          access-list 15 remark entry 4
+        EOL
+        aclstr_new = <<~'EOL'
+          access-list 15 remark entry 1
+          access-list 15 remark entry 4
+          access-list 15 remark entry 2
+          access-list 15 remark entry 3
+        EOL
         expect(@acl.name).to eq acl_new.name
         expect(@acl.acl_type).to eq acl_new.acl_type
         expect(@acl.to_s).to be_aclstr(aclstr)

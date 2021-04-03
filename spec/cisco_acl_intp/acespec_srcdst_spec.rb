@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe AceSrcDstSpec do
@@ -334,5 +335,5 @@ describe AceSrcDstSpec do
         ).to be_truthy
       end
     end
-  end # describe contains?
-end # describe AceSrcDstSpec
+  end
+end

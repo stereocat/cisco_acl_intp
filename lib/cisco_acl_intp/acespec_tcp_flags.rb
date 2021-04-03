@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# frozen_string_literal: true
 
 require 'forwardable'
 require 'cisco_acl_intp/acespec_base'
@@ -14,6 +14,7 @@ module CiscoAclIntp
     # @param [String] flag TCP flag name
     # @return [AceTcpFlag]
     def initialize(flag)
+      super()
       @flag = flag
     end
 
@@ -44,6 +45,7 @@ module CiscoAclIntp
     # @param [Array<AceTcpFlag>] list TCP Flag Objects
     # @todo If the object that are same are included in the list?
     def initialize(list = [])
+      super()
       @list = list
     end
 
@@ -62,7 +64,7 @@ module CiscoAclIntp
       end
     end
   end
-end # module
+end
 
 ### Local variables:
 ### mode: Ruby

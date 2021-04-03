@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# frozen_string_literal: true
 
 require 'spec_helper'
 require 'stringio'
@@ -7,17 +7,17 @@ require 'yaml'
 describe 'Parser' do
   describe '#parse_string' do
     before do
-      @parser = CiscoAclIntp::Parser.new(color: false)
+      @parser = CiscoAclIntp::Parser.new(color: false, debug: false)
     end
 
     it 'should be parsed acl' do
-      datastr = <<EOL
-ip access-list extended FA8-OUT
- deny   udp any any eq bootpc
- deny   udp any any eq bootps
- permit tcp host 192.168.3.4 173.30.240.0 0.0.0.255 range 32768 65535
-!
-EOL
+      datastr = <<~EOL
+        ip access-list extended FA8-OUT
+         deny   udp any any eq bootpc
+         deny   udp any any eq bootps
+         permit tcp host 192.168.3.4 173.30.240.0 0.0.0.255 range 32768 65535
+        !
+      EOL
       @parser.parse_string(datastr)
       expect(@parser.contains_error?).to be_falsey
       @parser.parse_string(StringIO.new(datastr))
@@ -25,14 +25,14 @@ EOL
     end
 
     it 'should not be parsed acl' do
-      datastr = <<EOL
-ip access-list extended FA8-OUT
- remark !syntax error! tcp -> tp (typo)
- deny up any any log-input hoge
- remark !------cleared------!
- permit ip any any log
-!
-EOL
+      datastr = <<~EOL
+        ip access-list extended FA8-OUT
+         remark !syntax error! tcp -> tp (typo)
+         deny up any any log-input hoge
+         remark !------cleared------!
+         permit ip any any log
+        !
+      EOL
       @parser.parse_string(datastr)
       expect(@parser.contains_error?).to be_truthy
       @parser.parse_string(StringIO.new(datastr))
@@ -52,26 +52,26 @@ EOL
     end
 
     it 'should be parsed acl' do
-      datastr = <<EOL
-ip access-list extended FA8-OUT
- deny   udp any any eq bootpc
- deny   udp any any eq bootps
- permit tcp host 192.168.3.4 173.30.240.0 0.0.0.255 range 32768 65535
-!
-EOL
+      datastr = <<~EOL
+        ip access-list extended FA8-OUT
+         deny   udp any any eq bootpc
+         deny   udp any any eq bootps
+         permit tcp host 192.168.3.4 173.30.240.0 0.0.0.255 range 32768 65535
+        !
+      EOL
       @parser.parse_file(StringIO.new(datastr))
       expect(@parser.contains_error?).to be_falsey
     end
 
     it 'should not be parsed acl' do
-      datastr = <<EOL
-ip access-list extended FA8-OUT
- remark !syntax error! tcp -> tp (typo)
- deny up any any log-input hoge
- remark !------cleared------!
- permit ip any any log
-!
-EOL
+      datastr = <<~EOL
+        ip access-list extended FA8-OUT
+         remark !syntax error! tcp -> tp (typo)
+         deny up any any log-input hoge
+         remark !------cleared------!
+         permit ip any any log
+        !
+      EOL
       @parser.parse_file(StringIO.new(datastr))
       expect(@parser.contains_error?).to be_truthy
     end
@@ -90,7 +90,7 @@ EOL
 
     # test data file
     data_files = [
-      'extended_acl.yml',
+      'extended_acl.yml'
       # 'object_group.yml'
     ]
 
@@ -121,8 +121,8 @@ EOL
         end
       end
     end
-  end # parse_file
-end # Parser
+  end
+end
 
 ### Local variables:
 ### mode: Ruby

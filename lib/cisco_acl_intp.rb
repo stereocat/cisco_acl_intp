@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# frozen_string_literal: true
 
 require 'rubygems'
 require 'cisco_acl_intp/acl'

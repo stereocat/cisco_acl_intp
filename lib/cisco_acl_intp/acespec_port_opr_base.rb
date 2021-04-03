@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# frozen_string_literal: true
+
 require 'cisco_acl_intp/acc'
 
 module CiscoAclIntp
@@ -22,6 +23,7 @@ module CiscoAclIntp
     # @param [AceProtoSpecBase] end_port End port object.
     # @raise [AclArgumentError]
     def initialize(begin_port, end_port = nil)
+      super()
       @operator = :any # default
       @begin_port = begin_port
       @end_port = end_port
@@ -41,7 +43,7 @@ module CiscoAclIntp
     def to_s
       tag_port(
         clean_acl_string(
-          format('%s %s %s', @operator, @begin_port, @end_port)
+          format('%<opr>s %<begin>s %<end>s', opr: @operator, begin: @begin_port, end: @end_port)
         )
       )
     end
@@ -137,14 +139,13 @@ module CiscoAclIntp
   class AceUnaryOpBase < AcePortOperatorBase
     # Constructor
     def initialize(*args)
-      super
-      if @begin_port.nil?
-        raise AclArgumentError, 'Port did not specified in unary operator'
-      end
+      super(*args)
+      raise AclArgumentError, 'Port did not specified in unary operator' if @begin_port.nil?
+
       @end_port = nil
     end
   end
-end # module
+end
 
 ### Local variables:
 ### mode: Ruby

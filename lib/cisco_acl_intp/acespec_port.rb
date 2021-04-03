@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# frozen_string_literal: true
+
 require 'forwardable'
 require 'cisco_acl_intp/acespec_proto'
 require 'cisco_acl_intp/acespec_port_opr'
@@ -10,6 +11,7 @@ module CiscoAclIntp
 
     # @return [AcePortOperatorBase] value Port-set operator
     attr_reader :operator
+
     def_delegators :@operator, :begin_port, :port, :end_port, :to_s
 
     # Constructor
@@ -28,12 +30,11 @@ module CiscoAclIntp
     #   and need the name when stringize the object.
     # @todo in ACL, can "eq/neq" receive port list? IOS15 later?
     def initialize(opts)
-      if opts.key?(:operator)
-        @options = opts
-        define_operator_and_ports
-      else
-        raise AclArgumentError, 'Not specified port operator'
-      end
+      super()
+      raise AclArgumentError, 'Not specified port operator' unless opts.key?(:operator)
+
+      @options = opts
+      define_operator_and_ports
     end
 
     # @param [AcePortSpec] other RHS Object
@@ -69,13 +70,14 @@ module CiscoAclIntp
     def define_operator_and_ports
       opr = @options.key?(:operator) ? @options[:operator].intern : :any
       raise AclArgumentError, 'Unknown operator' unless OPERATOR_CLASS.key?(opr)
+
       @operator = OPERATOR_CLASS[opr].new(
         (@options[:port] || @options[:begin_port]),
         @options[:end_port]
       )
     end
   end
-end # module
+end
 
 ### Local variables:
 ### mode: Ruby

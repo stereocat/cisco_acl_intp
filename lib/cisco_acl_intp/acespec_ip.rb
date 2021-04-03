@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# frozen_string_literal: true
+
 require 'forwardable'
 require 'netaddr'
 require 'cisco_acl_intp/acespec_base'
@@ -37,12 +38,11 @@ module CiscoAclIntp
     # @raise [AclArgumentError]
     # @return [AceIpSpec]
     def initialize(opts)
-      if opts.key?(:ipaddr)
-        @options = opts
-        define_addrinfo
-      else
-        raise AclArgumentError, 'Not specified IP address'
-      end
+      super()
+      raise AclArgumentError, 'Not specified IP address' unless opts.key?(:ipaddr)
+
+      @options = opts
+      define_addrinfo
     end
 
     # @param [AceIpSpec] other RHS Object
@@ -60,9 +60,9 @@ module CiscoAclIntp
         tag_ip('any')
       elsif @wildcard == '0.0.0.0'
         # /32 mask
-        format '%s %s', tag_mask('host'), tag_ip(@ipaddr.ip)
+        format '%<host>s %<ip>s', host: tag_mask('host'), ip: tag_ip(@ipaddr.ip)
       else
-        format '%s %s', tag_ip(to_wmasked_ip_s), tag_mask(@wildcard)
+        format '%<ip>s %<mask>s', ip: tag_ip(to_wmasked_ip_s), mask: tag_mask(@wildcard)
       end
     end
 
@@ -101,6 +101,7 @@ module CiscoAclIntp
     def wildcard_bitlength
       @wildcard.split(/\./).reduce(0) do |len, octet|
         break unless len && OCTET_BIT_LENGTH.key?(octet)
+
         len + OCTET_BIT_LENGTH[octet]
       end
     end
@@ -158,12 +159,12 @@ module CiscoAclIntp
     def define_addrinfo_with_netmask
       @netmask = @options[:netmask]
       @ipaddr = NetAddr::CIDR.create(
-        format('%s/%s', @options[:ipaddr], @netmask)
+        format('%<ip>s/%<mask>s', ip: @options[:ipaddr], mask: @netmask)
       )
       @wildcard = @ipaddr.wildcard_mask(true)
     end
   end
-end # module
+end
 
 ### Local variables:
 ### mode: Ruby

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# frozen_string_literal: true
 
 require 'forwardable'
 require 'cisco_acl_intp/acl_base'
@@ -50,10 +50,10 @@ module CiscoAclIntp
     # @return [String] ACL header string
     def header_string
       format(
-        '%s %s %s',
-        tag_header('ip access-list'),
-        tag_type(@acl_type),
-        tag_name(@name)
+        '%<hdr>s %<type>s %<name>s',
+        hdr: tag_header('ip access-list'),
+        type: tag_type(@acl_type),
+        name: tag_name(@name)
       )
     end
 
@@ -61,7 +61,7 @@ module CiscoAclIntp
     # @param [AceBase] entry ACE object
     def line_string(entry)
       # add indent
-      format ' %s', clean_acl_string(entry.to_s)
+      format ' %<str>s', str: clean_acl_string(entry.to_s)
     end
 
     # Generate string for Cisco IOS access list
@@ -100,7 +100,7 @@ module CiscoAclIntp
     def initialize(name)
       super
       case name
-      when Fixnum
+      when Integer
         set_name_and_number(name.to_s, name)
       when String
         validate_name_by_string(name)
@@ -113,16 +113,16 @@ module CiscoAclIntp
     # @return [String] ACL header string
     def header_string
       format(
-        '%s %s',
-        tag_header('access-list'),
-        tag_name(@name)
+        '%<hdr>s %<name>s',
+        hdr: tag_header('access-list'),
+        name: tag_name(@name)
       )
     end
 
     # Generate ACL line string
     # @param [AceBase] entry ACE object
     def line_string(entry)
-      clean_acl_string(format('%s %s', header_string, entry))
+      clean_acl_string(format('%<hdr>s %<entry>s', hdr: header_string, entry: entry))
     end
 
     # Generate string for Cisco IOS access list
@@ -139,11 +139,9 @@ module CiscoAclIntp
     # validate instance variables
     # @param [String] name ACL Name
     def validate_name_by_string(name)
-      if name =~ /\A\d+\Z/
-        set_name_and_number(name, name.to_i)
-      else
-        raise AclArgumentError, 'acl number string is not integer'
-      end
+      raise AclArgumentError, 'acl number string is not integer' unless name =~ /\A\d+\Z/
+
+      set_name_and_number(name, name.to_i)
     end
 
     # Set instance variables
@@ -152,7 +150,7 @@ module CiscoAclIntp
       @number = number
     end
   end
-end # module
+end
 
 ### Local variables:
 ### mode: Ruby

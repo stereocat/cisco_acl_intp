@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# frozen_string_literal: true
 
 require 'forwardable'
 require 'stringio'
@@ -39,7 +39,7 @@ module CiscoAclIntp
     # Parsed data contains error or not?
     # @return [Boolean]
     def contains_error?
-      @error_count > 0
+      @error_count.positive?
     end
   end
 
@@ -106,6 +106,7 @@ module CiscoAclIntp
     #   (default: false)
     # @return [CiscoACLParser]
     def initialize(opts)
+      super()
       @yydebug = opts[:yydebug] || false
       @debug_print = opts[:debug] || false
       @silent_mode = @debug_print || opts[:silent] || false
@@ -124,7 +125,7 @@ module CiscoAclIntp
     # Scan/Parse ACL from file
     # @param [String] filename File name
     # @raise [AclError]
-    # @return [IO] IO object (Raw AcL)
+    # @return [Hash] ACL Table
     def parse_file(filename)
       run_parser do
         case filename
@@ -140,30 +141,30 @@ module CiscoAclIntp
     end
 
     # Scan/Parse ACL from string
-    # @param [String] aclstr ACL string
+    # @param [String] acl_str ACL string
     # @raise [AclError]
-    # @return [IO] IO object (Raw AcL)
-    def parse_string(aclstr)
+    # @return [Hash] ACL Table
+    def parse_string(acl_str)
       run_parser do
-        case aclstr
+        case acl_str
         when String
-          StringIO.new(aclstr)
+          StringIO.new(acl_str)
         when IO, StringIO
-          aclstr
+          acl_str
         else
           @err_handler.count
-          raise AclError, "Argment: #{aclstr} not found."
+          raise AclError, "Argument: #{acl_str} not found."
         end
       end
     end
 
     # Syntax error handler
     def on_error(tok, val, _vstack)
-      errstr = format(
-        '%s, near value: %s, (token: %s)',
-        err_pos_str, val, token_to_str(tok)
+      err_str = format(
+        '%<ep>s, near value: %<val>s, (token: %<token>s)',
+        ep: err_pos_str, val: val, token: token_to_str(tok)
       )
-      @err_handler.regist_message(errstr)
+      @err_handler.regist_message(err_str)
     end
 
     # ACL table handling
@@ -194,14 +195,14 @@ module CiscoAclIntp
         scanner = Scanner.new
         @queue = scanner.scan_file(yield)
         do_parse
-      rescue Racc::ParseError => err
-        @err_handler.regist_message(racc_parse_err_message(err))
-      rescue AclArgumentError => err
-        @err_handler.regist_message(acl_arg_err_message(err, err_pos_str))
-      rescue AclError => err
-        @err_handler.regist_message(acl_err_message(err))
-      rescue => err
-        @err_handler.regist_message(err_message(err))
+      rescue Racc::ParseError => e
+        @err_handler.regist_message(racc_parse_err_message(e))
+      rescue AclArgumentError => e
+        @err_handler.regist_message(acl_arg_err_message(e, err_pos_str))
+      rescue AclError => e
+        @err_handler.regist_message(acl_err_message(e))
+      rescue StandardError => e
+        @err_handler.regist_message(err_message(e))
       end
       @acl_table
     end
@@ -229,13 +230,9 @@ module CiscoAclIntp
     # @return [String] error position string
     def err_pos_str
       format(
-        'in acl: %s, line: %s',
-        @curr_acl_name,
-        if @acl_table.key?(@curr_acl_name)
-          @acl_table[@curr_acl_name].length + 1
-        else
-          ''
-        end
+        'in acl: %<acl>s, line: %<line>s',
+        acl: @curr_acl_name,
+        line: @acl_table.key?(@curr_acl_name) ? @acl_table[@curr_acl_name].length + 1 : ''
       )
     end
   end
